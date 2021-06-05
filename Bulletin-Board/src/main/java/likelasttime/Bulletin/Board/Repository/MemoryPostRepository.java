@@ -6,35 +6,35 @@ import java.util.*;
 
 public class MemoryPostRepository implements PostRepository {
 
-    private static Map<Long, Post> post=new HashMap<>();
+    private static Map<Long, Post> blog=new HashMap<>();
     private static long sequence=0L;
 
     @Override
     public Post save(Post post) {
         post.setId(++sequence);
-        MemoryPostRepository.post.put(post.getId(), post);
+        blog.put(post.getId(), post);
         return post;
     }
 
     @Override
     public Optional<Post> findById(Long id) {
-        return Optional.ofNullable(post.get(id));
+        return Optional.ofNullable(blog.get(id));
     }
 
     @Override
     public Optional<Post> findByTitle(String title) {
-        return post.values().stream()
+        return blog.values().stream()
                 .filter(post->post.getTitle().equals(title))
                 .findAny();
     }
 
     @Override
     public List<Post> findAll(){
-        return new ArrayList<>(post.values());
+        return new ArrayList<>(blog.values());
     }
 
-    public void clearPost(){
-        post.clear();
+    public void clearBlog(){
+        blog.clear();
     }
 
 }

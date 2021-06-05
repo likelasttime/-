@@ -24,25 +24,25 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
 	compile('org.springframework.boot:spring-boot-starter-actuator')
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile 'mysql:mysql-connector-java'
 	compile('org.springframework.boot:spring-boot-starter-web')
-	runtime('com.h2database:h2')
-
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
+	compile 'org.hibernate:hibernate-core:5.0.7.Final'
+	runtimeOnly 'com.h2database:h2'
+	testImplementation ('org.springframework.boot:spring-boot-starter-test'){
+		exclude group:'org.junit.vintage', module: 'junit-vintage-engine'
+	}
 
 }
 
-buildscript {
-	repositories {
-		maven {
-			url "https://plugins.gradle.org/m2/"
-		}
-	}
-	dependencies {
-		classpath "io.freefair.gradle:lombok-plugin:6.0.0-m2"
-	}
+
+test{
+	useJUnitPlatform()
 }
 
-apply plugin: "io.freefair.lombok"

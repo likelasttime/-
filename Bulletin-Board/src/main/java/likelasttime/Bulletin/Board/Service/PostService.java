@@ -15,22 +15,22 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    //회원가입
+    // 게시글 작성
     public Long join(Post post){
-        validateDuplicatePosts(post);  // 중복 게시글
+        validateDuplicatePost(post);  // 중복 게시글
         postRepository.save(post);
         return post.getId();
     }
 
-    private void validateDuplicatePosts(Post post){
+    private void validateDuplicatePost(Post post){
         postRepository.findByTitle(post.getTitle())
                 .ifPresent(m->{
                     throw new IllegalStateException("이미 존재하는 게시글입니다.");
                 });
     }
 
-    //전체 회원 조회
-    public List<Post> findPosts(){
+    //전체 게시글 조회
+    public List<Post> findPost(){
         return postRepository.findAll();
     }
 

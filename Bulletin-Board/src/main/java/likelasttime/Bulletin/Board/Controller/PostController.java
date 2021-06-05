@@ -11,33 +11,35 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.List;
 
 @Controller
-public class MemberController {
-    private PostService postService;
+public class PostController {
+    private final PostService postService;
 
     @Autowired
-    public MemberController(PostService postService){
+    public PostController(PostService postService){
         this.postService=postService;
     }
 
-    @GetMapping("/posts/new")
+    @GetMapping("/post/new")
     public String createForm(){
-        return "posts/createPostsForm";
+        return "post/createPostForm";
     }
 
-    @PostMapping("/posts/new")
+    @PostMapping("/post/new")
     public String create(PostForm form){
         Post post =new Post();
         post.setTitle(form.getTitle());
+        post.setAuthor(form.getAuthor());
+        post.setContent(form.getContent());
 
         postService.join(post);
 
         return "redirect:/";
     }
 
-    @GetMapping("/posts")
+    @GetMapping("/post")
     public String list(Model model){
-        List<Post> posts=postService.findPosts();
-        model.addAttribute("posts", posts);
-        return "posts/postsList";
+        List<Post> post=postService.findPost();
+        model.addAttribute("post", post);
+        return "post/postList";
     }
 }

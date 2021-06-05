@@ -11,7 +11,7 @@ public class MemoryPostRepositoryTest {
 
     @AfterEach
     public void afterEach(){
-        repository.clearPost();
+        repository.clearBlog();
     }
 
     @Test

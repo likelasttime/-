@@ -1,9 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Hello</title>
+    <title>게시판</title>
 </head>
-<a href="/hello">hello</a>
+
+<body>
+<div class="container">
+    <form action="/members/new" method="post">
+        <div class="form-group">
+            <fieldset>
+                <p> 제목 : <input type="text" name="title"> </p>
+                <p> 작성자 : <input type="text" name="author"></p><br/><br/>
+                <p> 내용 : <textarea name="content" rows="10" cols="30">내용을 입력하세요.</textarea></p><br/>
+                <input type="submit" value="전송">
+            </fieldset>
+        </div>
+    </form>
+</div>
+
 </body>
 </html>

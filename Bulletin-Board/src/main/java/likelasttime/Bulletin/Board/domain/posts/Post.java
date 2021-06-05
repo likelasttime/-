@@ -1,16 +1,21 @@
 package likelasttime.Bulletin.Board.domain.posts;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
 public class Post {
-    @Id @GeneratedValue
+
+    @Id
+    @GeneratedValue
     private Long id;
 
+    @Column(length=500, nullable=false)
     private String title;
 
+    @Column(columnDefinition="TEXT")
     private String content;
 
     private String author;
