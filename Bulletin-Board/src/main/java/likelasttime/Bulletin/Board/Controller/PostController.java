@@ -6,9 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class PostController {
@@ -41,5 +44,12 @@ public class PostController {
         List<Post> post=postService.findPost();
         model.addAttribute("post", post);
         return "post/postList";
+    }
+
+    @GetMapping("/post/detail/{id}")
+    public String detail(@PathVariable("id") Long id, Model model){
+        postService.findOne(id).ifPresent(o->model.addAttribute("post", o));
+        //model.addAttribute("post", post);
+        return "post/detail";
     }
 }

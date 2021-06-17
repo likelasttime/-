@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+</head>
+
+<body>
+<div class="container">
+    <p>글번호 : <span th:text="${post.id}"></span></p>
+    <p>제목 : <span th:text="${post.title}"></span> </p>
+    <p>작성자 : <span th:text="${post.author}"></span> </p>
+    <textarea th:text="${post.content}"></textarea>
+
+
+
+
+</div>
+
+</body>
+</html>

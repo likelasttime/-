@@ -34,4 +34,9 @@ public class JpaPostRepository implements PostRepository{
         return em.createQuery("select p from Post p", Post.class)
                 .getResultList();
     }
+
+    public Post findOne(Long id){
+        return em.find(Post.class, id);
+    }
+
 }

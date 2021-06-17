@@ -22,7 +22,7 @@ class PostServiceTest {
 
     @AfterEach
     public void afterEach(){
-        postRepository.clearPost();
+        postRepository.clearBlog();
     }
 
     @Test

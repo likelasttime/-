@@ -4,17 +4,23 @@
 <body>
 <div class="container">
     <div>
-        <table>
+        <table border="1">
             <thead>
             <tr>
                 <th>#</th>
                 <th>제목</th>
+                <th>작성자</th>
+                <th>게시글</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="post : ${post}">
                 <td th:text="${post.id}"></td>
-                <td th:text="${post.title}"></td>
+                <td>
+                    <a th:href="@{'/post/detail/' + ${post.id}}">
+                        <span th:text="${post.title}"></span>
+                    </a>
+                </td>
                 <td th:text="${post.author}"></td>
                 <td th:text="${post.content}"></td>
             </tr>
