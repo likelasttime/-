@@ -11,10 +11,12 @@
     <p>제목 : <span th:text="${post.title}"></span> </p>
     <p>작성자 : <span th:text="${post.author}"></span> </p>
     <textarea th:text="${post.content}"></textarea>
+</div>
 
-
-
-
+<div>
+    <a th:href="@{'/post/edit/'+${post.id}}">
+        <button>수정</button>
+    </a>
 </div>
 
 </body>

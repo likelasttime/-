@@ -14,7 +14,12 @@ public class JpaPostRepository implements PostRepository{
     }
 
     public Post save(Post post){
-        em.persist(post);
+        if (post.getId() == null){
+            em.persist(post);
+        }else{
+            em.merge(post);
+        }
+
         return post;
     }
 
@@ -38,5 +43,7 @@ public class JpaPostRepository implements PostRepository{
     public Post findOne(Long id){
         return em.find(Post.class, id);
     }
+
+
 
 }

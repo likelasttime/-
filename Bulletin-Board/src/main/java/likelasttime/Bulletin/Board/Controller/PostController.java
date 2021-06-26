@@ -5,9 +5,7 @@ import likelasttime.Bulletin.Board.domain.posts.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -45,11 +43,31 @@ public class PostController {
         model.addAttribute("post", post);
         return "post/postList";
     }
-
+    // 상세 게시판 조회
     @GetMapping("/post/detail/{id}")
     public String detail(@PathVariable("id") Long id, Model model){
         postService.findOne(id).ifPresent(o->model.addAttribute("post", o));
-        //model.addAttribute("post", post);
         return "post/detail";
     }
+
+    //수정
+    @GetMapping("/post/edit/{id}")
+    public String edit(@PathVariable("id") Long id, Model model){
+        postService.findOne(id).ifPresent(o->model.addAttribute("post", o));
+        return "post/updateForm";
+    }
+
+    @PostMapping("/post/edit/{id}")
+    public String update(Post post){
+        postService.join(post);
+        return "redirect:/";
+    }
+
+    // 삭제
+    @DeleteMapping("/post/{id}")
+    public String delete(@PathVariable("id") Long id){
+
+    }
+
+
 }

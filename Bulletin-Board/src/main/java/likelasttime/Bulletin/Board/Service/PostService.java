@@ -17,7 +17,7 @@ public class PostService {
 
     // 게시글 작성
     public Long join(Post post){
-        validateDuplicatePost(post);  // 중복 게시글
+        //validateDuplicatePost(post);  // 중복 게시글
         postRepository.save(post);
         return post.getId();
     }
@@ -37,4 +37,9 @@ public class PostService {
     public Optional<Post> findOne(Long postsId){
         return postRepository.findById(postsId);
     }
+
+    public void deletePost(Long id){
+        postRepository.deleteById(id);
+    }
+
 }
