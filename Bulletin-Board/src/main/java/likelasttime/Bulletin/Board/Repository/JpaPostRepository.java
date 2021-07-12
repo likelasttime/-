@@ -40,8 +40,15 @@ public class JpaPostRepository implements PostRepository{
                 .getResultList();
     }
 
-    public Post findOne(Long id){
-        return em.find(Post.class, id);
+    public Optional<Post> findOne(Long id){
+        return Optional.ofNullable(em.find(Post.class, id));
+    }
+
+
+    public Post deleteById(Long id){
+        Post post=em.find(Post.class, id);
+        em.remove(post);
+        return post;
     }
 
 

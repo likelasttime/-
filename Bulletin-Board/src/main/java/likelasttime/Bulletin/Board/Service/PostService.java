@@ -1,7 +1,9 @@
 package likelasttime.Bulletin.Board.Service;
 
 import likelasttime.Bulletin.Board.Repository.PostRepository;
+import likelasttime.Bulletin.Board.Repository.SpringDataJpaPostRepository;
 import likelasttime.Bulletin.Board.domain.posts.Post;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -9,9 +11,9 @@ import java.util.Optional;
 
 @Transactional
 public class PostService {
-    private final PostRepository postRepository;
+    private final SpringDataJpaPostRepository postRepository;
 
-    public PostService(PostRepository postRepository){
+    public PostService(SpringDataJpaPostRepository postRepository){
         this.postRepository = postRepository;
     }
 
@@ -34,10 +36,12 @@ public class PostService {
         return postRepository.findAll();
     }
 
-    public Optional<Post> findOne(Long postsId){
+    public <Optional>Post findOne(Long postsId){
         return postRepository.findById(postsId);
+        //return postRepository.findOne(postsId);
     }
 
+    // 삭제
     public void deletePost(Long id){
         postRepository.deleteById(id);
     }

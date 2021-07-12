@@ -10,4 +10,7 @@ public interface PostRepository{
     Optional<Post> findById(Long id);
     Optional<Post> findByTitle(String title);
     List<Post> findAll();
+    //Optional<Post> findOne(Long id);
+    //Post deleteById(Long id);
+
 }

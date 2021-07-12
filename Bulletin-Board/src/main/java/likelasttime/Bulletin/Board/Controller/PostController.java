@@ -46,14 +46,18 @@ public class PostController {
     // 상세 게시판 조회
     @GetMapping("/post/detail/{id}")
     public String detail(@PathVariable("id") Long id, Model model){
-        postService.findOne(id).ifPresent(o->model.addAttribute("post", o));
+        //postService.findOne(id).ifPresent(o->model.addAttribute("post", o));
+        Post post=postService.findOne(id);
+        model.addAttribute("post", post);
         return "post/detail";
     }
 
     //수정
     @GetMapping("/post/edit/{id}")
     public String edit(@PathVariable("id") Long id, Model model){
-        postService.findOne(id).ifPresent(o->model.addAttribute("post", o));
+        //postService.findOne(id).ifPresent(o->model.addAttribute("post", o));
+        Post post=postService.findOne(id);
+        model.addAttribute("post", post);
         return "post/updateForm";
     }
 
@@ -63,10 +67,11 @@ public class PostController {
         return "redirect:/";
     }
 
-    // 삭제
-    @DeleteMapping("/post/{id}")
+    //삭제
+    @GetMapping("/post/delete/{id}")
     public String delete(@PathVariable("id") Long id){
-
+        postService.deletePost(id);
+        return "redirect:/";
     }
 
 
