@@ -1,6 +1,7 @@
 package likelasttime.Bulletin.Board.Service;
 
 import likelasttime.Bulletin.Board.Repository.MemoryPostRepository;
+import likelasttime.Bulletin.Board.Repository.SpringDataJpaPostRepository;
 import likelasttime.Bulletin.Board.domain.posts.Post;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

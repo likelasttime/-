@@ -14,9 +14,4 @@ public class BulletinBoardApplication {
 		SpringApplication.run(BulletinBoardApplication.class, args);
 	}
 
-	@Bean
-	public HiddenHttpMethodFilter hiddenHttpMethodFilter(){
-		return new HiddenHttpMethodFilter();
-	}
-
 }

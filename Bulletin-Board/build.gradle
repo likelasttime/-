@@ -1,23 +1,11 @@
-buildscript{
-	ext{
-		springBootVersion='1.5.9.RELEASE'
-	}
-	repositories{
-		mavenCentral()
-	}
-	dependencies{
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-
-	}
+plugins {
+	id 'org.springframework.boot' version '2.5.2'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'java'
 }
-
-apply plugin : 'java'
-apply plugin : 'eclipse'
-apply plugin : 'org.springframework.boot'
 
 group = 'likelasttime'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
 
 repositories {
 	mavenCentral()
@@ -33,16 +21,12 @@ dependencies {
 	compile 'mysql:mysql-connector-java'
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
-	compile 'org.hibernate:hibernate-core:5.0.7.Final'
 	runtimeOnly 'com.h2database:h2'
 	testImplementation ('org.springframework.boot:spring-boot-starter-test'){
 		exclude group:'org.junit.vintage', module: 'junit-vintage-engine'
 	}
-
 }
-
 
 test{
 	useJUnitPlatform()
 }
-

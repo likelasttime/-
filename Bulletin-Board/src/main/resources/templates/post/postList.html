@@ -1,10 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<meta charset="UTF-8"/>
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>게시판</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"/>
+</head>
+
 <body>
 <div class="container">
+    <br/>
+    <h1 class="text-center">board</h1>
+    <br/>
+    <div>총 건수 : <span th:text="${post.totalElements}"></span></div>
     <div>
-        <table border="1">
+        <table class="table table-hover">
             <thead>
             <tr>
                 <th>#</th>
@@ -27,9 +39,21 @@
             </tbody>
         </table>
     </div>
-    <button type="button" onclick="location.href='/'">홈</button>
+
+    <button type="button" class="btn btn-info pull-left" onclick="location.href='/'">홈</button>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${1==post.pageable.pageNumber+1}? 'disabled'">
+                <a class="page-link" th:href="@{/post(page=${post.pageable.pageNumber-1})}" tabindex="-1" aria-disabled="true">Previous</a>
+            </li>
+            <li class="page-item" th:classappend="${i==post.pageable.pageNumber+1}? 'disabled'" th:each="i : ${#numbers.sequence(start, end)}"><a class="page-link" th:href="@{/post(page=${i-1})}" th:text="${i}">1</a></li>
+            <li class="page-item" th:classappend="${post.totalPages==post.pageable.pageNumber+1}? 'disabled'">
+                <a class="page-link" th:href="@{/post(page=${post.pageable.pageNumber+1})}">Next</a>
+            </li>
+        </ul>
+    </nav>
 
 </div>
-
 </body>
 </html>

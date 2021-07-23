@@ -1,6 +1,7 @@
 package likelasttime.Bulletin.Board;
 
 import likelasttime.Bulletin.Board.Repository.JpaPostRepository;
+import likelasttime.Bulletin.Board.Repository.MemoryPostRepository;
 import likelasttime.Bulletin.Board.Repository.PostRepository;
 import likelasttime.Bulletin.Board.Repository.SpringDataJpaPostRepository;
 import likelasttime.Bulletin.Board.Service.PostService;
@@ -17,11 +18,6 @@ public class SpringConfig {
 
     public SpringConfig(SpringDataJpaPostRepository postRepository){
         this.postRepository=postRepository;
-    }
-
-    @Bean
-    public PostService postService(){
-        return new PostService(postRepository);
     }
 
 }

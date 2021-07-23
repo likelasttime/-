@@ -1,17 +1,19 @@
 package likelasttime.Bulletin.Board.Service;
 
-import likelasttime.Bulletin.Board.Repository.PostRepository;
 import likelasttime.Bulletin.Board.Repository.SpringDataJpaPostRepository;
 import likelasttime.Bulletin.Board.domain.posts.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
 
+@Service
 @Transactional
 public class PostService {
     private final SpringDataJpaPostRepository postRepository;
+    private static final int PAGE_NUM_COUNT=5;
+    private static final int POST_COUNT=4;  // 페이지당 게시글 수
 
     public PostService(SpringDataJpaPostRepository postRepository){
         this.postRepository = postRepository;
@@ -32,13 +34,13 @@ public class PostService {
     }
 
     //전체 게시글 조회
-    public List<Post> findPost(){
-        return postRepository.findAll();
+    public Page<Post> findPost(Pageable pageable){
+        return postRepository.findAll(pageable);
     }
 
+    // 특정 게시글 조회
     public <Optional>Post findOne(Long postsId){
-        return postRepository.findById(postsId);
-        //return postRepository.findOne(postsId);
+        return postRepository.findById(postsId).get();
     }
 
     // 삭제

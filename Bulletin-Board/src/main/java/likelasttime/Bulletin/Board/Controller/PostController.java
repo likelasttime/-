@@ -3,13 +3,13 @@ package likelasttime.Bulletin.Board.Controller;
 import likelasttime.Bulletin.Board.Service.PostService;
 import likelasttime.Bulletin.Board.domain.posts.Post;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class PostController {
@@ -37,16 +37,22 @@ public class PostController {
         return "redirect:/";
     }
 
+    // 전체 게시글 조회
     @GetMapping("/post")
-    public String list(Model model){
-        List<Post> post=postService.findPost();
+    public String list(Model model, @PageableDefault(size=5) Pageable pageable){
+        Page<Post> post=postService.findPost(pageable);
+        int start=Math.max(1, post.getPageable().getPageNumber()-4);
+        int end=Math.min(post.getTotalPages(), post.getPageable().getPageNumber()+4);
         model.addAttribute("post", post);
+        model.addAttribute("start", start);
+        model.addAttribute("end", end);
+
         return "post/postList";
     }
+
     // 상세 게시판 조회
     @GetMapping("/post/detail/{id}")
     public String detail(@PathVariable("id") Long id, Model model){
-        //postService.findOne(id).ifPresent(o->model.addAttribute("post", o));
         Post post=postService.findOne(id);
         model.addAttribute("post", post);
         return "post/detail";
@@ -55,7 +61,6 @@ public class PostController {
     //수정
     @GetMapping("/post/edit/{id}")
     public String edit(@PathVariable("id") Long id, Model model){
-        //postService.findOne(id).ifPresent(o->model.addAttribute("post", o));
         Post post=postService.findOne(id);
         model.addAttribute("post", post);
         return "post/updateForm";
