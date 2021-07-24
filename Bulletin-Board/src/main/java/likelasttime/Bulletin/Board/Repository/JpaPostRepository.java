@@ -1,7 +1,6 @@
 package likelasttime.Bulletin.Board.Repository;
 
 import likelasttime.Bulletin.Board.domain.posts.Post;
-
 import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +42,6 @@ public class JpaPostRepository implements PostRepository{
     public Optional<Post> findOne(Long id){
         return Optional.ofNullable(em.find(Post.class, id));
     }
-
 
     public void deleteById(Long id){
         Post post=em.find(Post.class, id);

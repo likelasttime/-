@@ -20,6 +20,8 @@ public class Post {
 
     private String author;
 
+    private Integer view;
+
     public Long getId() {
         return id;
     }
@@ -52,7 +54,8 @@ public class Post {
         this.author = author;
     }
 
+    public Integer getView() { return view; }
 
-
+    public void setView(Integer view) { this.view = view; }
 
 }

@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
 @Transactional
 public class PostService {
@@ -46,6 +45,14 @@ public class PostService {
     // 삭제
     public void deletePost(Long id){
         postRepository.deleteById(id);
+    }
+
+    // 조회수
+   public void updateView(Long id) {
+        Post post=findOne(id);
+        if(post.getView() == null) post.setView(1);
+        else post.setView(post.getView()+1);
+        postRepository.save(post);
     }
 
 }

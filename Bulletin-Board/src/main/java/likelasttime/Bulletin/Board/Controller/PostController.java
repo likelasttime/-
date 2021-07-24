@@ -39,7 +39,7 @@ public class PostController {
 
     // 전체 게시글 조회
     @GetMapping("/post")
-    public String list(Model model, @PageableDefault(size=5) Pageable pageable){
+    public String list(Model model, @PageableDefault(size=5) Pageable pageable) {
         Page<Post> post=postService.findPost(pageable);
         int start=Math.max(1, post.getPageable().getPageNumber()-4);
         int end=Math.min(post.getTotalPages(), post.getPageable().getPageNumber()+4);
@@ -54,6 +54,7 @@ public class PostController {
     @GetMapping("/post/detail/{id}")
     public String detail(@PathVariable("id") Long id, Model model){
         Post post=postService.findOne(id);
+        postService.updateView(id);
         model.addAttribute("post", post);
         return "post/detail";
     }
