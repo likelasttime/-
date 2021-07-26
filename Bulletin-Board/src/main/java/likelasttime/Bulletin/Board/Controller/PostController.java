@@ -5,11 +5,11 @@ import likelasttime.Bulletin.Board.domain.posts.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 
 @Controller
 public class PostController {
@@ -39,7 +39,7 @@ public class PostController {
 
     // 전체 게시글 조회
     @GetMapping("/post")
-    public String list(Model model, @PageableDefault(size=5) Pageable pageable) {
+    public String list(Model model, @PageableDefault(size=5, sort="id", direction= Sort.Direction.DESC) Pageable pageable) {
         Page<Post> post=postService.findPost(pageable);
         int start=Math.max(1, post.getPageable().getPageNumber()-4);
         int end=Math.min(post.getTotalPages(), post.getPageable().getPageNumber()+4);
@@ -79,6 +79,4 @@ public class PostController {
         postService.deletePost(id);
         return "redirect:/";
     }
-
-
 }

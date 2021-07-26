@@ -15,7 +15,6 @@
     <h1 class="text-center">board</h1>
     <br/>
     <div>총 건수 : <span th:text="${post.totalElements}"></span></div>
-    <div>
         <table class="table table-hover">
             <thead>
             <tr>
@@ -25,9 +24,8 @@
                 <th>조회수</th>
             </tr>
             </thead>
-            <tbody>
-            <tr th:each="post : ${post}">
-                <td th:text="${post.id}"></td>
+            <tr th:each="post, i : ${post}">
+                    <td th:text="${i.count}"></td>
                 <td>
                     <a th:href="@{'/post/detail/' + ${post.id}}">
                         <span th:text="${post.title}"></span>

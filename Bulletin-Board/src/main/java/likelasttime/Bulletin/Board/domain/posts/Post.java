@@ -20,7 +20,7 @@ public class Post {
 
     private String author;
 
-    private Integer view;
+    private Integer view=0;
 
     public Long getId() {
         return id;

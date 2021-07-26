@@ -50,8 +50,7 @@ public class PostService {
     // 조회수
    public void updateView(Long id) {
         Post post=findOne(id);
-        if(post.getView() == null) post.setView(1);
-        else post.setView(post.getView()+1);
+        post.setView(post.getView()+1);
         postRepository.save(post);
     }
 
