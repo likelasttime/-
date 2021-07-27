@@ -21,6 +21,7 @@
                 <th>#</th>
                 <th>제목</th>
                 <th>작성자</th>
+                <th>등록일</th>
                 <th>조회수</th>
             </tr>
             </thead>
@@ -32,6 +33,7 @@
                     </a>
                 </td>
                 <td th:text="${post.author}"></td>
+                <td th:text="${post.firstCreatedDate}"></td>
                 <td th:text="${post.view}"></td>
             </tr>
             </tbody>

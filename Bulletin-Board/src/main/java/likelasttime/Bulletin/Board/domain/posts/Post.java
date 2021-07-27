@@ -1,12 +1,10 @@
 package likelasttime.Bulletin.Board.domain.posts;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import likelasttime.Bulletin.Board.Repository.BaseTimeEntity;
+import javax.persistence.*;
 
 @Entity
-public class Post {
+public class Post extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
