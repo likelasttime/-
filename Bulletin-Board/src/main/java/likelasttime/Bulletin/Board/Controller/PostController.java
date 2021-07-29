@@ -11,6 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
 @Controller
 public class PostController {
     private final PostService postService;
@@ -73,10 +76,21 @@ public class PostController {
         return "redirect:/";
     }
 
-    //삭제
+    // 삭제
     @GetMapping("/post/delete/{id}")
     public String delete(@PathVariable("id") Long id){
         postService.deletePost(id);
         return "redirect:/";
     }
+
+    // 검색
+    @GetMapping("/post/search")
+    public String search(@RequestParam(required = false, defaultValue = "") String keyword,
+                         Model model){
+        List<Post> lst=postService.search(keyword, keyword, keyword);
+        model.addAttribute("search", lst);
+
+        return "post/search";
+    }
+
 }

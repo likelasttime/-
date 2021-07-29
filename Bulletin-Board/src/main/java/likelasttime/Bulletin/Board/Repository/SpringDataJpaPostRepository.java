@@ -4,6 +4,8 @@ import likelasttime.Bulletin.Board.domain.posts.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 import java.util.Optional;
 
 public interface SpringDataJpaPostRepository  extends JpaRepository<Post, Long>{
@@ -13,5 +15,6 @@ public interface SpringDataJpaPostRepository  extends JpaRepository<Post, Long>{
     void deleteById(Long id);
     //Page<Post> findAllByOrderByFirstCreatedDateDesc(Pageable pageable);
     Page<Post> findAll(Pageable pageable);
+    List<Post> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(String title, String content, String author);
 
 }

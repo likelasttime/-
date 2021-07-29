@@ -7,6 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @Transactional
 public class PostService {
@@ -52,6 +55,13 @@ public class PostService {
         Post post=findOne(id);
         post.setView(post.getView()+1);
         postRepository.save(post);
+    }
+
+    // 검색
+    public List<Post> search(String title, String content, String author){
+        List<Post> lst=postRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(title, content, author);
+
+        return lst;
     }
 
 }
