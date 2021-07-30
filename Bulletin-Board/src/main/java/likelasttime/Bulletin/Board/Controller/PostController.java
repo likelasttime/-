@@ -19,18 +19,18 @@ public class PostController {
     private final PostService postService;
 
     @Autowired
-    public PostController(PostService postService){
-        this.postService=postService;
+    public PostController(PostService postService) {
+        this.postService = postService;
     }
 
     @GetMapping("/post/new")
-    public String createForm(){
+    public String createForm() {
         return "post/createPostForm";
     }
 
     @PostMapping("/post/new")
-    public String create(PostForm form){
-        Post post =new Post();
+    public String create(PostForm form) {
+        Post post = new Post();
         post.setTitle(form.getTitle());
         post.setAuthor(form.getAuthor());
         post.setContent(form.getContent());
@@ -42,10 +42,14 @@ public class PostController {
 
     // 전체 게시글 조회
     @GetMapping("/post")
-    public String list(Model model, @PageableDefault(size=5, sort="id", direction= Sort.Direction.DESC) Pageable pageable) {
-        Page<Post> post=postService.findPost(pageable);
-        int start=Math.max(1, post.getPageable().getPageNumber()-4);
-        int end=Math.min(post.getTotalPages(), post.getPageable().getPageNumber()+4);
+    public String list(Model model,
+                       @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                       @RequestParam(required = false, defaultValue = "") String keyword) {
+
+        Page<Post> post = postService.search(keyword, keyword, keyword, pageable);
+        int start = Math.max(1, post.getPageable().getPageNumber() - 4);
+        int end = Math.min(post.getTotalPages(), post.getPageable().getPageNumber() + 4);
+
         model.addAttribute("post", post);
         model.addAttribute("start", start);
         model.addAttribute("end", end);
@@ -55,8 +59,8 @@ public class PostController {
 
     // 상세 게시판 조회
     @GetMapping("/post/detail/{id}")
-    public String detail(@PathVariable("id") Long id, Model model){
-        Post post=postService.findOne(id);
+    public String detail(@PathVariable("id") Long id, Model model) {
+        Post post = postService.findOne(id);
         postService.updateView(id);
         model.addAttribute("post", post);
         return "post/detail";
@@ -64,33 +68,23 @@ public class PostController {
 
     //수정
     @GetMapping("/post/edit/{id}")
-    public String edit(@PathVariable("id") Long id, Model model){
-        Post post=postService.findOne(id);
+    public String edit(@PathVariable("id") Long id, Model model) {
+        Post post = postService.findOne(id);
         model.addAttribute("post", post);
         return "post/updateForm";
     }
 
     @PostMapping("/post/edit/{id}")
-    public String update(Post post){
+    public String update(Post post) {
         postService.join(post);
         return "redirect:/";
     }
 
     // 삭제
     @GetMapping("/post/delete/{id}")
-    public String delete(@PathVariable("id") Long id){
+    public String delete(@PathVariable("id") Long id) {
         postService.deletePost(id);
         return "redirect:/";
-    }
-
-    // 검색
-    @GetMapping("/post/search")
-    public String search(@RequestParam(required = false, defaultValue = "") String keyword,
-                         Model model){
-        List<Post> lst=postService.search(keyword, keyword, keyword);
-        model.addAttribute("search", lst);
-
-        return "post/search";
     }
 
 }

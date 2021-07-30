@@ -15,6 +15,6 @@ public interface SpringDataJpaPostRepository  extends JpaRepository<Post, Long>{
     void deleteById(Long id);
     //Page<Post> findAllByOrderByFirstCreatedDateDesc(Pageable pageable);
     Page<Post> findAll(Pageable pageable);
-    List<Post> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(String title, String content, String author);
+    Page<Post> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(String title, String content, String author, Pageable pageable);
 
 }

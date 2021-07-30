@@ -58,8 +58,8 @@ public class PostService {
     }
 
     // 검색
-    public List<Post> search(String title, String content, String author){
-        List<Post> lst=postRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(title, content, author);
+    public Page<Post> search(String title, String content, String author, Pageable pageable){
+        Page<Post> lst=postRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(title, content, author, pageable);
 
         return lst;
     }
