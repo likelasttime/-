@@ -2,23 +2,44 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Title</title>
+    <meta http-equiv="x-ua-compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>board</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"/>
+    <style>body{padding-top:70px; padding-bottom:30px;}</style>
+    <script>
+        function updatePost(){
+            let id=document.getElementById('postId').value;
+            let isUpdate=confirm("정말 수정하시겠습니까?");
+            if(isUpdate){
+                window.location.href="/post/edit/"+id;
+                }
+                }
+    </script>
 </head>
 
 <body>
 <div class="container">
+    <h2>board Form</h2>
     <form th:action="@{'/post/edit/'+${post.id}}" method="post">
         <input type="hidden" name="put" value="put"/>
         <input type="hidden" name="id" th:value="${post.id}"/>
-
-        <p>제목 : <input type="text" name="title" th:value="${post.title}"/></p>
-        <p>작성자 : <input type="text" name="author" th:value="${post.author}"/></p>
-        <p>내용 : <textarea name="content" th:text="${post.content}"></textarea></p>
-
-        <input type="submit" value="수정"/>
+        <div class="mb-3">
+            <lable for="title">제목</lable>
+            <input type="text" class="form-control" name="title" th:value="${post.title}"/>
+        </div>
+        <div class="mb-3">
+            <lable for="author">작성자</lable>
+            <input type="text" class="form-control" name="author" th:value="${post.author}"/>
+        </div>
+        <div class="mb-3">
+            <lable for="content">내용</lable>
+            <textarea name="content" class="form-control" rows="6" th:text="${post.content}"></textarea>
+        </div>
+        <input type="hidden" id="postId" th:value="${post.id}">
+        <button onclick="updatePost();" class="btn btn-primary me-md-2">수정</button>
+        <button class="btn btn-primary me-md-2" onclick="location.href='/post'">목록</button>
     </form>
-
 </div>
-
 </body>
 </html>

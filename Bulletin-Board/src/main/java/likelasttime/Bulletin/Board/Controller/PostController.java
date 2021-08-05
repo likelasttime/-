@@ -11,9 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-
 @Controller
 public class PostController {
     private final PostService postService;
@@ -44,7 +41,8 @@ public class PostController {
     @GetMapping("/post")
     public String list(Model model,
                        @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                       @RequestParam(required = false, defaultValue = "") String keyword) {
+                       @RequestParam(required = false, defaultValue = "") String keyword
+                       ) {
 
         Page<Post> post = postService.search(keyword, keyword, keyword, pageable);
         int start = Math.max(1, post.getPageable().getPageNumber() - 4);
@@ -54,7 +52,7 @@ public class PostController {
         model.addAttribute("start", start);
         model.addAttribute("end", end);
 
-        return "post/postList";
+        return "/post/postList";
     }
 
     // 상세 게시판 조회
