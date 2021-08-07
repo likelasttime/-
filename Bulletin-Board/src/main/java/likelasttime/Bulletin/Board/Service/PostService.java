@@ -7,8 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -22,7 +20,7 @@ public class PostService {
     }
 
     // 게시글 작성
-    public Long join(Post post){
+    public Long join(Post post){      // update용과 분리시키기
         //validateDuplicatePost(post);  // 중복 게시글
         postRepository.save(post);
         return post.getId();
@@ -41,8 +39,8 @@ public class PostService {
     }
 
     // 특정 게시글 조회
-    public <Optional>Post findOne(Long postsId){
-        return postRepository.findById(postsId).get();
+    public <Optional>Post findOne(Long postId){
+        return postRepository.findById(postId).get();
     }
 
     // 삭제
@@ -50,11 +48,9 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
-    // 조회수
-   public void updateView(Long id) {
-        Post post=findOne(id);
-        post.setView(post.getView()+1);
-        postRepository.save(post);
+    // 조회수 증가
+    public void updateView(Long id) {
+        postRepository.updateView(id);
     }
 
     // 검색

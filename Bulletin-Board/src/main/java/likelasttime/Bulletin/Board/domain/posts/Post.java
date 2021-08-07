@@ -18,7 +18,7 @@ public class Post extends BaseTimeEntity {
 
     private String author;
 
-    private Integer view=0;
+    private int view=0;
 
     public Long getId() {
         return id;
@@ -52,8 +52,8 @@ public class Post extends BaseTimeEntity {
         this.author = author;
     }
 
-    public Integer getView() { return view; }
+    public int getView() { return view; }
 
-    public void setView(Integer view) { this.view = view; }
+    public void setView(int view) { this.view = view; }
 
 }

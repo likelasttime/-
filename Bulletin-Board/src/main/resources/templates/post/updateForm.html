@@ -22,8 +22,6 @@
 <div class="container">
     <h2>board Form</h2>
     <form th:action="@{'/post/edit/'+${post.id}}" method="post">
-        <input type="hidden" name="put" value="put"/>
-        <input type="hidden" name="id" th:value="${post.id}"/>
         <div class="mb-3">
             <lable for="title">제목</lable>
             <input type="text" class="form-control" name="title" th:value="${post.title}"/>
@@ -37,7 +35,8 @@
             <textarea name="content" class="form-control" rows="6" th:text="${post.content}"></textarea>
         </div>
         <input type="hidden" id="postId" th:value="${post.id}">
-        <button onclick="updatePost();" class="btn btn-primary me-md-2">수정</button>
+        <input type="hidden" name="_method" value="put"/>
+        <button type="submit" onclick="updatePost();" class="btn btn-primary me-md-2">수정</button>
         <button class="btn btn-primary me-md-2" onclick="location.href='/post'">목록</button>
     </form>
 </div>

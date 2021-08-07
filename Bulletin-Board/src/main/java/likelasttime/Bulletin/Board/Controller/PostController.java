@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+
 @Controller
 public class PostController {
     private final PostService postService;
@@ -31,7 +32,6 @@ public class PostController {
         post.setTitle(form.getTitle());
         post.setAuthor(form.getAuthor());
         post.setContent(form.getContent());
-
         postService.join(post);
 
         return "redirect:/";
@@ -59,12 +59,14 @@ public class PostController {
     @GetMapping("/post/detail/{id}")
     public String detail(@PathVariable("id") Long id, Model model) {
         Post post = postService.findOne(id);
-        postService.updateView(id);
+        postService.updateView(id);     // 조회수 증가
+        post.setView(post.getView()+1);     // 게시글 들어가면 바로 조회수 증가 시키기 위해서
         model.addAttribute("post", post);
         return "post/detail";
     }
 
-    //수정
+
+    //수정(데베에서 값 불러오기)
     @GetMapping("/post/edit/{id}")
     public String edit(@PathVariable("id") Long id, Model model) {
         Post post = postService.findOne(id);
@@ -72,10 +74,13 @@ public class PostController {
         return "post/updateForm";
     }
 
-    @PostMapping("/post/edit/{id}")
-    public String update(Post post) {
+    // 수정한 내용 저장
+    @PutMapping("/post/edit/{id}")
+    public String update(Post post, @PathVariable("id") Long id) {
+        int view=postService.findOne(id).getView();
+        post.setView(view);   // 조회수 저장
         postService.join(post);
-        return "redirect:/";
+        return "redirect:/post";
     }
 
     // 삭제
