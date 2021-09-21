@@ -19,6 +19,7 @@
 |**Java**|11.0.9 버전을 사용했습니다.|
 |**Spring Data JPA**|메소드 이름만으로 쿼리를 생성했습니다.|
 |**MySQL**|영속적인 데이터 사용을 위해 RDBMS인 MySQL을 사용했습니다.|
+|**JUnit5**|Given, When, Then 형식으로 테스트 코드를 작성했습니다.|
 |**Thymeleaf**|server-side Java template engine입니다.|
 |**HTML**|화면을 만들기 위해 사용했습니다.|
 </br>
@@ -76,7 +77,6 @@ updatable-false를 넣지 않았을 때는 게시글 수정시 null이 되는 �
     public String detail(@PathVariable("id") Long id, Model model) {
         Post post = postService.findOne(id);
         postService.updateView(id);     // 조회수 증가
-        post.setView(post.getView()+1);     // 게시글 들어가면 바로 조회수 증가 시키기 위해서
         model.addAttribute("post", post);
         return "post/detail";
     }
@@ -142,7 +142,18 @@ int updateView(@Param("id") Long id);
 ```  
     
 다음과 같은 update 쿼리를 작성했습니다.  
-게시글 상세보기를 할 때만 조회수가 1씩 증가합니다.
+게시글 상세보기를 할 때만 조회수가 1씩 증가합니다.  
+postService의 updateView 메소드에서 조회수를 증가시키도록 아래와 같이 리팩토링하였습니다.  
+update 쿼리를 작성할 필요가 없다는 것을 알았습니다.  
+
+```java
+// 조회수 증가
+public void updateView(Long id) {
+    Post post=postRepository.findById(id).get();
+    post.setView(post.getView()+1);
+    postRepository.save(post);
+    }
+```
 
 </br>
 
@@ -227,4 +238,8 @@ push로 원격 저장소에 올립니다.
 Spring Data JPA는 데이터 접근 계층을 개발할 때 인터페이스만 작성해도 개발할 수 있게 해주는 이점이 있습니다. 
 이러한 이점 때문에 Spring Data JPA를 사용했습니다. 
 JpaRepository를 상속받는 인터페이스를 생성하고, 메소드 이름으로 쿼리가 자동으로 생성되는 점이 매우 흥미로웠습니다.  
+
+### 4-4. 테스트
+JUnit5를 이용해 Given, When, Then 형식으로 테스트 코드를 작성하는 방법을 알았습니다. 테스트는 각각 독립적으로 실행 하기 위해 @AfterEach로 테스트마다 메모리 DB를 비웠습니다. 테스트 코드를 작성하니 서버를 실행하는 시간을 절약할 수 있어서 좋았습니다.  
+
 
