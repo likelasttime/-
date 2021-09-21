@@ -12,14 +12,8 @@ public class JpaPostRepository implements PostRepository{
         this.em=em;
     }
 
-    public Post save(Post post){
-        if (post.getId() == null){
-            em.persist(post);
-        }else{
-            em.merge(post);
-        }
-
-        return post;
+    public void save(Post post){
+        em.persist(post);
     }
 
     public Optional<Post> findById(Long id){
@@ -43,9 +37,21 @@ public class JpaPostRepository implements PostRepository{
         return Optional.ofNullable(em.find(Post.class, id));
     }
 
-    public void deleteById(Long id){
+    public void update(Long id, Post post){
+        Post find_post=em.find(Post.class, id);
+        find_post.setTitle(post.getTitle());
+        find_post.setContent(post.getContent());
+        find_post.setAuthor(post.getAuthor());
+
+    }
+
+    public void delete(Long id){
         Post post=em.find(Post.class, id);
         em.remove(post);
+    }
+
+    public void deleteAll(){
+        em.clear();
     }
 
 }

@@ -60,7 +60,6 @@ public class PostController {
     public String detail(@PathVariable("id") Long id, Model model) {
         Post post = postService.findOne(id);
         postService.updateView(id);     // 조회수 증가
-        post.setView(post.getView()+1);     // 게시글 들어가면 바로 조회수 증가 시키기 위해서
         model.addAttribute("post", post);
         return "post/detail";
     }

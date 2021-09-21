@@ -20,10 +20,9 @@ public class PostService {
     }
 
     // 게시글 작성
-    public Long join(Post post){      // update용과 분리시키기
+    public void join(Post post){
         //validateDuplicatePost(post);  // 중복 게시글
         postRepository.save(post);
-        return post.getId();
     }
 
     private void validateDuplicatePost(Post post){
@@ -50,7 +49,9 @@ public class PostService {
 
     // 조회수 증가
     public void updateView(Long id) {
-        postRepository.updateView(id);
+        Post post=postRepository.findById(id).get();
+        post.setView(post.getView()+1);
+        postRepository.save(post);
     }
 
     // 검색

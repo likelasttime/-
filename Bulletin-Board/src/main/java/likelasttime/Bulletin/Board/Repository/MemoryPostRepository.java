@@ -10,10 +10,9 @@ public class MemoryPostRepository implements PostRepository {
     private static long sequence=0L;
 
     @Override
-    public Post save(Post post) {
+    public void save(Post post) {
         post.setId(++sequence);
         blog.put(post.getId(), post);
-        return post;
     }
 
     @Override
@@ -33,12 +32,17 @@ public class MemoryPostRepository implements PostRepository {
         return new ArrayList<>(blog.values());
     }
 
+    @Override
+    public void update(Long id, Post post){
+        blog.put(id, blog.replace(id, post));
+    }
+
+    @Override
+    public void delete(Long id){ blog.remove(id); }
+
+    // 모두 삭제
     public void clearBlog(){
         blog.clear();
     }
-
-
-
-
 
 }
