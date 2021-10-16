@@ -33,10 +33,6 @@ public class JpaPostRepository implements PostRepository{
                 .getResultList();
     }
 
-    public Optional<Post> findOne(Long id){
-        return Optional.ofNullable(em.find(Post.class, id));
-    }
-
     public void update(Long id, Post post){
         Post find_post=em.find(Post.class, id);
         find_post.setTitle(post.getTitle());
