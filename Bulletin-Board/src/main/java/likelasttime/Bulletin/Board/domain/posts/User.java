@@ -59,4 +59,11 @@ public class User {
     }
 
     public void setEmail(String email) { this.email = email; }
+
+    public void update(User newUser) {
+        this.name=newUser.name;
+        this.password=newUser.password;
+        this.email=newUser.email;
+        this.phone=newUser.phone;
+    }
 }

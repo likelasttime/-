@@ -19,7 +19,7 @@
                 <td th:text="${u.userId}"></td>
                 <td th:text="${u.name}"></td>
                 <td th:text="${u.email}"></td>
-                <td><a href="#" role="button">수정</a></td>
+                <td><a th:href="@{'/user/'+${u.id}+'/form'}" role="button">수정</a></td>
             </tr>
         </tbody>
     </table>
