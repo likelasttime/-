@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import javax.servlet.http.HttpSession;
+import java.util.Optional;
+
 @Controller
 public class UserController {
 
@@ -45,5 +48,28 @@ public class UserController {
         user.update(newUser);
         userRepository.save(user);
         return "redirect:/user/list";
+    }
+
+    @GetMapping("/user/loginForm")
+    public String loginForm(){
+        return "/user/login";
+    }
+
+    @PostMapping("/user/login")
+    public String login(String userId, String password, HttpSession session){
+        Optional<User> user=userRepository.findByUserId(userId);
+        if(user.isEmpty()){
+            System.out.println("Login Failure!");
+            return "redirect:/user/loginForm";
+        }
+        if(!user.get().getPassword().equals(password)){
+            System.out.println("Login Failure!");
+            return "redirect:/user/loginForm";
+        }
+
+        System.out.println("Login Success!");
+        session.setAttribute("user", user);
+
+        return "redirect:/post";
     }
 }
