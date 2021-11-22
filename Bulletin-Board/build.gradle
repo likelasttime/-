@@ -13,12 +13,14 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    //implementation 'junit:junit:4.12'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+	//implementation group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '2.5.3'
 
-    //compile('org.springframework.boot:spring-boot-starter-actuator')
+
 	compile 'mysql:mysql-connector-java'
 	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
 	runtimeOnly 'com.h2database:h2'

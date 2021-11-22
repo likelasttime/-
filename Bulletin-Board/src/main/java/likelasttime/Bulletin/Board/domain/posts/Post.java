@@ -10,7 +10,7 @@ public class Post extends BaseTimeEntity {
     @GeneratedValue
     private Long id;
 
-    @Column(name="post_id", nullable=false)
+    @Column(nullable=false)
     private String title;
 
     @Column(columnDefinition="TEXT")

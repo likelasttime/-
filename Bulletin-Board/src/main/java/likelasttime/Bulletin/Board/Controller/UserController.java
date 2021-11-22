@@ -1,8 +1,10 @@
 package likelasttime.Bulletin.Board.Controller;
 
 import likelasttime.Bulletin.Board.Repository.UserRepository;
+import likelasttime.Bulletin.Board.domain.posts.Role;
 import likelasttime.Bulletin.Board.domain.posts.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,8 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
-import javax.servlet.http.HttpSession;
-import java.util.Optional;
 
 @Controller
 public class UserController {
@@ -19,15 +19,24 @@ public class UserController {
     @Autowired
     public UserRepository userRepository;
 
-    @GetMapping("/join/new")
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @GetMapping("/user/joinForm")
     public String joinForm(){
         return "user/joinForm";
     }
 
-    @PostMapping("/join/new")
+    @PostMapping("/user/joinForm")
     public String join(User user){
+        String encodedPassword=passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+        user.setEnabled(true);
+        Role role=new Role();
+        role.setId(1l);
+        user.getRoles().add(role);
         userRepository.save(user);
-        return "redirect:/user/list";
+        return "redirect:/";
     }
 
     @GetMapping("/user/list")
@@ -50,26 +59,9 @@ public class UserController {
         return "redirect:/user/list";
     }
 
-    @GetMapping("/user/loginForm")
+    @GetMapping("/user/login")
     public String loginForm(){
         return "/user/login";
     }
 
-    @PostMapping("/user/login")
-    public String login(String userId, String password, HttpSession session){
-        Optional<User> user=userRepository.findByUserId(userId);
-        if(user.isEmpty()){
-            System.out.println("Login Failure!");
-            return "redirect:/user/loginForm";
-        }
-        if(!user.get().getPassword().equals(password)){
-            System.out.println("Login Failure!");
-            return "redirect:/user/loginForm";
-        }
-
-        System.out.println("Login Success!");
-        session.setAttribute("user", user);
-
-        return "redirect:/post";
-    }
 }

@@ -1,4 +1,4 @@
-package likelasttime.Bulletin.Board;
+package likelasttime.Bulletin.Board.Config;
 
 import likelasttime.Bulletin.Board.Repository.SpringDataJpaPostRepository;
 import org.springframework.context.annotation.Configuration;

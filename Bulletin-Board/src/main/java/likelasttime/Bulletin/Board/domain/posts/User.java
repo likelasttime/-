@@ -1,9 +1,8 @@
 package likelasttime.Bulletin.Board.domain.posts;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class User {
@@ -12,18 +11,28 @@ public class User {
     private Long id;
 
     @Column(nullable=false, length=20)
-    private String userId;
+    private String username;
     private String name;
     private String password;
+    private Boolean enabled;
     private String email;
     private String phone;
+
+    @ManyToMany
+    @JoinTable(
+            name="user_role",
+            joinColumns=@JoinColumn(name="user_id"),
+            inverseJoinColumns=@JoinColumn(name="role_id")
+    )
+
+    private List<Role> roles=new ArrayList<>();
 
     public Long getId() {
         return id;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
     public String getName() {
@@ -34,6 +43,14 @@ public class User {
         return password;
     }
 
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -42,8 +59,12 @@ public class User {
         return phone;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setName(String name) {
@@ -59,6 +80,14 @@ public class User {
     }
 
     public void setEmail(String email) { this.email = email; }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 
     public void update(User newUser) {
         this.name=newUser.name;

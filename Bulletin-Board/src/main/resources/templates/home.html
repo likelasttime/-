@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
+
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -13,8 +15,12 @@
     <h2>board</h2>
     <button type="button" class="btn btn-info" onclick="location.href='/post/new'">글 작성</button>
     <button type="button" class="btn btn-info" onclick="location.href='/post'">글 목록</button>
-    <button type="button" class="btn btn-info" onclick="location.href='/user/loginForm'">로그인</button>
-    <button type="button" class="btn btn-info" onclick="location.href='/join/new'">회원가입</button>
+
+    <a sec:authorize="isAnonymous()" class="btn btn-info" th:href="@{/user/login}">로그인</a>
+    <form th:action="@{/logout}" method="POST" sec:authorize="isAuthenticated()">
+        <button class="btn btn-info" type="submit">로그아웃</button>
+    </form>
+    <a sec:authorize="isAnonymous()" class="btn btn-info" onclick="location.href='/user/joinForm'">회원가입</a>
 </div>
 </body>
 </html>
