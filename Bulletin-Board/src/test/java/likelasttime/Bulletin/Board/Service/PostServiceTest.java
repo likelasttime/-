@@ -77,7 +77,7 @@ class PostServiceTest {
         repository.save(post);
 
         // when
-        Post result=postService.findOne(post.getId());
+        Post result=postService.findOne(post.getId()).get();
 
         // then
         assertThat(result.getTitle()).isEqualTo("Spring");
@@ -96,7 +96,7 @@ class PostServiceTest {
         repository.save(post);
 
         // when
-        Post result=postService.findOne(post.getId());
+        Post result=postService.findOne(post.getId()).get();
 
         // then
         assertThat(result.getTitle()).isEqualTo("Spring2");

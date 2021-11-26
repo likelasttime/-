@@ -1,64 +1,85 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head>
+<head th:replace="fragments/common :: head('게시판')">
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>게시판</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"/>
+    <style>
+        body {
+    padding-top: 5rem;
+}
+.starter-template {
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+    </style>
 </head>
 
 <body>
 <div class="container">
-    <br/>
-    <h1 class="text-center">board</h1>
-    <br/>
-    <div>총 건수 : <span th:text="${post.totalElements}"></span></div>
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>제목</th>
-                <th>작성자</th>
-                <th>등록일</th>
-                <th>조회수</th>
-            </tr>
-            </thead>
-            <tr th:each="post, i : ${post}">
-                    <td th:text="${i.count}"></td>
-                <td>
-                    <a th:href="@{'/post/detail/' + ${post.id}}">
-                        <span th:text="${post.title}"></span>
-                    </a>
-                </td>
-                <td th:text="${post.author}"></td>
-                <td th:text="${post.CreatedDate}"></td>
-                <td th:text="${post.view}"></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <button type="button" class="btn btn-info pull-left" onclick="location.href='/'">홈</button>
-
-    <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${1==post.pageable.pageNumber+1}? 'disabled'">
-                <a class="page-link" th:href="@{/post(page=${post.pageable.pageNumber-1})}" tabindex="-1" aria-disabled="true">Previous</a>
-            </li>
-            <li class="page-item" th:classappend="${i==post.pageable.pageNumber+1}? 'disabled'" th:each="i : ${#numbers.sequence(start, end)}"><a class="page-link" th:href="@{/post(page=${i-1})}" th:text="${i}">1</a></li>
-            <li class="page-item" th:classappend="${post.totalPages==post.pageable.pageNumber+1}? 'disabled'">
-                <a class="page-link" th:href="@{/post(page=${post.pageable.pageNumber+1})}">Next</a>
-            </li>
-        </ul>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" th:replace="fragments/common :: menu('board')">
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">홈 <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">게시판</a>
+                </li>
+            </ul>
+        </div>
     </nav>
 
-<form action="/post" method="GET" align="right">
-    <input name="keyword" type="text" placeholder="검색어를 입력해주세요">
-    <button>검색</button>
-</form>
-
+    <div class="container">
+        <h2>게시판✍️</h2>
+        <div>총 건수 : <span th:text="${post.totalElements}"></span></div>
+        <form class="form-inline d-flex justify-content-end" method="GET" th:action="@{/post}">
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="searchText" class="sr-only">검색</label>
+                <input type="text" class="form-control" id="searchText" name="searchText"
+                       th:value="${param.searchText}">
+            </div>
+            <button type="submit" class="btn btn-light mb-2">검색</button>
+        </form>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">번호</th>
+                <th scope="col">제목</th>
+                <th scope="col">작성자</th>
+                <th scope="col">조회수</th>
+                <th scope="col">작성일자</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr th:each="post, i : ${post}">
+                    <td th:text="${i.count}"></td>
+                    <td><a th:text="${post.title}" th:href="@{'/post/detail/' + ${post.id}}"></a></td>
+                    <td th:text="${post.author}"></td>
+                    <td th:text="${post.view}"></td>
+                    <td th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd')}"></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${1==post.pageable.pageNumber+1}? 'disabled'">
+                    <a class="page-link" th:href="@{/post(page=${post.pageable.pageNumber-1})}" tabindex="-1" aria-disabled="true">Previous</a>
+                </li>
+                <li class="page-item" th:classappend="${i==post.pageable.pageNumber+1}? 'disabled'" th:each="i : ${#numbers.sequence(start, end)}"><a class="page-link" th:href="@{/post(page=${i-1})}" th:text="${i}">1</a></li>
+                <li class="page-item" th:classappend="${post.totalPages==post.pageable.pageNumber+1}? 'disabled'">
+                    <a class="page-link" th:href="@{/post(page=${post.pageable.pageNumber+1})}">Next</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="text-right">
+            <a type="button" class="btn btn-primary" th:href="@{/post/new}">쓰기</a>
+        </div>
+    </div>
 </div>
 </body>
 </html>

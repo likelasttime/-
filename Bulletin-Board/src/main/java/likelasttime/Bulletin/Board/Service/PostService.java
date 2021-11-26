@@ -4,8 +4,12 @@ import likelasttime.Bulletin.Board.Repository.SpringDataJpaPostRepository;
 import likelasttime.Bulletin.Board.domain.posts.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 
 @Service
@@ -22,6 +26,8 @@ public class PostService {
     // 게시글 작성
     public void join(Post post){
         //validateDuplicatePost(post);  // 중복 게시글
+        Object principal= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        post.setAuthor(((UserDetails)principal).getUsername());
         postRepository.save(post);
     }
 
@@ -38,8 +44,8 @@ public class PostService {
     }
 
     // 특정 게시글 조회
-    public <Optional>Post findOne(Long postId){
-        return postRepository.findById(postId).get();
+    public Optional<Post> findOne(Long postId){
+        return postRepository.findById(postId);
     }
 
     // 삭제
