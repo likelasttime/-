@@ -28,20 +28,19 @@ public class PostController {
     private PostValidator postValidator;
 
     @GetMapping("/post/new")
-    public String createForm() {
+    public String createForm(Model model) {
+        model.addAttribute("post", new Post());
         return "post/createPostForm";
     }
 
     @PostMapping("/post/new")
-    public String create(PostForm form) {
-
-        Post post = new Post();
-        post.setTitle(form.getTitle());
-        post.setContent(form.getContent());
-        post.setView(0);
+    public String create(@Valid Post post, BindingResult bindingResult) {
+        postValidator.validate(post, bindingResult);
+        if(bindingResult.hasErrors()){
+            return "post/createPostForm";
+        }
         postService.join(post);
-
-        return "redirect:/";
+        return "redirect:/post";
     }
 
     // 전체 게시글 조회

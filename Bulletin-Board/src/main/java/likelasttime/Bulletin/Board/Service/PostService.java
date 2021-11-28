@@ -27,7 +27,7 @@ public class PostService {
     public void join(Post post){
         //validateDuplicatePost(post);  // 중복 게시글
         Object principal= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        post.setAuthor(((UserDetails)principal).getUsername());
+        post.setAuthor(((UserDetails)principal).getUsername());     // 작성자=로그인한 유저 id
         postRepository.save(post);
     }
 
