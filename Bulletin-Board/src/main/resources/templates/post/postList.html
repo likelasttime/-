@@ -35,12 +35,12 @@
 
     <div class="container">
         <h2>게시판✍️</h2>
-        <div>총 건수 : <span th:text="${post.totalElements}"></span></div>
-        <form class="form-inline d-flex justify-content-end" method="GET" th:action="@{/post}">
+        <div style="float:left; margin-top:10px;">총 건수 : <span th:text="${post.totalElements}"></span></div>
+        <form class="form-inline d-flex justify-content-end" method="GET" th:action="@{/post}" style="float:right;">
             <div class="form-group mx-sm-3 mb-2">
                 <label for="searchText" class="sr-only">검색</label>
-                <input type="text" class="form-control" id="searchText" name="searchText"
-                       th:value="${param.searchText}">
+                <input type="text" class="form-control" id="searchText" name="keyword" placeholder="검색어를 입력해주세요"
+                       th:value="${param.keyword}">
             </div>
             <button type="submit" class="btn btn-light mb-2">검색</button>
         </form>
@@ -65,8 +65,12 @@
                 </tr>
             </tbody>
         </table>
+        <div style="margin-top:60px;">
+        <div style="float:right;">
+            <a type="button" class="btn btn-primary" th:href="@{/post/new}">쓰기</a>
+        </div>
         <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
+            <ul class="pagination justify-content-center" style="margin-top:0;">
                 <li class="page-item" th:classappend="${1==post.pageable.pageNumber+1}? 'disabled'">
                     <a class="page-link" th:href="@{/post(page=${post.pageable.pageNumber-1})}" tabindex="-1" aria-disabled="true">Previous</a>
                 </li>
@@ -76,8 +80,6 @@
                 </li>
             </ul>
         </nav>
-        <div class="text-right">
-            <a type="button" class="btn btn-primary" th:href="@{/post/new}">쓰기</a>
         </div>
     </div>
 </div>
