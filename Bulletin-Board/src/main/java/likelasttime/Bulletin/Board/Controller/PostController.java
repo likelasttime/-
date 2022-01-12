@@ -3,7 +3,7 @@ package likelasttime.Bulletin.Board.Controller;
 import likelasttime.Bulletin.Board.Service.PostService;
 import likelasttime.Bulletin.Board.domain.posts.Post;
 import likelasttime.Bulletin.Board.validator.PostValidator;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,16 +16,10 @@ import javax.validation.Valid;
 
 
 @Controller
+@RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
-
-    @Autowired
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
-
-    @Autowired
-    private PostValidator postValidator;
+    private final PostValidator postValidator;
 
     @GetMapping("/post/new")
     public String createForm(Model model) {

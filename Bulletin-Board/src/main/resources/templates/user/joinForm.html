@@ -1,73 +1,287 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>sign up</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"/>
-    <style>html,body {
-  height: 100%;
-}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
-body {
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-align: center;
-  align-items: center;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  background-color: #f5f5f5;
-}
+    <style>
+        html,body { height: 100%; }
 
-.form-register {
-  width: 100%;
-  max-width: 330px;
-  padding: 15px;
-  margin: auto;
-}
+        body {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-align: center;
+            align-items: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background-color: #f5f5f5;
+        }
 
-.form-register .form-control {
-  position: relative;
-  box-sizing: border-box;
-  height: auto;
-  padding: 10px;
-  font-size: 16px;
-}
+        .form-register {
+            width: 100%;
+            max-width: 330px;
+            padding: 15px;
+            margin: auto;
+        }
 
-.form-register .label{
-    text-align : left;
-    margin-bottom : 10px;
-}
-</style>
+        .form-register .form-control {
+            position: relative;
+            box-sizing: border-box;
+            height: auto;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .form-register .label{
+            text-align : left;
+            margin-bottom : 10px;
+        }
+
+        .id_ok{color:#0000FF; display: none;}
+
+        .id_already{color:#FF0000; display: none;}
+
+        .check_id{color:#FF0000; display: none;}
+
+        .check_first{color:#FF0000; display: none;}
+    </style>
+
+    <script type="text/javascript">
+    const correct="#0000FF";
+    const wrong="#FF0000";
+
+    var ableId;         // 아이디 중복여부
+    var ablePassword;   // 비밀번호 유효성 검사 및 일치여부
+
+    function checkName(){
+        var name=$('#username').val();
+        var msg=document.getElementById('name_msg');
+        var getCheck=/^[가-힣]{2,5}$/;
+
+        $('.server_NameMsg').css("display", "none");  // 서버 메시지 숨기기
+
+        if(name == ""){
+            msg.innerHTML="";
+        }else if(!getCheck.test(name)){
+            msg.style.color=wrong;
+            msg.innerHTML="2~5자의 한글만 입력가능합니다.";
+        }else{      // 통과
+            msg.innerHTML="";
+        }
+    }
+
+    function checkId(){
+        var id = $('#user_id').val();
+        var password=$('#password').val();
+        ableId=false;
+
+        var getCheck=/^(?=.*[0-9]+)[a-zA-Z][a-zA-Z0-9]{5,10}$/g;
+        var getFirst=/^[a-zA-Z]+/g;
+
+        document.getElementById('target').disabled=true;   // 가입하기 버튼 비활성화
+        $('.server_IdMsg').css("display", "none");  // 서버 메시지 숨기기
+
+        if(id == ""){     // 아무것도 입력이 안됨
+            $('.check_id').css("display", "none");
+            $('.id_already').css("display","none");
+            $('.id_ok').css("display", "none");
+            $('.check_first').css("display", "none");
+        }else if(!getCheck.test(id)){       // 숫자와 영문자 조합만 가능
+            if(!getFirst.test(id)){       // 영문자로 시작하지 않음
+                $('.check_first').css("display", "inline-block");
+                $('.check_id').css("display", "none");
+                $('.id_already').css("display","none");
+                $('.id_ok').css("display", "none");
+            }else{
+                $('.check_id').css("display", "inline-block");
+                $('.id_already').css("display","none");
+                $('.id_ok').css("display", "none");
+                $('.check_first').css("display", "none");
+            }
+        }else{
+            $.ajax({
+            url: "/user/idCheck",
+            type: "post",
+            data: {'id':id},
+            success:function(flag){
+                if(flag){       // 중복된 아이디
+                    $('.id_already').css("display","inline-block");
+                    $('.check_id').css("display", "none");
+                    $('.id_ok').css("display", "none");
+                    $('.check_first').css("display", "none");
+                }else{          // 사용 가능한 아이디
+                    $('.id_ok').css("display","inline-block");
+                    $('.check_id').css("display", "none");
+                    $('.id_already').css("display", "none");
+                    $('.check_first').css("display", "none");
+                    ableId=true;
+                    if((ablePassword) || (ablePassword == undefined && password.length != 0)){
+                        document.getElementById('target').disabled=false;   // 가입하기 버튼 활성화
+                    }
+                }
+            },
+            error:function(){
+                alert("에러입니다");
+            }
+            });
+        }
+    };
+
+    function checkPassword(){
+        var password=$('#password').val();
+        var id = $('#user_id').val();
+        var msg=document.getElementById('msg');
+        ablePassword=false;
+
+        // 비밀번호 재확인 input
+        var passwordConfirm=$('#password1').val();
+        var confirmMsg=document.getElementById('pass_msg');
+
+        var regex=/(?=.*[0-9])(?=.*[a-z])(?=.*\W)(?=\S+$).{8,20}/;     // 소문자, 특수문자, 숫자 포함
+
+        // 메시지 초기화
+        document.getElementById('password1').disabled=true;    // 비밀번호 재확인란 비활성화
+        document.getElementById('target').disabled=true;   // 가입하기 버튼 비활성화
+        confirmMsg.innerHTML="";
+        $('.server_PasswordMsg').css("display", "none");  // 서버 메시지 숨기기
+
+        if(password.length == 0){       // 아무것도 입력하지 않음
+            msg.innerHTML="";
+            document.getElementById('password1').value='';      // 비밀번호 재확인 초기화
+        }else if(password.search(/\s/) != -1){
+            msg.style.color=wrong;
+            msg.innerHTML="비밀번호는 공백 없이 입력하세요.";
+            document.getElementById('password1').value='';      // 비밀번호 재확인 초기화
+        }else if(!regex.test(password)){
+            msg.style.color=wrong;
+            msg.innerHTML="8~20자의 영문, 숫자, 특수문자를 모두 사용해야 합니다.";
+            document.getElementById('password1').value='';      // 비밀번호 재확인 초기화
+        }else{      // 사용할 수 있는 비밀번호
+            msg.style.color=correct;
+            msg.innerHTML='통과';      // 비밀번호 메시지 초기화
+            document.getElementById('password1').disabled=false;    // 비밀번호 재확인란 활성화
+            if(password == passwordConfirm){    // 비밀번호 일치
+                confirmMsg.style.color=correct;
+                confirmMsg.innerHTML="비밀번호 일치";
+                ablePassword=true;
+                if((ableId) || (ableId == undefined && id.length != 0)){
+                    document.getElementById('target').disabled=false;   // 가입하기 버튼 활성화
+                }
+            }else if(passwordConfirm.length > 0){   // 비밀번호 재확인 칸에 값이 있어야 비교
+                confirmMsg.style.color=wrong;
+                confirmMsg.innerHTML="비밀번호 불일치";
+            }
+        }
+    }
+
+    function emailCheck(){
+        var getMail=/^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+$/;
+        var emailMsg=document.getElementById("check_email");
+        var email=$('#email').val();
+
+        $('.server_EmailMsg').css("display", "none");  // 서버 메시지 숨기기
+
+        if(email.length == 0){        // 아무것도 입력안함
+            emailMsg.innerHTML="";
+        }else if(!getMail.test(email)){
+            emailMsg.innerHTML="이메일형식에 맞게 입력하세요.";
+            emailMsg.style.color="#FF0000";
+        }else{      // 통과
+            $.ajax({
+            url: "/user/emailCheck",
+            type: "post",
+            data: {'email':email},
+            success:function(flag){
+                if(flag){   // 중복
+                    emailMsg.innerHTML="중복된 이메일입니다.";
+                    emailMsg.style.color="#FF0000";
+                }else{      // 사용할 수 있는 이메일
+                    emailMsg.innerHTML="";
+                }
+            },error:function(){
+                alert("에러입니다.");
+            }
+            });
+        }
+    }
+
+    function phoneCheck(){
+        var phone=$('#phone').val();
+        var phoneMsg=document.getElementById("check_phone");
+        var getPhone=/^[0-9]{10,11}$/;
+
+        $('.server_PhoneMsg').css("display", "none");  // 서버 메시지 숨기기
+
+        if(phone.length == 0){      // 아무것도 입력안함
+            phoneMsg.innerHTML="";
+        }else if(!getPhone.test(phone)){
+            phoneMsg.innerHTML="10~11자의 숫자만 입력하세요.";
+            phoneMsg.style.color="#FF0000";
+        }else{      // 통과
+            $.ajax({
+            url: "/user/phoneCheck",
+            type: "post",
+            data: {'phone':phone},
+            success:function(flag){
+                if(flag){   // 중복
+                    phoneMsg.innerHTML="가입된 번호입니다.";
+                    phoneMsg.style.color="#FF0000";
+                }else{      // 사용할 수 있는 번호
+                    phoneMsg.innerHTML="";
+                }
+            },error:function(){
+                alert("에러입니다.");
+            }
+            });
+        }
+    }
+    </script>
 </head>
 
 <body class="text-center">
-<form class="form-register" th:action="@{/user/joinForm}" method="post">
+<form class="form-register" method="post" th:action="@{/user/join}" modelAttribute="userDto">
     <h1 class="h3 mb-3 font-weight-normal">✨회원가입✨</h1>
     <div class="label">
         <lable for="username">Name</lable>
-        <input type="text" id="username" name="name" class="form-control" placeholder="이름" requred autofocus>
+        <input type="text" id="username" name="name" th:value="${userDto?.name}" minlength='2' maxlength='5' class="form-control" placeholder="2~5자의 한글" onchange="checkName()" required autofocus>
+        <div id="name_msg"></div>
+        <span class="server_NameMsg" th:text="${valid_name}" style="color:#FF0000"></span>
     </div>
     <div class="label">
-        <label for="id">Id</label>
-        <input type="text" id="id" name="username" class="form-control" placeholder="아이디" required>
+        <label for="user_id">ID</label>
+        <input type="text" id="user_id" name="username" th:value="${userDto?.username}" minlength='5' maxlength='10' class="form-control" placeholder="5~10자의 영문자, 숫자 조합" required onkeyup="checkId();">
+        <span class="id_ok">사용 가능한 아이디입니다.</span>
+        <span class="id_already">사용중인 아이디입니다.</span>
+        <span class="check_id">영문자, 숫자 조합의 5~10자의 아이디여야 합니다.</span>
+        <span class="server_IdMsg" th:text="${valid_username}" style="color:#FF0000"></span>
+        <span class="check_first">아이디는 영문자로 시작해야 합니다.</span>
     </div>
     <div class="label">
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호" required>
+        <input type="password" id="password" name="password" class="form-control" onchange="checkPassword()" minlength='8' maxlength='20' placeholder="8~20자의 소문자, 숫자, 특수문자 조합" required>
+        <div id="msg"></div>
+        <span class="server_PasswordMsg" th:text="${valid_password}" style="color:#FF0000"></span>
     </div>
     <div class="label">
         <label for="password1">Password 재확인</label>
-        <input type="password" id="password1" name="password" class="form-control" placeholder="비밀번호 재확인" required>
+        <input type="password" id="password1" class="form-control" onchange="checkPassword()" minlength='8' maxlength='20' disabled placeholder="비밀번호 재확인" required>
+        <div id="pass_msg"></div>
     </div>
     <div class="label">
         <label for="email">E-mail</label>
-        <input type="email" id="email" name="email" class="form-control" placeholder="이메일" required>
+        <input type="email" id="email" name="email" th:value="${userDto?.email}" class="form-control" placeholder="이메일" onchange="emailCheck()" required>
+        <div id="check_email"></div>
+        <span class="server_EmailMsg" th:text="${valid_email}" style="color:#FF0000"></span>
     </div>
     <div class="label">
         <label for="phone">Phone</label>
-        <input type="tel" id="phone" name="phone" class="form-control" placeholder="연락처" required>
+        <input type="tel" id="phone" name="phone" th:value="${userDto?.phone}" onchange="phoneCheck()" minlength='10' maxlength='11' class="form-control" placeholder="숫자만 기입" required>
+        <div id="check_phone"></div>
+        <span class="server_PhoneMsg" th:text="${valid_phone}" style="color:#FF0000"></span>
     </div>
-    <button class="btn btn-lg btn-primary btn-block" type="submit">가입하기</button>
+    <button id="target" class="btn btn-lg btn-primary btn-block" disabled>가입하기</button>
 </form>
 </body>
 </html>
