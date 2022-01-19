@@ -28,7 +28,7 @@ public class UserRequestDto {
 
     @NotBlank(message="아이디를 입력해주세요.")
     @Pattern(regexp="^(?=.*[0-9]+)[a-zA-Z][a-zA-Z0-9]{5,10}$",
-            message="영문자, 숫자가 포함된 5~10자의 아이디여야 합니다.")
+            message="소문자/대문자, 숫자가 포함된 5~10자의 아이디여야 합니다.")
     private String username;
 
     @NotBlank(message="비밀번호를 입력해주세요.")

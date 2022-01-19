@@ -66,9 +66,11 @@ public class UserController {
             for (String key : result.keySet()) {
                 model.addAttribute(key, result.get(key));
             }
+            LOG.info("회원가입 실패");
             return "user/joinForm";
         }
         userService.joinUser(userRequestDto);
+        LOG.info("회원가입 성공");
         return "redirect:/user/login";
     }
 
