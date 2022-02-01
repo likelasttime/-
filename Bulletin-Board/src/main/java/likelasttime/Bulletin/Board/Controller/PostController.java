@@ -1,6 +1,6 @@
 package likelasttime.Bulletin.Board.Controller;
 
-import likelasttime.Bulletin.Board.Service.PostService;
+import likelasttime.Bulletin.Board.Service.PostServiceImpl;
 import likelasttime.Bulletin.Board.domain.posts.Post;
 import likelasttime.Bulletin.Board.validator.PostValidator;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import javax.validation.Valid;
 @Controller
 @RequiredArgsConstructor
 public class PostController {
-    private final PostService postService;
+    private final PostServiceImpl postService;
     private final PostValidator postValidator;
 
     @GetMapping("/post/new")

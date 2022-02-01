@@ -1,6 +1,6 @@
 package likelasttime.Bulletin.Board.Controller;
 
-import likelasttime.Bulletin.Board.Service.UserService;
+import likelasttime.Bulletin.Board.Service.UserServiceImpl;
 import likelasttime.Bulletin.Board.domain.posts.User;
 import likelasttime.Bulletin.Board.domain.posts.UserRequestDto;
 import likelasttime.Bulletin.Board.validator.UserValidator;
@@ -18,7 +18,7 @@ import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final UserValidator userValidator;
     private final static Logger LOG = LoggerFactory.getLogger(UserController.class);
 
@@ -69,7 +69,8 @@ public class UserController {
             LOG.info("회원가입 실패");
             return "user/joinForm";
         }
-        userService.joinUser(userRequestDto);
+        User user=userRequestDto.toEntity();
+        userService.joinUser(user);
         LOG.info("회원가입 성공");
         return "redirect:/user/login";
     }

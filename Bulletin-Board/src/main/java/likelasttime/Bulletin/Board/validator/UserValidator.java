@@ -1,6 +1,6 @@
 package likelasttime.Bulletin.Board.validator;
 
-import likelasttime.Bulletin.Board.Repository.UserRepository;
+import likelasttime.Bulletin.Board.Repository.SpringDataJpaUserRepository;
 import likelasttime.Bulletin.Board.domain.posts.UserRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 @Component
 @RequiredArgsConstructor
 public class UserValidator implements Validator {
-    private final UserRepository userRepository;
+    private final SpringDataJpaUserRepository userRepository;
     String pattern="^[a-zA-Z].+$";
 
     @Override
