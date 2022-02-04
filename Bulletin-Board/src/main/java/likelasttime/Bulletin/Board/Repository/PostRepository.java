@@ -13,4 +13,5 @@ public interface PostRepository{
     List<Post> findAll();
     void deleteById(Long id);
     Page<Post> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(String title, String content, String author, Pageable pageable);
+    void deleteAll();
 }

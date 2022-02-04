@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostService {
-    void join(Post post);
+    void create(Post post);
 
-    Optional<Post> findOne(Long postId);
+    Optional<Post> findById(Long postId);
 
     void deletePost(Long id);
 
@@ -17,9 +17,9 @@ public interface PostService {
 
     Page<Post> search(String title, String content, String author, Pageable pageable);
 
-    Page<Post> findAll(Pageable pageable);
+    List<Post> findAll();
 
-    List<Post> findPost();
+    void deleteAll();
 }
 
 

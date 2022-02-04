@@ -1,14 +1,11 @@
 package likelasttime.Bulletin.Board.Service;
 
 import likelasttime.Bulletin.Board.domain.posts.User;
-import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Service
 public interface UserService {
     boolean userIdCheck(String user_id);
     Map<String, String> handling(Errors errors);
@@ -18,5 +15,6 @@ public interface UserService {
     List<User> findAll();
     Optional<User> findById(Long id);
     void save(User user);
+    void deleteAll();
 
 }
