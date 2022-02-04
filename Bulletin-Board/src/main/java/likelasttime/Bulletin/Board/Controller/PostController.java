@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,7 +35,9 @@ public class PostController {
         if(bindingResult.hasErrors()){
             return "post/createPostForm";
         }
-        postService.join(post);
+        Object principal= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        post.setAuthor(((UserDetails)principal).getUsername());     // 작성자=로그인한 유저 id
+        postService.create(post);
         return "redirect:/post";
     }
 
@@ -61,7 +65,7 @@ public class PostController {
         if(id == null){
             model.addAttribute("post", new Post());
         }else{
-            Post post= postService.findOne(id).orElse(null);
+            Post post= postService.findById(id).orElse(null);
             postService.updateView(id);     // 조회수 증가
             model.addAttribute("post", post);
         }
@@ -75,9 +79,11 @@ public class PostController {
         if(bindingResult.hasErrors()){
             return "post/detail";
         }
-        int view=postService.findOne(id).get().getView();
+        int view=postService.findById(id).get().getView();
         post.setView(view);   // 조회수 저장
-        postService.join(post);
+        String author=postService.findById(id).get().getAuthor();
+        post.setAuthor(author);
+        postService.create(post);
         return "redirect:/post";
     }
 
