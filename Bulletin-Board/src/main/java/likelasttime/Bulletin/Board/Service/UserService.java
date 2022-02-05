@@ -14,6 +14,7 @@ public interface UserService {
     boolean userPhoneCheck(String phone);
     List<User> findAll();
     Optional<User> findById(Long id);
+    Optional<User> findByUsername(String username);
     void save(User user);
     void deleteAll();
 
