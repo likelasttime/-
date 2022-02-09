@@ -1,6 +1,7 @@
 package likelasttime.Bulletin.Board.Service;
 
 import likelasttime.Bulletin.Board.domain.posts.User;
+import likelasttime.Bulletin.Board.domain.posts.UserRequestDto;
 import org.springframework.validation.Errors;
 import java.util.List;
 import java.util.Map;
@@ -17,5 +18,6 @@ public interface UserService {
     Optional<User> findByUsername(String username);
     void save(User user);
     void deleteAll();
+    boolean checkUpdate(UserRequestDto userRequestDto, Long id);
 
 }

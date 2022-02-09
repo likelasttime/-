@@ -3,6 +3,7 @@ package likelasttime.Bulletin.Board.Service;
 import likelasttime.Bulletin.Board.Repository.UserRepository;
 import likelasttime.Bulletin.Board.domain.posts.Role;
 import likelasttime.Bulletin.Board.domain.posts.User;
+import likelasttime.Bulletin.Board.domain.posts.UserRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,6 +68,24 @@ public class UserServiceImpl implements UserService{
     public void save(User user){userRepository.save(user);}
 
     @Override
-    public void deleteAll(){userRepository.deleteAll();}
+    public void deleteAll(){ userRepository.deleteAll(); }
+
+    @Override
+    public boolean checkUpdate(UserRequestDto userRequestDto, Long id){
+        // 데이터베이스에 저장된 정보와 비교
+        User beforeUser=userRepository.findById(id).get();
+        User afterUser=userRequestDto.toEntity();
+
+        if(!afterUser.getName().equals(beforeUser.getName())) {
+            return true;
+        }else if(!passwordEncoder.matches(afterUser.getPassword(), beforeUser.getPassword())){
+            return true;
+        }else if(!afterUser.getEmail().equals(beforeUser.getEmail())){
+            return true;
+        }else if(!afterUser.getPhone().equals(beforeUser.getPhone())){
+            return true;
+        }
+        return false;        // 수정 사항 없음
+    }
 
 }

@@ -47,43 +47,140 @@
             width : 400px;
         }
     </style>
+
+    <script type="text/javascript">
+    const correct="#0000FF";
+    const wrong="#FF0000";
+
+    function checkName(){
+        var name=$('#name').val();
+        var msg=document.getElementById('name_msg');
+
+        var getCheck=/^[가-힣]{2,5}$/;
+
+        if(name == ""){
+            msg.innerHTML="";
+        }else if(!getCheck.test(name)){
+            msg.style.color=wrong;
+            msg.innerHTML="2~5자의 한글만 입력 가능합니다.";
+        }else{      // 통과
+            msg.innerHTML="";
+        }
+    }
+
+    function checkPassword(){
+        var password=$('#password').val();
+        var id = $('#user_id').val();
+        var msg=document.getElementById('msg');
+        msg.style.color=wrong;
+
+        // 비밀번호 재확인 input
+        var passwordConfirm=$('#password1').val();
+        var confirmMsg=document.getElementById('pass_msg');
+
+        var regex=/(?=.*[0-9])(?=.*[a-z])(?=.*\W)(?=\S+$).{8,20}/;     // 소문자, 특수문자, 숫자 포함
+
+        document.getElementById('password1').disabled=true;    // 비밀번호 재확인란 비활성화
+        confirmMsg.innerHTML="";        // 비밀번호 재확인 메시지 초기화
+
+        if(password.length == 0){       // 아무것도 입력하지 않음
+            msg.innerHTML="";
+            document.getElementById('password1').value='';      // 비밀번호 재확인 초기화
+        }else if(password.search(/\s/) != -1){
+            msg.innerHTML="비밀번호는 공백 없이 입력하세요.";
+            document.getElementById('password1').value='';      // 비밀번호 재확인 초기화
+        }else if(!regex.test(password)){
+            msg.innerHTML="8~20자의 영문, 숫자, 특수문자를 모두 사용해야 합니다.";
+            document.getElementById('password1').value='';      // 비밀번호 재확인 초기화
+        }else{      // 사용할 수 있는 비밀번호
+            msg.style.color=correct;
+            msg.innerHTML='통과';      // 비밀번호 메시지 초기화
+            document.getElementById('password1').disabled=false;    // 비밀번호 재확인란 활성화
+            if(password == passwordConfirm){    // 비밀번호 일치
+                confirmMsg.style.color=correct;
+                confirmMsg.innerHTML="비밀번호 일치";
+            }else if(passwordConfirm.length > 0){   // 비밀번호 재확인 칸에 값이 있어야 비교
+                confirmMsg.style.color=wrong;
+                confirmMsg.innerHTML="비밀번호 불일치";
+            }
+        }
+    }
+
+    function emailCheck(){
+        var getMail=/^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+$/;
+
+        var emailMsg=document.getElementById("check_email");
+        var email=$('#email').val();
+        emailMsg.style.color=wrong;
+
+        if(email.length == 0){        // 아무것도 입력 안 함
+            emailMsg.innerHTML="";
+        }else if(!getMail.test(email)){
+            emailMsg.innerHTML="이메일 형식에 맞게 입력하세요.";
+        }else{      // 통과
+            emailMsg.innerHTML="";
+        }
+    }
+
+    function phoneCheck(){
+        var phone=$('#phone').val();
+        var phoneMsg=document.getElementById("check_phone");
+        phoneMsg.style.color=wrong;
+
+        var getPhone=/^[0-9]{10,11}$/;
+
+        if(phone.length == 0){      // 아무것도 입력 안 함
+            phoneMsg.innerHTML="";
+        }else if(!getPhone.test(phone)){
+            phoneMsg.innerHTML="10~11자의 숫자만 입력하세요.";
+        }else{      // 통과
+            phoneMsg.innerHTML="";
+        }
+    }
+    </script>
 </head>
 
 <body class="text-center">
-    <form class="form-update" th:action="@{'/user/'+${user.id}}" method="post">
+    <form class="form-update" th:action="@{'/user/'+${userDto.id}}" method="post" modelAttribute="userDto">
         <input type="hidden" name="_method" value="put"/>
+        <input type="hidden" name="id" th:value="${userDto.id}"/>
         <div class="my-box">
         <div class="label">
             <label for="name">이름</label>
-            <input type="text" class="form-control" id="name" name="name" maxlength="20" th:value="${user.name}" placeholder="2~5자의 한글" required>
+            <input type="text" class="form-control" id="name" name="name" maxlength="5" th:value="${userDto.name}" onchange="checkName()" placeholder="2~5자의 한글" required>
+            <div id="name_msg" th:text="${valid_name}" style="color:#FF0000"></div>
         </div>
 
         <div class="label">
-            <label for="id">아이디</label>
-            <input type="text" class="form-control" id="id" name="userId" th:value="${user.username}" placeholder="5~10자의 영문자, 숫자 조합" required>
+            <label for="user_id">아이디</label>
+            <input type="text" class="form-control" id="user_id" name="username" th:value="${userDto.username}" readonly>
         </div>
 
         <div class="label">
-            <label for="pswd1">비밀번호</label>
-            <input type="password" class="form-control" id="pswd1" name="password" placeholder="8~20자의 소문자, 숫자, 특수문자 조합" required>
+            <label for="password">비밀번호</label>
+            <input type="password" class="form-control" id="password" onchange="checkPassword()" minlength='8' maxlength='20' placeholder="8~20자의 소문자, 숫자, 특수문자 조합" required>
+            <div id="msg" th:text="${valid_password}" style="color:#FF0000"></div>
         </div>
 
         <div class="label">
-            <label for="pswd2">비밀번호 재확인</label>
-            <input type="password" class="form-control" id="pswd2" name="password" placeholder="비밀번호 재확인" required>
+            <label for="password1">비밀번호 재확인</label>
+            <input type="password" class="form-control" id="password1" name="password" onchange="checkPassword()" minlength='8' maxlength='20' placeholder="비밀번호 재확인" disabled required>
+            <div id="pass_msg"></div>
         </div>
 
         <div class="label">
-            <label for="email">본인확인 이메일</label>
-            <input type="text" class="form-control" id="email" name="email" placeholder="이메일 입력" th:value="${user.email}" required>
+            <label for="email">이메일</label>
+            <input type="text" class="form-control" id="email" name="email" placeholder="이메일 입력" th:value="${userDto.email}" onchange="emailCheck()" required>
+            <div id="check_email" th:text="${valid_email}" style="color:#FF0000"></div>
         </div>
 
         <div class="label">
-            <label for="phone">휴대전화</label>
-            <input type="tel" class="form-control" id="phone" name="phone" maxlength="16" placeholder="숫자만 기입" th:value="${user.phone}" required>
+            <label for="phone">연락처</label>
+            <input type="tel" class="form-control" id="phone" name="phone" minlength='10' maxlength="11" onchange="phoneCheck()" placeholder="숫자만 기입" th:value="${userDto.phone}" required>
+            <div id="check_phone" th:text="${valid_phone}" style="color:#FF0000"></div>
         </div>
 
-        <button type="submit" class="btn btn-lg btn-primary btn-block">개인정보 수정</button>
+        <button id="target" class="btn btn-lg btn-primary btn-block">개인정보 수정</button>
         </div>
     </form>
 </body>

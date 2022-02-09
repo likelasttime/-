@@ -87,16 +87,32 @@ public class UserController {
     public String updateForm(Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id=authentication.getName(); // 로그인한 유저 id
-        model.addAttribute("user", userService.findByUsername(id).get());
+        model.addAttribute("userDto", userService.findByUsername(id).get());
         return "/user/updateForm";
     }
 
-    @PutMapping("/user/{id}")
-    public String update(@PathVariable Long id, User newUser){
-        User user=userService.findById(id).get();
-        user.update(newUser);
-        userService.save(user);
-        return "redirect:/user/list";
+    @PutMapping("/user/{id}")     // 개인정보 수정
+    public String update(@Valid UserRequestDto userRequestDto, Errors errors, Model model, @PathVariable Long id){
+        // 변경사항이 있나?
+        if(!userService.checkUpdate(userRequestDto, id)){
+            LOG.info("개인정보 수정 변동 사항 없음");
+            return "redirect:/";
+        }
+        userValidator.validate(userRequestDto, errors);
+        if(errors.hasErrors()){     // 유효성 검사 실패
+            model.addAttribute("userDto", userRequestDto);
+            Map<String, String> result=userService.handling(errors);
+            for(String key : result.keySet()){
+                model.addAttribute(key, result.get(key));
+            }
+            LOG.info("개인정보 수정 실패");
+            return "user/updateForm";
+        }
+        User user=userRequestDto.toEntity();
+        userService.joinUser(user);
+        LOG.info("개인정보 수정 성공");
+
+        return "redirect:/";
     }
 
     @GetMapping("/user/login")
