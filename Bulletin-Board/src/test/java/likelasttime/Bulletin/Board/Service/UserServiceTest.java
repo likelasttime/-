@@ -2,6 +2,7 @@ package likelasttime.Bulletin.Board.Service;
 
 import likelasttime.Bulletin.Board.domain.posts.Role;
 import likelasttime.Bulletin.Board.domain.posts.User;
+import likelasttime.Bulletin.Board.domain.posts.UserRequestDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,5 +191,68 @@ public class UserServiceTest {
 
         // then
         assertThat(findUser.get().getId()).isEqualTo(user1.getId());
+    }
+
+    @Test
+    public void findByUsername(){
+        // given
+        User user1=new User();
+        user1.setUsername("spring00");
+        user1.setEmail("abc@naver.com");
+        user1.setEnabled(true);
+        user1.setName("스프링");
+        user1.setPassword("lovespring00!");
+        user1.setPhone("01012345678");
+        user1.setRoles(new ArrayList<Role>());
+
+        // when
+        userService.joinUser(user1);
+        User user2=userService.findByUsername(user1.getUsername()).get();
+
+        // then
+        assertThat(user2.getUsername()).isEqualTo(user1.getUsername());
+    }
+
+    @Test
+    public void deleteAll(){
+        // given
+        User user1=new User();
+        user1.setUsername("spring00");
+        user1.setEmail("abc@naver.com");
+        user1.setEnabled(true);
+        user1.setName("스프링");
+        user1.setPassword("lovespring00!");
+        user1.setPhone("01012345678");
+        user1.setRoles(new ArrayList<Role>());
+
+        // when
+        userService.joinUser(user1);
+        userService.deleteAll();
+
+        // then
+        assertThat(userService.findAll().size()).isEqualTo(0);
+    }
+
+    @Test
+    public void checkUpdate(){
+        // given
+        UserRequestDto user1=new UserRequestDto();
+        user1.setUsername("spring00");
+        user1.setEmail("abc@naver.com");
+        user1.setEnabled(true);
+        user1.setName("스프링");
+        user1.setPassword("lovespring00!");
+        user1.setPhone("01012345678");
+        user1.setRoles(new ArrayList<Role>());
+
+        User user2=user1.toEntity();
+
+        // when
+        userService.joinUser(user2);
+        user1.setEmail("a@naver.com");
+        boolean flag=userService.checkUpdate(user1, user2.getId());
+
+        // then
+        assertThat(flag).isEqualTo(true);
     }
 }
