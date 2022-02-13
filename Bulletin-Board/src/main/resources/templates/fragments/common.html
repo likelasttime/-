@@ -39,7 +39,7 @@
         </ul>
         <a role="button" class="btn btn-link my-2 mr-2 my-sm-0" th:href="@{/user/login}"
            sec:authorize="!isAuthenticated()" style="color : #FFFFFF">로그인</a>
-        <a role="button" class="btn btn-link my-2 my-sm-0" th:href="@{/user/joinForm}"
+        <a role="button" class="btn btn-link my-2 my-sm-0" th:href="@{/user/availability/joinForm}"
            sec:authorize="!isAuthenticated()" style="color : #FFFFFF">회원가입</a>
         <a role="button" class="btn btn-link my-2 mr-2 my-sm-0" th:href="@{/user/form}" sec:authorize="isAuthenticated()" style="color : #FFFFFF">개인정보수정</a>
         <form class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="POST" sec:authorize="isAuthenticated()">

@@ -19,17 +19,18 @@ import javax.validation.Valid;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping(path="/post")
 public class PostController {
     private final PostServiceImpl postService;
     private final PostValidator postValidator;
 
-    @GetMapping("/post/new")
+    @GetMapping("/new")
     public String createForm(Model model) {
         model.addAttribute("post", new Post());
         return "post/createPostForm";
     }
 
-    @PostMapping("/post/new")
+    @PostMapping("/new")
     public String create(@Valid Post post, BindingResult bindingResult) {
         postValidator.validate(post, bindingResult);
         if(bindingResult.hasErrors()){
@@ -42,7 +43,7 @@ public class PostController {
     }
 
     // 전체 게시글 조회
-    @GetMapping("/post")
+    @GetMapping
     public String list(Model model,
                        @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                        @RequestParam(required = false, defaultValue = "") String keyword
@@ -60,7 +61,7 @@ public class PostController {
     }
 
     // 상세 게시판 조회
-    @GetMapping("/post/detail/{id}")
+    @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Long id, Model model) {
         if(id == null){
             model.addAttribute("post", new Post());
@@ -73,7 +74,7 @@ public class PostController {
     }
 
     // 수정
-    @PutMapping("/post/detail/{id}")
+    @PutMapping("/detail/{id}")
     public String greetingSubmit(@PathVariable("id") Long id, @Valid Post post, BindingResult bindingResult){
         postValidator.validate(post, bindingResult);
         if(bindingResult.hasErrors()){
@@ -88,7 +89,7 @@ public class PostController {
     }
 
     // 삭제
-    @DeleteMapping("/post/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id) {
         postService.deletePost(id);
         return "redirect:/post";

@@ -22,17 +22,18 @@ import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping(path="/user")
 public class UserController {
     private final UserServiceImpl userService;
     private final UserValidator userValidator;
     private final static Logger LOG = LoggerFactory.getLogger(UserController.class);
 
-    @GetMapping("/user/joinForm")
+    @GetMapping("/availability/joinForm")
     public String joinForm(UserRequestDto userDto){
         return "user/joinForm";
     }
 
-    @PostMapping("/user/idCheck")       // 아이디 중복 체크
+    @PostMapping("/availability/idCheck")       // 아이디 중복 체크
     @ResponseBody
     public boolean idCheck(@RequestParam("id") String id){
         LOG.info("userIdCheck 진입");
@@ -42,7 +43,7 @@ public class UserController {
         return flag;
     }
 
-    @PostMapping("/user/emailCheck")        // 이메일 중복 체크
+    @PostMapping("/availability/emailCheck")        // 이메일 중복 체크
     @ResponseBody
     public boolean emailCheck(@RequestParam("email") String email){
         LOG.info("userEmailCheck 진입");
@@ -52,7 +53,7 @@ public class UserController {
         return flag;
     }
 
-    @PostMapping("/user/phoneCheck")    // 전화번호 중복 검사
+    @PostMapping("/availability/phoneCheck")    // 전화번호 중복 검사
     @ResponseBody
     public boolean phoneCheck(@RequestParam("phone") String phone){
         LOG.info("userPhoneCheck 진입");
@@ -62,7 +63,7 @@ public class UserController {
         return flag;
     }
 
-    @PostMapping("/user/join")     // 회원가입
+    @PostMapping("/availability/join")     // 회원가입
     public String join(@Valid UserRequestDto userRequestDto, Errors errors, Model model){
         userValidator.validate(userRequestDto, errors);
         if(errors.hasErrors()) {     // 회원가입 실패 : 비밀번호만 지워진다.
@@ -80,13 +81,13 @@ public class UserController {
         return "redirect:/user/login";
     }
 
-    @GetMapping("/user/list")
+    @GetMapping("/list")
     public String list(Model model){
         model.addAttribute("users", userService.findAll());
         return "/user/list";
     }
 
-    @GetMapping("/user/form")      // 개인정보 수정
+    @GetMapping("/form")      // 개인정보 수정
     public String updateForm(Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id=authentication.getName(); // 로그인한 유저 id
@@ -94,7 +95,7 @@ public class UserController {
         return "/user/updateForm";
     }
 
-    @PutMapping("/user/{id}")     // 개인정보 수정
+    @PutMapping("/{id}")     // 개인정보 수정
     public String update(@Valid UserRequestDto userRequestDto, Errors errors, Model model, @PathVariable Long id){
         // 변경사항이 있나?
         if(!userService.checkUpdate(userRequestDto, id)){
@@ -118,17 +119,17 @@ public class UserController {
         return "redirect:/";
     }
 
-    @GetMapping("/user/login")
+    @GetMapping("/login")
     public String loginForm(){
         return "/user/login";
     }
 
-    @GetMapping("/user/find-id")
+    @GetMapping("/availability/find-id")
     public String findId(){
         return "/user/findIdForm";
     }
 
-    @PostMapping("/user/find-id")
+    @PostMapping("/availability/find-id")
     public String findId(User user, Model model, HttpServletResponse response) throws Exception{
         response.setContentType("text/html;charset=utf-8");
         PrintWriter out=response.getWriter();

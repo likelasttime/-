@@ -79,7 +79,7 @@
             }
         }else{
             $.ajax({
-            url: "/user/idCheck",
+            url: "/user/availability/idCheck",
             type: "post",
             data: {'id':id},
             success:function(flag){
@@ -148,7 +148,7 @@
             emailMsg.innerHTML="이메일 형식에 맞게 입력하세요.";
         }else{      // 통과
             $.ajax({
-            url: "/user/emailCheck",
+            url: "/user/availability/emailCheck",
             type: "post",
             data: {'email':email},
             success:function(flag){
@@ -176,7 +176,7 @@
             phoneMsg.innerHTML="10~11자의 숫자만 입력하세요.";
         }else{      // 통과
             $.ajax({
-            url: "/user/phoneCheck",
+            url: "/user/availability/phoneCheck",
             type: "post",
             data: {'phone':phone},
             success:function(flag){
@@ -211,7 +211,7 @@
 </head>
 
 <body class="text-center">
-<form class="form-register" method="post" action="/user/join" onsubmit="return signUp();" modelAttribute="userDto">
+<form class="form-register" method="post" action="/user/availability/join" onsubmit="return signUp();" modelAttribute="userDto">
     <h1 class="h3 mb-3 font-weight-normal">✨회원가입✨</h1>
     <div class="label">
         <lable for="username">Name</lable>
