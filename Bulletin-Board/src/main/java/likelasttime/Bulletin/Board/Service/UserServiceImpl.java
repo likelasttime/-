@@ -88,4 +88,14 @@ public class UserServiceImpl implements UserService{
         return false;        // 수정 사항 없음
     }
 
+    @Override
+    public Optional<User> findUserId(User user){
+        String name=user.getName();
+        String email=user.getEmail();
+        String phone=user.getPhone();
+
+        Optional<User> result=userRepository.findByNameAndEmailAndPhone(name, email, phone);
+
+        return result;
+    }
 }

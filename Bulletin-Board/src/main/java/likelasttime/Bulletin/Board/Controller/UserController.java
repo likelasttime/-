@@ -13,8 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.PrintWriter;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Controller
@@ -117,6 +120,29 @@ public class UserController {
 
     @GetMapping("/user/login")
     public String loginForm(){
+        return "/user/login";
+    }
+
+    @GetMapping("/user/find-id")
+    public String findId(){
+        return "/user/findIdForm";
+    }
+
+    @PostMapping("/user/find-id")
+    public String findId(User user, Model model, HttpServletResponse response) throws Exception{
+        response.setContentType("text/html;charset=utf-8");
+        PrintWriter out=response.getWriter();
+        Optional<User> result=userService.findUserId(user);
+        if(result.isEmpty()){       // 아이디 찾기 실패
+            out.println("<script>");
+            out.println("alert('가입된 아이디가 없습니다.');");
+            out.println("history.go(-1)");
+            out.println("</script>");
+            out.close();
+            return "/user/findIdForm";
+        }else {
+            model.addAttribute("result", result.get().getUsername());
+        }
         return "/user/login";
     }
 

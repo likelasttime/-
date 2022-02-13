@@ -19,5 +19,6 @@ public interface UserService {
     void save(User user);
     void deleteAll();
     boolean checkUpdate(UserRequestDto userRequestDto, Long id);
+    Optional<User> findUserId(User user);
 
 }

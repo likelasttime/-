@@ -60,9 +60,11 @@ body {
         You have been logged out.
     </div>
     <label for="username" class="sr-only">UserId</label>
-    <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+    <input type="text" id="username" name="username" th:value="${result}" class="form-control" placeholder="Username" required autofocus>
     <label for="inputPassword" class="sr-only">Password</label>
     <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
+    <a th:href="@{/user/find-id}">아이디 찾기</a>
+
     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 </form>
 </body>
