@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest
@@ -254,5 +255,37 @@ public class UserServiceTest {
 
         // then
         assertThat(flag).isEqualTo(true);
+    }
+
+    @Test
+    public void findUserId(){
+        // given
+        User user1=new User();
+        user1.setUsername("spring00");
+        user1.setEmail("abc@naver.com");
+        user1.setEnabled(true);
+        user1.setName("스프링");
+        user1.setPassword("lovespring00!");
+        user1.setPhone("01012345678");
+        user1.setRoles(new ArrayList<Role>());
+
+        User user2=new User();
+        user2.setUsername("spring2");
+        user2.setEmail("a@naver.com");
+        user2.setEnabled(true);
+        user2.setName("스프링");
+        user2.setPassword("lovespring00!");
+        user2.setPhone("01012345656");
+        user2.setRoles(new ArrayList<Role>());
+
+        // when
+        userService.joinUser(user1);
+        Optional<User> result1=userService.findUserId(user1);
+        Optional<User> result2=userService.findUserId(user2);       // 가입하지 않은 사용자
+
+        // then
+        assertTrue(result1.isPresent());        // 성공
+        assertFalse(result2.isPresent());      // 실패
+
     }
 }
