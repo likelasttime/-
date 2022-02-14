@@ -37,23 +37,92 @@
             margin-bottom : 10px;
         }
     </style>
+
+    <script type="text/javascript">
+        const correct="#0000FF";
+        const wrong="#FF0000";
+
+        function checkName(){
+            var name=$('#username').val();
+            var msg=document.getElementById('name_msg');
+
+            var getCheck=/^[가-힣]{2,5}$/;
+
+            if(name == ""){
+                msg.innerHTML="";
+            }else if(!getCheck.test(name)){
+                msg.style.color=wrong;
+                msg.innerHTML="2~5자의 한글만 입력 가능합니다.";
+            }else{      // 통과
+                msg.innerHTML="";
+            }
+        }
+
+        function emailCheck(){
+            var getMail=/^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+$/;
+
+            var emailMsg=document.getElementById("check_email");
+            var email=$('#email').val();
+            emailMsg.style.color=wrong;
+
+            if(email.length == 0){        // 아무것도 입력 안 함
+                emailMsg.innerHTML="";
+            }else if(!getMail.test(email)){
+                emailMsg.innerHTML="이메일 형식에 맞게 입력하세요.";
+            }else{      // 통과
+                emailMsg.innerHTML="";
+            }
+        }
+
+    function phoneCheck(){
+        var phone=$('#phone').val();
+        var phoneMsg=document.getElementById("check_phone");
+        phoneMsg.style.color=wrong;
+
+        var getPhone=/^[0-9]{10,11}$/;
+
+        if(phone.length == 0){      // 아무것도 입력 안 함
+            phoneMsg.innerHTML="";
+        }else if(!getPhone.test(phone)){
+            phoneMsg.innerHTML="10~11자의 숫자만 입력하세요.";
+        }else{      // 통과
+            phoneMsg.innerHTML="";
+        }
+    }
+
+    function submitButton(){
+        var nameMsg=document.getElementById("name_msg").innerText;
+        var email=document.getElementById("check_email").innerText;
+        var phone=document.getElementById("check_phone").innerText;
+
+        if(!nameMsg == "" || !email == "" || !phone == ""){
+            alert('다시 확인해 보세요.');
+            return false;
+        }else{
+            return true;
+        }
+    }
+    </script>
 </head>
 
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" th:replace="fragments/common :: menu('board')">
 </nav>
-<form method="post" class="form-find">
+<form method="post" class="form-find" onsubmit="return submitButton()">
     <div class="form-group">
         <lable for="username">Name</lable>
-        <input type="text" id="username" name="name" th:value="${userDto?.name}" minlength='2' maxlength='5' class="form-control" placeholder="2~5자의 한글" required autofocus>
+        <input type="text" id="username" name="name" onchange="checkName()" minlength='2' maxlength='5' class="form-control" placeholder="2~5자의 한글" required autofocus>
+        <div id="name_msg" th:text="${valid_name}" style="color:#FF0000"></div>
     </div>
     <div class="form-group">
         <label for="email">E-mail</label>
-        <input type="email" id="email" name="email" th:value="${userDto?.email}" class="form-control" placeholder="이메일" required>
+        <input type="email" id="email" name="email" onchange="emailCheck()" class="form-control" placeholder="이메일" required>
+        <div id="check_email" th:text="${valid_email}" style="color:#FF0000"></div>
     </div>
     <div class="form-group">
         <label for="phone">Phone</label>
-        <input type="tel" id="phone" name="phone" th:value="${userDto?.phone}" minlength='10' maxlength='11' class="form-control" placeholder="숫자만 기입" required>
+        <input type="tel" id="phone" name="phone" onchange="phoneCheck()" minlength='10' maxlength='11' class="form-control" placeholder="숫자만 기입" required>
+        <div id="check_phone" th:text="${valid_phone}" style="color:#FF0000"></div>
     </div>
     <button id="target" class="btn btn-lg btn-primary btn-block">아이디 찾기</button>
 </form>
