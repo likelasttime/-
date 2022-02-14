@@ -1,52 +1,58 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <div th:replace="fragments/common :: head('게시판')"></div>
     <title>Login</title>
-    <style>html,body {
-  height: 100%;
-}
+    <style>
+    html,body {
+        height: 100%;
+    }
 
-body {
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-align: center;
-  align-items: center;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  background-color: #f5f5f5;
-}
+    body {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        padding-top: 40px;
+        padding-bottom: 40px;
+        background-color: #f5f5f5;
+    }
 
-.form-signin {
-  width: 100%;
-  max-width: 330px;
-  padding: 15px;
-  margin: auto;
-}
+    .form-signin {
+        width: 100%;
+        max-width: 330px;
+        padding: 15px;
+        margin: auto;
+    }
 
-.form-signin .form-control {
-  position: relative;
-  box-sizing: border-box;
-  height: auto;
-  padding: 10px;
-  font-size: 16px;
-}
+    .form-signin .form-control {
+        position: relative;
+        box-sizing: border-box;
+        height: auto;
+        padding: 10px;
+        font-size: 16px;
+    }
 
-.form-signin input[type="text"] {
-  margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
+    .form-signin input[type="text"] {
+        margin-bottom: -1px;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
 
-.form-signin input[type="password"] {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}</style>
+    .form-signin input[type="password"] {
+        margin-bottom: 10px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+
+    .form-signin .id {
+        margin-top: 10px;
+    }
+
+    .form-signin .btn {
+        margin-top: 10px;
+    }
+</style>
 </head>
 
 <body class="text-center">
@@ -63,9 +69,8 @@ body {
     <input type="text" id="username" name="username" th:value="${result}" class="form-control" placeholder="Username" required autofocus>
     <label for="inputPassword" class="sr-only">Password</label>
     <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
-    <a th:href="@{/user/availability/find-id}">아이디 찾기</a>
-
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    <a th:href="@{/user/availability/find-id}" class="id">아이디 찾기</a>
+    <button class="btn btn-lg btn-primary btn-block">Sign in</button>
 </form>
 </body>
 </html>
