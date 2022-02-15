@@ -16,7 +16,9 @@
             let id=document.getElementById('postId').value;
             let isDelete=confirm("정말 삭제하시겠습니까?");
             if(isDelete){
-                window.location.href="/post/delete/"+id;
+                return true;
+            }else{
+                return false;
             }
         }
     </script>
@@ -52,8 +54,8 @@
             </div>
         </form>
         <div style="float:left;">
-            <form th:action="@{'/post/delete/'+${post.id}}" th:method="delete">
-                <button class="btn btn-primary" onclick="deletePost();">삭제</button>
+            <form th:action="@{'/post/delete/'+${post.id}}" th:method="delete" onsubmit="return deletePost()">
+                <button class="btn btn-primary">삭제</button>
             </form>
         </div>
     </div>
