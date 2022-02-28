@@ -3,6 +3,7 @@ package likelasttime.Bulletin.Board.Service;
 import likelasttime.Bulletin.Board.domain.posts.User;
 import likelasttime.Bulletin.Board.domain.posts.UserRequestDto;
 import org.springframework.validation.Errors;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,5 +21,6 @@ public interface UserService {
     void deleteAll();
     boolean checkUpdate(UserRequestDto userRequestDto, Long id);
     Optional<User> findUserId(User user);
+    boolean findPassword(String username, String mail);
 
 }

@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,5 +98,10 @@ public class UserServiceImpl implements UserService{
         Optional<User> result=userRepository.findByNameAndEmailAndPhone(name, email, phone);
 
         return result;
+    }
+
+    @Override
+    public boolean findPassword(String username, String mail){
+        return userRepository.existsByUsernameAndEmail(username, mail);
     }
 }
