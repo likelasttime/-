@@ -161,13 +161,35 @@ Spring Security를 이용해 로그인, 로그아웃을 구현했습니다.
 비밀번호는 PasswordEncoder 클래스를 이용해 암호화되어 데이터베이스에 저장됩니다.  
 Thymeleaf의 sec:authorize를 이용해서 표현식이 참일 때만 로그인과 회원가입 또는 로그아웃 버튼이 나타나게 했습니다. 
 </br>
-![login](https://user-images.githubusercontent.com/46569105/144176501-79830692-7e20-4a7b-bf52-8e4618247acd.gif)
+![login](https://user-images.githubusercontent.com/46569105/159108736-221c1824-2e31-4630-9eb1-a1770a864b5e.gif)
 </br>
 로그인
 
-![logout](https://user-images.githubusercontent.com/46569105/144176504-ba7653f3-93f2-42b4-b808-d5e46a7d9d18.gif)
+![logout](https://user-images.githubusercontent.com/46569105/159108738-5d82dfb3-f8cf-4ba6-87f3-c99cd159ad20.gif)
 </br>
 로그아웃  
+
+
+![id](https://user-images.githubusercontent.com/46569105/159108778-a2576ace-412f-48ad-96cc-6b16ab364631.gif)
+</br>
+아이디 찾기  
+```java
+Optional<User> findByNameAndEmailAndPhone(String name, String email, String phone);
+```
+이름, 메일, 연락처가 일치하는 사용자를 찾습니다.  
+아이디를 로그인 페이지에 자동으로 채워줍니다.  
+찾는 사용자가 없으면 "가입된 아이디가 없습니다" 메시지를 출력합니다.  
+
+![비번form](https://user-images.githubusercontent.com/46569105/159108977-5a2d78b5-6c66-422b-8f39-b7bfc7898b1b.png)
+비밀번호 찾기  
+```java
+boolean existsByUsernameAndEmail(String username, String mail);
+```
+아이디, 메일을 이용해 사용자를 찾습니다.  
+가입된 메일로 임시 비밀번호를 발송합니다.  
+데이터베이스에 저장된 비밀번호는 임시 비밀번호로 변경됩니다.  
+![메일](https://user-images.githubusercontent.com/46569105/159108979-85f7941c-184d-49d5-aad8-9ed3093559cd.png)
+
 
 ![회원가입](https://user-images.githubusercontent.com/46569105/149871638-80fc7ad3-18e4-479b-8bbf-dafcf76fda68.png)
 form 태그의 onsubmit 속성을 이용해 모든 유효성 검사를 통과해야 서버에 전송합니다.  
