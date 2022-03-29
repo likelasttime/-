@@ -48,14 +48,14 @@
                     내용 에러 메시지
                 </div>
             </div>
-            <div style="float:right;">
+            <div style="float:right;" th:with="username=${#authentication.name}">
                 <a type="button" class="btn btn-primary" th:href="@{/post}">취소</a>
-                <button class="btn btn-primary">수정</button>
+                <button class="btn btn-primary" th:if="${#strings.equals(post.author, username)}">수정</button>
             </div>
         </form>
-        <div style="float:left;">
+        <div style="float:left;" th:with="username=${#authentication.name}">
             <form th:action="@{'/post/delete/'+${post.id}}" th:method="delete" onsubmit="return deletePost()">
-                <button class="btn btn-primary">삭제</button>
+                <button class="btn btn-primary" th:if="${#strings.equals(post.author, username)}">삭제</button>
             </form>
         </div>
     </div>

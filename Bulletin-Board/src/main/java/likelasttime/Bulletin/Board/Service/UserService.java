@@ -22,5 +22,6 @@ public interface UserService {
     boolean checkUpdate(UserRequestDto userRequestDto, Long id);
     Optional<User> findUserId(User user);
     boolean findPassword(String username, String mail);
+    String getUserId();
 
 }

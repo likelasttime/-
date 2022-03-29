@@ -5,6 +5,8 @@ import likelasttime.Bulletin.Board.domain.posts.Role;
 import likelasttime.Bulletin.Board.domain.posts.User;
 import likelasttime.Bulletin.Board.domain.posts.UserRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
@@ -103,5 +105,12 @@ public class UserServiceImpl implements UserService{
     @Override
     public boolean findPassword(String username, String mail){
         return userRepository.existsByUsernameAndEmail(username, mail);
+    }
+
+    @Override
+    public String getUserId(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id=authentication.getName(); // 로그인한 유저 id
+        return id;
     }
 }

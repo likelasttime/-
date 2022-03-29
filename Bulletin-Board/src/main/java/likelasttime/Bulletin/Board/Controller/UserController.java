@@ -92,8 +92,7 @@ public class UserController {
 
     @GetMapping("/form")      // 개인정보 수정
     public String updateForm(Model model){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String id=authentication.getName(); // 로그인한 유저 id
+        String id=userService.getUserId(); // 로그인한 유저 id
         model.addAttribute("userDto", userService.findByUsername(id).get());
         return "/user/updateForm";
     }
