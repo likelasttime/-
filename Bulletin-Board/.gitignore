@@ -11,6 +11,13 @@
 .settings
 .springBeans
 
+### Java template ###
+*.class
+
+### Package Files ###
+*.war
+*.ear
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
