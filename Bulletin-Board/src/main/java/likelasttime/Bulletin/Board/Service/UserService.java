@@ -23,5 +23,6 @@ public interface UserService {
     Optional<User> findUserId(User user);
     boolean findPassword(String username, String mail);
     String getUserId();
+    void deleteUser(Long id);
 
 }

@@ -4,8 +4,11 @@ import likelasttime.Bulletin.Board.domain.posts.Role;
 import likelasttime.Bulletin.Board.domain.posts.User;
 import likelasttime.Bulletin.Board.domain.posts.UserRequestDto;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
 import java.util.List;
@@ -287,5 +290,25 @@ public class UserServiceTest {
         assertTrue(result1.isPresent());        // 성공
         assertFalse(result2.isPresent());      // 실패
 
+    }
+
+    @Test
+    public void deleteUser(){
+        // given
+        User user1=new User();
+        user1.setUsername("spring00");
+        user1.setEmail("abc@naver.com");
+        user1.setEnabled(true);
+        user1.setName("스프링");
+        user1.setPassword("lovespring00!");
+        user1.setPhone("01012345678");
+        user1.setRoles(new ArrayList<Role>());
+
+        // when
+        userService.joinUser(user1);
+        userService.deleteUser(user1.getId());
+
+        // then
+        assertFalse(userService.findById(user1.getId()).isPresent());
     }
 }

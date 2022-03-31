@@ -113,4 +113,12 @@ public class UserServiceImpl implements UserService{
         String id=authentication.getName(); // 로그인한 유저 id
         return id;
     }
+
+    @Override
+    public void deleteUser(Long id){
+        Optional<User> user=userRepository.findById(id);
+        user.ifPresent(u -> {
+            userRepository.delete(u);
+        });
+    }
 }
