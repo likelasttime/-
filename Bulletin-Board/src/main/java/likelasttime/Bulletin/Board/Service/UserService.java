@@ -4,6 +4,7 @@ import likelasttime.Bulletin.Board.domain.posts.User;
 import likelasttime.Bulletin.Board.domain.posts.UserRequestDto;
 import org.springframework.validation.Errors;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +24,7 @@ public interface UserService {
     Optional<User> findUserId(User user);
     boolean findPassword(String username, String mail);
     String getUserId();
-    void deleteUser(Long id);
+    void deleteUser(String id);
+    void logout(HttpSession session);
 
 }

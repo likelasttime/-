@@ -16,6 +16,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.PrintWriter;
 import java.util.Map;
@@ -181,6 +182,19 @@ public class UserController {
         LOG.info("비밀번호 찾기 : 메일 발송");
 
         return "/user/login";
+    }
+
+    @GetMapping("/delete")
+    public String deleteForm(){
+        return "/user/deleteForm";
+    }
+
+    @PostMapping("/delete")
+    public String deleteUser(HttpSession session){
+        String userId=userService.getUserId();
+        userService.deleteUser(userId);
+        userService.logout(session);
+        return "redirect:/";
     }
 
 }

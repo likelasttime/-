@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,10 +116,16 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void deleteUser(Long id){
-        Optional<User> user=userRepository.findById(id);
+    public void deleteUser(String id){
+        Optional<User> user=userRepository.findByUsername(id);
         user.ifPresent(u -> {
             userRepository.delete(u);
         });
+    }
+
+    @Override
+    public void logout(HttpSession session){
+        session.removeAttribute("user");  // 로그아웃
+        session.invalidate();
     }
 }
