@@ -306,7 +306,7 @@ public class UserServiceTest {
 
         // when
         userService.joinUser(user1);
-        userService.deleteUser(user1.getId());
+        userService.deleteUser(user1.getUsername());
 
         // then
         assertFalse(userService.findById(user1.getId()).isPresent());
