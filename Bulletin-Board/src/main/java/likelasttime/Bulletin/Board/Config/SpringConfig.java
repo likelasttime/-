@@ -4,6 +4,8 @@ import likelasttime.Bulletin.Board.Repository.PostRepository;
 import likelasttime.Bulletin.Board.Repository.UserRepository;
 import likelasttime.Bulletin.Board.Service.PostServiceImpl;
 import likelasttime.Bulletin.Board.Service.UserServiceImpl;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,11 +26,23 @@ public class SpringConfig {
 
     @Bean
     public PostServiceImpl postService(){
-        return new PostServiceImpl(postRepository);
+        return new PostServiceImpl(postRepository, modelMapper());
     }
 
     @Bean
     public UserServiceImpl userService(){
         return new UserServiceImpl(passwordEncoder, userRepository);
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setSkipNullEnabled(true)
+                .setFieldMatchingEnabled(true)
+                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
+        ;
+        return modelMapper;
     }
 }

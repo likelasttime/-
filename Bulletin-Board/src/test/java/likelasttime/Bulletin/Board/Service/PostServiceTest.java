@@ -1,6 +1,7 @@
 package likelasttime.Bulletin.Board.Service;
 
 import likelasttime.Bulletin.Board.domain.posts.Post;
+import likelasttime.Bulletin.Board.domain.posts.PostRequestDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,31 +25,31 @@ class PostServiceTest {
     @Test
     public void create(){
         //given
-        Post post=new Post();
+        PostRequestDto post=new PostRequestDto();
         post.setTitle("spring");
         post.setAuthor("iu");
         post.setContent("안녕");
 
         //when
-        postService.create(post);
+        Post post_object=postService.create(post);
 
         //then
-        Post findPost=postService.findById(post.getId()).get();
-        assertThat(post.getTitle()).isEqualTo(findPost.getTitle());
-        assertThat(post.getAuthor()).isEqualTo(findPost.getAuthor());
-        assertThat(post.getContent()).isEqualTo(findPost.getContent());
+        Post findPost=postService.findById(post_object.getId()).get();
+        assertThat(post_object.getTitle()).isEqualTo(findPost.getTitle());
+        assertThat(post_object.getAuthor()).isEqualTo(findPost.getAuthor());
+        assertThat(post_object.getContent()).isEqualTo(findPost.getContent());
     }
 
     @Test
     public void findAll() {
         //given
-        Post post1=new Post();
+        PostRequestDto post1=new PostRequestDto();
         post1.setTitle("Spring1");
-        postService.create(post1);
+        Post post_object1=postService.create(post1);
 
-        Post post2=new Post();
+        PostRequestDto post2=new PostRequestDto();
         post2.setTitle("Spring2");
-        postService.create(post2);
+        Post post_object2=postService.create(post2);
 
         Pageable pageable= PageRequest.of(0,5);
 
@@ -62,12 +63,12 @@ class PostServiceTest {
     @Test
     public void findById(){
         // given
-        Post post=new Post();
+        PostRequestDto post=new PostRequestDto();
         post.setTitle("Spring");
-        postService.create(post);
+        Post post_object=postService.create(post);
 
         // when
-        Post result=postService.findById(post.getId()).get();
+        Post result=postService.findById(post_object.getId()).get();
 
         // then
         assertThat(result.getTitle()).isEqualTo("Spring");
@@ -77,32 +78,31 @@ class PostServiceTest {
     @Test
     public void update(){
         // given
-        Post post=new Post();
+        PostRequestDto post=new PostRequestDto();
         post.setTitle("Spring1");
         post.setContent("hello");
-        postService.create(post);
+        Post post_object1=postService.create(post);
 
         // when
-        post.setTitle("Spring2");   // 수정
-        postService.create(post);
+        post.setTitle("Spring2");
+        Post post_object2=postService.update(post_object1.getId(), post);
 
         // then
-        Post result=postService.findById(post.getId()).get();
-        assertThat(result.getTitle()).isEqualTo("Spring2");
-        assertThat(result.getContent()).isEqualTo("hello");
-        assertThat(result.getView()).isEqualTo(0);
+        assertThat(post_object2.getTitle()).isEqualTo("Spring2");
+        assertThat(post_object2.getContent()).isEqualTo("hello");
+        assertThat(post_object2.getView()).isEqualTo(0);
 
     }
 
     @Test
     public void deletePost(){
         // given
-        Post post=new Post();
+        PostRequestDto post=new PostRequestDto();
         post.setTitle("Spring");
-        postService.create(post);
+        Post post_object=postService.create(post);
 
         // when
-        postService.deletePost(post.getId());
+        postService.deletePost(post_object.getId());
 
         // then
         List<Post> all_post=postService.findAll();
@@ -112,26 +112,26 @@ class PostServiceTest {
     @Test
     public void updateView(){
         // given
-        Post post=new Post();
+        PostRequestDto post=new PostRequestDto();
         post.setTitle("spring");
-        postService.create(post);
+        Post post_object=postService.create(post);
 
         // when
-        postService.updateView(post.getId());
+        postService.updateView(post_object.getId());
 
         // then
-        Post result=postService.findById(post.getId()).get();
+        Post result=postService.findById(post_object.getId()).get();
         assertThat(result.getView()).isEqualTo(1);
     }
 
     @Test
     public void search(){
         // given
-        Post post=new Post();
+        PostRequestDto post=new PostRequestDto();
         post.setTitle("hello");
         post.setContent("I like ..");
         post.setAuthor("ju");
-        postService.create(post);
+        Post post_object=postService.create(post);
 
         String keyword="ju";
         Pageable pageable= PageRequest.of(0,5);
