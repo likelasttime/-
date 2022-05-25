@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <div th:replace="fragments/common :: head('게시판')"></div>
     <style>
@@ -10,6 +10,7 @@
         h2 {
             margin-bottom: 10px;
         }
+
     </style>
 </head>
 
@@ -22,16 +23,14 @@
         <input type="hidden" th:field="*{id}">
         <div class="form-group">
             <label for="title">제목</label>
-            <input type="text" class="form-control"
-                   th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'" id="title" th:field="*{title}">
+            <input type="text" class="form-control" id="title" th:field="*{title}" maxlength='30' required>
             <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
                 제목 에러 메시지
             </div>
         </div>
         <div class="form-group">
             <label for="content">내용</label>
-            <textarea class="form-control" id="content" rows="3" th:field="*{content}"
-                      th:classappend="${#fields.hasErrors('content')} ? 'is-invalid'"></textarea>
+            <textarea class="form-control" id="content" rows="3" th:field="*{content}" maxlength="10000" required></textarea>
             <div class="invalid-feedback" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
                 내용 에러 메시지
             </div>

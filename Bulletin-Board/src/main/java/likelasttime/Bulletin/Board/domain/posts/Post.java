@@ -1,13 +1,12 @@
 package likelasttime.Bulletin.Board.domain.posts;
 
-import javax.validation.constraints.NotNull;
+
 import likelasttime.Bulletin.Board.Repository.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -18,9 +17,7 @@ public class Post extends BaseTimeEntity {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     @Column(nullable=false)
-    @Size(min=2, max=30, message="제목은 2자이상 30자 이하입니다.")
     private String title;
 
     @Column(columnDefinition="TEXT")

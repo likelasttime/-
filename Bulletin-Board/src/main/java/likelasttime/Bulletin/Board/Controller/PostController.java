@@ -2,7 +2,6 @@ package likelasttime.Bulletin.Board.Controller;
 
 import likelasttime.Bulletin.Board.Service.PostServiceImpl;
 import likelasttime.Bulletin.Board.domain.posts.*;
-import likelasttime.Bulletin.Board.validator.PostValidator;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 
@@ -24,7 +23,6 @@ import javax.validation.Valid;
 @RequestMapping(path="/post")
 public class PostController {
     private final PostServiceImpl postService;
-    private final PostValidator postValidator;
     private final ModelMapper modelMapper;
 
     @GetMapping("/new")
@@ -34,8 +32,7 @@ public class PostController {
     }
 
     @PostMapping("/new")
-    public String create(@Valid PostRequestDto post, BindingResult bindingResult) {
-        postValidator.validate(post, bindingResult);
+    public String create(@ModelAttribute("post") @Valid PostRequestDto post, BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
             return "post/createPostForm";
         }
@@ -81,8 +78,8 @@ public class PostController {
 
     // 수정
     @PutMapping("/detail/{id}")
-    public String greetingSubmit(@PathVariable("id") Long id, @Valid PostRequestDto post, BindingResult bindingResult){
-        postValidator.validate(post, bindingResult);
+    public String greetingSubmit(@PathVariable("id") Long id, @ModelAttribute("post") @Valid PostRequestDto post, BindingResult bindingResult){
+        post.setAuthor(((postService.findById(id).get()).getAuthor()));     // 작성자
         if(bindingResult.hasErrors()){
             return "post/detail";
         }

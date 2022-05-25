@@ -21,6 +21,28 @@
                 return false;
             }
         }
+
+        function updatePost(){
+            let id=document.getElementById('postId').value;
+            let isUpdate=confirm("정말 수정하시겠습니까?");
+            if(isUpdate){
+                window.location.href="/post/edit/"+id;
+            }
+        }
+
+        function updateComment() {
+            var commentBean={
+                content: $("#commentContent").val()
+            };
+            $.ajax({
+                url: "/comment/write",
+                type: "POST",
+                data: commentBean
+            })
+            .done(function(fragment) {
+                $('#commentTable').replaceWith(fragment);
+            });
+        }
     </script>
 </head>
 
@@ -35,7 +57,7 @@
             <div class="form-group">
                 <label for="title">제목</label>
                 <input type="text" class="form-control"
-                       th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'" id="title" th:field="*{title}">
+                       th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'" id="title" th:field="*{title}" required>
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
                     제목 에러 메시지
                 </div>
@@ -43,14 +65,14 @@
             <div class="form-group">
                 <label for="content">내용</label>
                 <textarea class="form-control" id="content" rows="3" th:field="*{content}"
-                          th:classappend="${#fields.hasErrors('content')} ? 'is-invalid'"></textarea>
+                          th:classappend="${#fields.hasErrors('content')} ? 'is-invalid'" required></textarea>
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
                     내용 에러 메시지
                 </div>
             </div>
             <div style="float:right;" th:with="username=${#authentication.name}">
                 <a type="button" class="btn btn-primary" th:href="@{/post}">취소</a>
-                <button class="btn btn-primary" th:if="${#strings.equals(post.author, username)}">수정</button>
+                <button class="btn btn-primary" th:if="${#strings.equals(post.author, username)}" onclick="updatePost();">수정</button>
             </div>
         </form>
         <div style="float:left;" th:with="username=${#authentication.name}">
@@ -58,6 +80,34 @@
                 <button class="btn btn-primary" th:if="${#strings.equals(post.author, username)}">삭제</button>
             </form>
         </div>
+
+        <br/>
+        <div class="card">
+            <div class="card-header bi bi-char-right-dots"> Write a Comment</div>
+            <form method="POST" onsubmit="return checkComment(event)">
+                <input type="hidden" id="post_id" th:value="${post.id}">
+                <div class="card-body">
+                    <textarea id="comment" class="form-control" rows="4" placeholder="댓글을 입력하세요"></textarea>
+                </div>
+                <div class="card-footer">
+                    <input type="button" id="btn-comment-save"class="btn btn-outline-primary bi bi-pencil-square" onclick="return checkComment(event)" value="등록">
+                </div>
+
+
+                <!--<input type="text" id="comment" name="comment">
+                <input type="button" onclick="return checkComment(event)" value="comment_save">
+                -->
+            </form>
+        </div>
+
+        <div id="commentTable">
+            <div th:each="comment:${commentList}">
+                <form method="post">
+                    <div th:text="${comment.comment}"></div>
+                </form>
+            </div>
+        </div>
+
     </div>
 </body>
 </html>
