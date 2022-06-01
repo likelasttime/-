@@ -30,12 +30,15 @@
             }
         }
 
+
+
         function updateComment() {
             var commentBean={
                 content: $("#commentContent").val()
             };
             $.ajax({
                 url: "/comment/write",
+                contentType: 'application/json',
                 type: "POST",
                 data: commentBean
             })
@@ -84,19 +87,14 @@
         <br/>
         <div class="card">
             <div class="card-header bi bi-char-right-dots"> Write a Comment</div>
-            <form method="POST" onsubmit="return checkComment(event)">
-                <input type="hidden" id="post_id" th:value="${post.id}">
+            <form method="POST" onsubmit="return checkComment(event)" th:action="@{/comment/write}">
+                <input type="hidden" id="post_id" name="post_id" th:value="${post.id}">
                 <div class="card-body">
-                    <textarea id="comment" class="form-control" rows="4" placeholder="댓글을 입력하세요"></textarea>
+                    <textarea id="reply" name="reply" class="form-control" rows="4" placeholder="댓글을 입력하세요"></textarea>
                 </div>
                 <div class="card-footer">
-                    <input type="button" id="btn-comment-save"class="btn btn-outline-primary bi bi-pencil-square" onclick="return checkComment(event)" value="등록">
+                    <button id="btn-comment-save"class="btn btn-outline-primary bi bi-pencil-square">등록</button>
                 </div>
-
-
-                <!--<input type="text" id="comment" name="comment">
-                <input type="button" onclick="return checkComment(event)" value="comment_save">
-                -->
             </form>
         </div>
 
