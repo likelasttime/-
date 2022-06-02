@@ -99,10 +99,12 @@
         </div>
 
         <div id="commentTable">
-            <div th:each="comment:${commentList}">
+            <div th:each="comment:${commentList}" class="card">
                 <form method="post">
-                    <div th:text="${comment.comment}"></div>
+                    <span th:text="${comment.user_name}"> 작성자 </span>
+                    <span th:text="${#temporals.format(comment.createdDate, 'yyyy-MM-dd HH:mm')}"> 날짜 </span>
                 </form>
+                <div th:text="${comment.comment}">댓글</div>
             </div>
         </div>
 
