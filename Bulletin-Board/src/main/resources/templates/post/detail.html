@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
     <div th:replace="fragments/common :: head('게시판')"> </div>
     <style>
         .container {
@@ -85,8 +86,9 @@
         </div>
 
         <br/>
-        <div class="card">
-            <div class="card-header bi bi-char-right-dots"> Write a Comment</div>
+        <br/>
+        <div class="card w-100">
+            <div class="card-header bi bi-chat-right-dots"> Write a Comment</div>
             <form method="POST" onsubmit="return checkComment(event)" th:action="@{/comment/write}">
                 <input type="hidden" id="post_id" name="post_id" th:value="${post.id}">
                 <div class="card-body">
@@ -97,14 +99,19 @@
                 </div>
             </form>
         </div>
-
+        </br>
         <div id="commentTable">
+            <div class="card-header bi bi-chat-dots"> Comments</div>
             <div th:each="comment:${commentList}" class="card">
-                <form method="post">
-                    <span th:text="${comment.user_name}"> 작성자 </span>
-                    <span th:text="${#temporals.format(comment.createdDate, 'yyyy-MM-dd HH:mm')}"> 날짜 </span>
-                </form>
-                <div th:text="${comment.comment}">댓글</div>
+                <ul class="list-group-flush">
+                    <li class="list-group-item">
+                        <form method="post">
+                            <span th:text="${comment.user_name}" style="font-size: small"> 작성자 </span>
+                            <span th:text="${#temporals.format(comment.createdDate, 'yyyy-MM-dd HH:mm')}" style="font-size: xx-small"> 날짜 </span>
+                            <div th:text="${comment.comment}">댓글</div>
+                        </form>
+                    </li>
+                </ul>
             </div>
         </div>
 
