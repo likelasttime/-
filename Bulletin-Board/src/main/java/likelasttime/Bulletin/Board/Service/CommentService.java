@@ -35,4 +35,13 @@ public class CommentService {
 
         return comment_entity.getId();
     }
+
+    public void update(Long id, String content) {
+        Comment comment=commentRepository.findById(id).get();
+        comment.update(content);
+    }
+
+    public void delete(Long id) {
+        commentRepository.deleteById(id);
+    }
 }

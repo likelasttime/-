@@ -24,4 +24,8 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name="user_id")
     private User user;
 
+    public void update(String comment) {
+        this.comment=comment;
+    }
+
 }
