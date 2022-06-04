@@ -31,10 +31,12 @@ public class CommentController {
     }
 
     // 삭제
-    @DeleteMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id, @RequestParam("post_id") Long post_id) {
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Long id, @RequestBody Map<String, String> map) {
+        Long post_id=Long.parseLong(map.get("post_id"));        // 게시글 번호
         commentService.delete(id);
         return "redirect:/post/detail/" + post_id;
     }
+
 
 }
