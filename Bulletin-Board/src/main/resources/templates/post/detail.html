@@ -119,6 +119,10 @@
             document.getElementById("btnCommentDelete").setAttribute("onclick", "deleteComment("+ idx +")");
 
 	}
+
+	function hideModal() {
+	    $("#commentModal").modal("hide");
+	}
     </script>
 </head>
 
@@ -163,7 +167,7 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="hideModal();">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -180,7 +184,7 @@
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="btnModalCancel" class="btn btn-default waves-effect waves-light" data-dismiss="modal">취소하기</button>
+                            <button type="button" id="btnModalCancel" class="btn btn-default waves-effect waves-light" data-dismiss="modal" onclick="hideModal();">취소하기</button>
                             <button type="button" id="btnCommentUpdate" class="btn btn-primary waves-effect waves-light" onclick="updateComment()">수정하기</button>
                             <button type="button" id="btnCommentDelete" class="btn btn-danger waves-effect waves-light" onclick="deleteComment()">삭제하기</button>
                         </div>
