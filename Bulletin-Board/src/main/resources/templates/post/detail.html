@@ -78,11 +78,11 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
             }
 
             var content = document.getElementById("modalContent");
-            var post_id=document.getElementById("postId");
+            var commentMsg=document.getElementById("check_comment");
 
             var uri = "/comment/update/" + idx;
             var headers = {"Content-Type": "application/json", "X-HTTP-Method-Override" : "PUT"};
-            var params = {"id" : idx, "comment" : content.value, "post_id" : post_id.value};
+            var params = {"comment" : content.value};
 
             $.ajax({
                 url: uri,
@@ -90,14 +90,12 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
                 headers: headers,
                 data: JSON.stringify(params),
                 success: function(response) {
-                    /*
-                    if (response.result == false) {
-                        alert("댓글 수정에 실패하였습니다.");
-                        return false;
-                    }*/
-
-                    window.location.reload();
-                    $("#commentModal").modal("hide");
+                    if (response.blank == true) {
+                        commentMsg.innerHTML="댓글을 작성해주세요.";
+                    }else {         // 댓글 수정 완료
+                        window.location.reload();
+                        $("#commentModal").modal("hide");
+                    }
                 },
                 error: function(xhr, status, error) {
                     alert("에러가 발생하였습니다." + error + status);
@@ -181,14 +179,15 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form>
+                            <form method="POST" th:action="@{/comment/write}">
                                 <div class="form-group">
                                     <label for="modalWriter" class="col-form-label">작성자</label>
                                     <input type="text" id="modalWriter" class="form-control" disabled/>
                                 </div>
                                 <div class="form-group">
                                     <label for="modalContent" class="col-form-label">내용</label>
-                                    <textarea id="modalContent" class="form-control" placeholder="내용을 입력해 주세요."></textarea>
+                                    <textarea id="modalContent" class="form-control" placeholder="내용을 입력해주세요."></textarea>
+                                    <div id="check_comment" class="text-danger"></div>
                                 </div>
                             </form>
                         </div>

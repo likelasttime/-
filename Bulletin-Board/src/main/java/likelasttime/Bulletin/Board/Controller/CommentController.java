@@ -2,10 +2,7 @@ package likelasttime.Bulletin.Board.Controller;
 
 import likelasttime.Bulletin.Board.Service.CommentService;
 import likelasttime.Bulletin.Board.Service.PostService;
-import likelasttime.Bulletin.Board.domain.posts.CommentRequestDto;
-import likelasttime.Bulletin.Board.domain.posts.CommentResponseDto;
-import likelasttime.Bulletin.Board.domain.posts.Post;
-import likelasttime.Bulletin.Board.domain.posts.PostResponseDto;
+import likelasttime.Bulletin.Board.domain.posts.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
@@ -51,10 +48,18 @@ public class CommentController {
 
     // 수정
     @PutMapping("/update/{id}")
-    public String update_comment(@PathVariable(value="id") Long comment_id, @RequestBody Map<String, String> map){
-        Long post_id=Long.parseLong(map.get("post_id"));        // 게시글 번호
-        commentService.update(comment_id, map.get("comment"));
-        return "redirect:/post/detail/" + post_id;
+    @ResponseBody
+    public Result update_comment(@PathVariable(value="id") Long comment_id,
+                                 @RequestBody Map<String, String> map){
+        Result result=new Result();
+        String comment=map.get("comment");
+        if (comment.isBlank()){
+            result.setBlank(true);
+            return result;
+        }
+        result.setBlank(false);
+        commentService.update(comment_id, comment);
+        return result;
     }
 
     // 삭제
