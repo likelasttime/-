@@ -75,6 +75,7 @@ public class PostController {
                     .post(post)
                     .build();
             model.addAttribute("post", postResponseDto);
+            model.addAttribute("commentRequestDto", new CommentRequestDto());
             List<CommentResponseDto> comments=postResponseDto.getComment();
             if(comments != null && !comments.isEmpty()){
                 model.addAttribute("commentList", comments);
@@ -85,10 +86,12 @@ public class PostController {
 
     // 수정
     @PutMapping("/detail/{id}")
-    public String greetingSubmit(@PathVariable("id") Long id, @ModelAttribute("post") @Valid PostRequestDto post, BindingResult bindingResult){
+    public String greetingSubmit(@PathVariable("id") Long id,
+                                 @ModelAttribute("post") @Valid PostRequestDto post,
+                                 BindingResult bindingResult){
         post.setAuthor(((postService.findById(id).get()).getAuthor()));     // 작성자
         if(bindingResult.hasErrors()){
-            return "post/detail";
+            return "/post/detail";
         }
         postService.update(id, post);
         return "redirect:/post";

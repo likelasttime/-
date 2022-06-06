@@ -13,7 +13,6 @@
         }
     </style>
     <script>
-    /*
         function deletePost(){
             let id=document.getElementById('postId').value;
             let isDelete=confirm("정말 삭제하시겠습니까?");
@@ -22,33 +21,27 @@
             }else{
                 return false;
             }
-        }*/
+        }
 
-        function deletePost(){
+        /*function deletePost(){
             let id=document.getElementById('postId').value;
             let isDelete=confirm("정말 삭제하시겠습니까?");
             if(isDelete){
                 window.location.href="/post/delete/"+id;
             }
         }
+        There was an unexpected error (type=Method Not Allowed, status=405).
+Request method 'GET' not supported
+org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' not supported
+        */
 
         function updatePost(){
             let id=document.getElementById('postId').value;
             let isUpdate=confirm("정말 수정하시겠습니까?");
             if(isUpdate){
-                window.location.href="/post/edit/"+id;
+                window.location.href="/post/detail/"+id;
             }
         }
-        /*
-        function deleteComment(idx){
-            //let id=document.getElementById('postId').value;
-            let isDelete=confirm("정말 삭제하시겠습니까?");
-            if(isDelete){
-                return true;
-            }else{
-                return false;
-            }
-        }*/
 
         function deleteComment(idx){
             if(!confirm('댓글을 삭제하시겠어요?')) {
@@ -77,9 +70,13 @@
         }
 
         function updateComment(idx) {
+            if(!isValid("modalContent")) {
+                return false;
+            }
             if(!confirm('댓글을 수정하시겠어요?')) {
                 return false;
             }
+
             var content = document.getElementById("modalContent");
             var post_id=document.getElementById("postId");
 
@@ -123,6 +120,18 @@
 	function hideModal() {
 	    $("#commentModal").modal("hide");
 	}
+
+	function isValid(value) {
+	    const content=document.getElementById(value);
+
+	    if (!content.value.trim()) {
+	        alert('댓글을 입력하세요.');
+	        content.focus();
+	        return false;
+	    }
+
+	    return true;
+	}
     </script>
 </head>
 
@@ -138,7 +147,7 @@
                 <label for="title">제목</label>
                 <input type="text" class="form-control"
                        th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'" id="title" th:field="*{title}" required>
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
+                <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
                     제목 에러 메시지
                 </div>
             </div>
@@ -146,7 +155,7 @@
                 <label for="content">내용</label>
                 <textarea class="form-control" id="content" rows="3" th:field="*{content}"
                           th:classappend="${#fields.hasErrors('content')} ? 'is-invalid'" required></textarea>
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
+                <div class="text-danger" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
                     내용 에러 메시지
                 </div>
             </div>
@@ -197,13 +206,14 @@
         <br/>
         <div class="card w-100">
             <div class="card-header bi bi-chat-right-dots"> Write a Comment</div>
-            <form method="POST" onsubmit="return checkComment(event)" th:action="@{/comment/write}">
+            <form method="POST" th:action="@{/comment/write}" th:object="${commentRequestDto}">
                 <input type="hidden" id="post_id" name="post_id" th:value="${post.id}">
                 <div class="card-body">
-                    <textarea id="reply" name="reply" class="form-control" rows="4" placeholder="댓글을 입력하세요"></textarea>
+                    <textarea id="reply" name="reply" class="form-control" th:field="*{comment}" rows="4" placeholder="댓글을 입력하세요"></textarea>
+                    <span class="text-danger" th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}"></span>
                 </div>
                 <div class="card-footer">
-                    <button id="btn-comment-save"class="btn btn-outline-primary bi bi-pencil-square">등록</button>
+                    <button id="btn-comment-save" onclick="return isValid('reply');" class="btn btn-outline-primary bi bi-pencil-square">등록</button>
                 </div>
             </form>
         </div>
@@ -224,7 +234,6 @@
                 </ul>
             </div>
         </div>
-
     </div>
 </body>
 </html>

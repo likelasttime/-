@@ -1,12 +1,21 @@
 package likelasttime.Bulletin.Board.Controller;
 
 import likelasttime.Bulletin.Board.Service.CommentService;
+import likelasttime.Bulletin.Board.Service.PostService;
+import likelasttime.Bulletin.Board.domain.posts.CommentRequestDto;
+import likelasttime.Bulletin.Board.domain.posts.CommentResponseDto;
+import likelasttime.Bulletin.Board.domain.posts.Post;
+import likelasttime.Bulletin.Board.domain.posts.PostResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -15,10 +24,28 @@ import java.util.Map;
 public class CommentController {
     private final CommentService commentService;
     private final ModelMapper modelMapper;
+    private final PostService postService;
 
     @PostMapping("/write")
-    public String create(@RequestParam("post_id") Long post_id, @RequestParam("reply") String content, Principal principal){
-        commentService.commentSave(principal.getName(), post_id, content);
+    public String create(@RequestParam("post_id") Long post_id,
+                         @ModelAttribute("commentRequestDto") @Valid CommentRequestDto commentRequestDto,
+                         BindingResult bindingResult,
+                         Principal principal,
+                         Model model
+                         ){
+        if(bindingResult.hasErrors()){
+            Post post=postService.findById(post_id).get();
+            PostResponseDto postResponseDto=PostResponseDto.builder()
+                    .post(post)
+                    .build();
+            model.addAttribute("post", postResponseDto);
+            List<CommentResponseDto> comments=postResponseDto.getComment();
+            if(comments != null && !comments.isEmpty()){
+                model.addAttribute("commentList", comments);
+            }
+            return "post/detail";
+        }
+        commentService.commentSave(principal.getName(), post_id, commentRequestDto.getComment());
         return "redirect:/post/detail/" + post_id;
     }
 
