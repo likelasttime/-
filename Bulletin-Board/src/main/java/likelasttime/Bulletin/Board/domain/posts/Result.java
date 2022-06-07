@@ -7,4 +7,5 @@ import lombok.Setter;
 @Getter
 public class Result {
     boolean isBlank;
+    boolean isMax;
 }

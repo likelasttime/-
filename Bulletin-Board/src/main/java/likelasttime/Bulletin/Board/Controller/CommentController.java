@@ -56,8 +56,12 @@ public class CommentController {
         if (comment.isBlank()){
             result.setBlank(true);
             return result;
+        }else if (comment.length() > 10000) {
+            result.setMax(true);
+            return result;
         }
         result.setBlank(false);
+        result.setMax(false);
         commentService.update(comment_id, comment);
         return result;
     }

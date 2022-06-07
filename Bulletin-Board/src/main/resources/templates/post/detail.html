@@ -92,6 +92,8 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
                 success: function(response) {
                     if (response.blank == true) {
                         commentMsg.innerHTML="댓글을 작성해주세요.";
+                    }else if (response.max == true) {
+                        commentMsg.innerHTML="10,000자 이하로 댓글을 작성하세요.";
                     }else {         // 댓글 수정 완료
                         window.location.reload();
                         $("#commentModal").modal("hide");
@@ -186,7 +188,7 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
                                 </div>
                                 <div class="form-group">
                                     <label for="modalContent" class="col-form-label">내용</label>
-                                    <textarea id="modalContent" class="form-control" placeholder="내용을 입력해주세요."></textarea>
+                                    <textarea id="modalContent" class="form-control" maxlength="10000" placeholder="내용을 입력해주세요."></textarea>
                                     <div id="check_comment" class="text-danger"></div>
                                 </div>
                             </form>
@@ -208,7 +210,7 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
             <form method="POST" th:action="@{/comment/write}" th:object="${commentRequestDto}">
                 <input type="hidden" id="post_id" name="post_id" th:value="${post.id}">
                 <div class="card-body">
-                    <textarea id="reply" name="reply" class="form-control" th:field="*{comment}" rows="4" placeholder="댓글을 입력하세요"></textarea>
+                    <textarea id="reply" name="reply" class="form-control" th:field="*{comment}" rows="4" maxlength="10000" placeholder="댓글을 입력하세요"></textarea>
                     <span class="text-danger" th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}"></span>
                 </div>
                 <div class="card-footer">
