@@ -75,7 +75,6 @@ public class PostController {
                     .post(post)
                     .build();
             model.addAttribute("post", postResponseDto);
-            model.addAttribute("commentRequestDto", new CommentRequestDto());
             List<CommentResponseDto> comments=postResponseDto.getComment();
             if(comments != null && !comments.isEmpty()){
                 model.addAttribute("commentList", comments);
