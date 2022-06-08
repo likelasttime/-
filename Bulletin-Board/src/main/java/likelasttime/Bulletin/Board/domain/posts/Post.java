@@ -28,6 +28,7 @@ public class Post extends BaseTimeEntity {
     private int view;
 
     @OneToMany(mappedBy="post", fetch=FetchType.EAGER, cascade=CascadeType.REMOVE)
+    @OrderBy("id desc")
     private List<Comment> comment;
 
     @Builder
