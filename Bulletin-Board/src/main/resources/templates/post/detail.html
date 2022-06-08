@@ -39,7 +39,9 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
             let id=document.getElementById('postId').value;
             let isUpdate=confirm("정말 수정하시겠습니까?");
             if(isUpdate){
-                window.location.href="/post/detail/"+id;
+                return true;
+            }else {
+                return false;
             }
         }
 
@@ -196,7 +198,7 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
             <div style="float:right;" th:with="username=${#authentication.name}">
                 <a type="button" class="btn btn-primary" th:href="@{/post}">취소</a>
                 <input type="hidden" name="_method" value="put"/>
-                <button type="button" class="btn btn-primary" th:if="${#strings.equals(post.author, username)}" onclick="updatePost();">수정</button>
+                <button type="submit" class="btn btn-primary" th:if="${#strings.equals(post.author, username)}" onclick="return updatePost();">수정</button>
             </div>
         </form>
         <div style="float:left;" th:with="username=${#authentication.name}">
