@@ -174,7 +174,7 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
 <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" th:replace="fragments/common :: menu('board')">
     </nav>
-    <div class="container">
+    <div class="container" th:with="username=${#authentication.name}">
         <h2>게시판✍️</h2>
         <form action="#" th:action="@{'/post/detail/' + ${post.id}}" th:object="${post}" method="post">
             <input type="hidden" name="_method" value="put">
@@ -195,13 +195,13 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
                     내용 에러 메시지
                 </div>
             </div>
-            <div style="float:right;" th:with="username=${#authentication.name}">
+            <div style="float:right;">
                 <a type="button" class="btn btn-primary" th:href="@{/post}">취소</a>
                 <input type="hidden" name="_method" value="put"/>
                 <button type="submit" class="btn btn-primary" th:if="${#strings.equals(post.author, username)}" onclick="return updatePost();">수정</button>
             </div>
         </form>
-        <div style="float:left;" th:with="username=${#authentication.name}">
+        <div style="float:left;">
             <form th:method="delete">
                 <button type="button" class="btn btn-primary" th:if="${#strings.equals(post.author, username)}" onclick="deletePost();">삭제</button>
             </form>
@@ -257,7 +257,7 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
         </br>
         <div id="commentTable">
             <div class="card-header bi bi-chat-dots"> Comments</div>
-            <div th:each="comment:${commentList}" class="card" th:with="username=${#authentication.name}">
+            <div th:each="comment:${commentList}" class="card">
                 <ul class="list-group-flush">
                     <li class="list-group-item">
                         <form method="post">
@@ -265,7 +265,7 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
                             <span th:text="${#temporals.format(comment.createdDate, 'yyyy-MM-dd HH:mm')}" style="font-size: xx-small"> 날짜 </span>
                             </br>
                             <span th:text="${comment.comment}">댓글</span>
-                            <button type="button" th:attr="onclick=|openModal('${comment.id}', '${comment.user_name}', '${comment.comment}' )|" class="bi bi-pencil" style="float : right"></button>
+                            <button type="button" th:if="${#strings.equals(comment.user_name, username)}" th:attr="onclick=|openModal('${comment.id}', '${comment.user_name}', '${comment.comment}' )|" class="bi bi-pencil" style="float : right"></button>
                         </form>
                     </li>
                 </ul>
