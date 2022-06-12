@@ -23,18 +23,6 @@
             }
         }
 
-        /*function deletePost(){
-            let id=document.getElementById('postId').value;
-            let isDelete=confirm("정말 삭제하시겠습니까?");
-            if(isDelete){
-                window.location.href="/post/delete/"+id;
-            }
-        }
-        There was an unexpected error (type=Method Not Allowed, status=405).
-Request method 'GET' not supported
-org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' not supported
-        */
-
         function updatePost(){
             let id=document.getElementById('postId').value;
             let isUpdate=confirm("정말 수정하시겠습니까?");
@@ -202,8 +190,9 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
             </div>
         </form>
         <div style="float:left;">
-            <form th:method="delete">
-                <button type="button" class="btn btn-primary" th:if="${#strings.equals(post.author, username)}" onclick="deletePost();">삭제</button>
+            <form th:method="delete" th:action="@{'/post/delete/' + ${post.id}}">
+                <input type="hidden" name="_method" value="delete">
+                <button type="submit" class="btn btn-primary" th:if="${#strings.equals(post.author, username)}" onclick="deletePost();">삭제</button>
             </form>
         </div>
 
