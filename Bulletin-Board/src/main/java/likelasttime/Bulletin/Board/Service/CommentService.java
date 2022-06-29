@@ -10,6 +10,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -44,4 +46,11 @@ public class CommentService {
     public void delete(Long id) {
         commentRepository.deleteById(id);
     }
+
+    public void deleteAll(){commentRepository.deleteAll();}
+
+    public Comment findById(Long id){return commentRepository.findById(id).get();}
+
+    public List<Comment> findAll(){return commentRepository.findAll();}
+
 }
