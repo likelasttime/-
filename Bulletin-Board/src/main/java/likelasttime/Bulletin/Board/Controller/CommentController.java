@@ -59,7 +59,7 @@ public class CommentController {
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id, @RequestBody Map<String, String> map) {
         Long post_id=Long.parseLong(map.get("post_id"));        // 게시글 번호
-        commentService.delete(id);
+        commentService.delete(id, post_id);
         return "redirect:/post/detail/" + post_id;
     }
 

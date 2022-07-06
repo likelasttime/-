@@ -29,6 +29,6 @@ public class PostRequestDto {
 
     private LocalDateTime modifiedDate;
 
-    private List<CommentResponseDto> comments;
+    private int comment_cnt;
 
 }

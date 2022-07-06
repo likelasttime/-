@@ -25,7 +25,7 @@ public class CommentService {
         User user=userRepository.findByUsername(name).get();
         Post post=postRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("댓글 쓰기 실패: 해당 게시글이 존재하지 않습니다." + id));
-
+        post.update(post.getTitle(), post.getContent(), post.getView(), post.getComment_cnt() + 1);
         CommentRequestDto comment=CommentRequestDto.builder()
                 .comment(content)
                 .post(post)
@@ -43,7 +43,9 @@ public class CommentService {
         comment.update(content);
     }
 
-    public void delete(Long id) {
+    public void delete(Long id, Long post_id) {
+        Post post=postRepository.findById(post_id).get();
+        post.update(post.getTitle(), post.getContent(), post.getView(), post.getComment_cnt() - 1);
         commentRepository.deleteById(id);
     }
 

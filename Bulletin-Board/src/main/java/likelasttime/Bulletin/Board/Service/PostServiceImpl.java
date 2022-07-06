@@ -37,7 +37,7 @@ public class PostServiceImpl implements PostService{
     // 게시글 수정
     public Post update(Long id, PostRequestDto post){
         Post post_entity=postRepository.findById(id).get();
-        post_entity.update(post.getTitle(), post.getContent(), post_entity.getView());
+        post_entity.update(post.getTitle(), post.getContent(), post_entity.getView(), post_entity.getComment_cnt());
         return post_entity;
     }
 
@@ -59,7 +59,7 @@ public class PostServiceImpl implements PostService{
     // 조회수 증가
     public void updateView(Long id) {
         Post post=postRepository.findById(id).get();
-        post.update(post.getTitle(), post.getContent(), post.getView()+1);
+        post.update(post.getTitle(), post.getContent(), post.getView()+1, post.getComment_cnt());
     }
 
     // 검색
