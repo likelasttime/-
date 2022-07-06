@@ -68,41 +68,25 @@ updatable-false를 넣지 않았을 때는 게시글 수정시 null이 되는 �
 
 ### [🔝 ](#-2-1-게시글-작성)2-2. 전체 게시글 조회 및 상세보기
  
-![조회](https://user-images.githubusercontent.com/46569105/144240199-5ab6248e-bee3-4d2f-a18f-686967b31a3e.gif)
+![게시글상세보기](https://user-images.githubusercontent.com/46569105/173226386-3a29a74c-c081-4e2e-a35b-d0329a5c14fb.gif)  
 
 게시글 리스트에서 게시글 번호, 제목, 작성자, 작성일자, 조회수를 출력합니다.  
 상단 좌측에는 총 게시글 수를 나타냈습니다.  
-```java
- // 상세 게시판 조회
-    @GetMapping("/post/detail/{id}")
-    public String detail(@PathVariable("id") Long id, Model model) {
-        Post post = postService.findOne(id);
-        postService.updateView(id);     // 조회수 증가
-        model.addAttribute("post", post);
-        return "post/detail";
-    }
-```
-getView 메소드로 조회수를 가져오고 1을 더한 값을 멤버변수 view에 저장합니다.
 
 </br>
 
 ### [🔝 ](#-2-2-전체-게시글-조회-및-상세보기)2-3. 게시글 수정
 
-![수정](https://user-images.githubusercontent.com/46569105/144241987-db1eef4b-d77f-4755-aa3b-0f8ce64b94e4.gif)
+![게시글 수정](https://user-images.githubusercontent.com/46569105/173226389-ab0ef6b7-5f06-4e2a-bb47-628b9b48b86b.gif)  
 
-get 요청으로 받은 id로 게시글을 찾습니다.  
-updateForm.html을 반환해서 해당 게시글을 수정하는 페이지를 출력합니다.  
 JS로 수정 버튼을 클릭했을 때 메시지를 띄웁니다.  
-수정 버튼을 누르면 put 요청이 들어옵니다.  
-id 값을 이용해서 해당 게시글의 조회수를 찾아 저장합니다.  
-이 작업을 하지 않으면, 글 수정시 조회수가 0으로 초기화됩니다.
 게시글을 수정후 게시글 리스트 화면으로 이동합니다.
 
 </br>
 
 ### [🔝 ](#-2-3-게시글-수정)2-4. 글 삭제
 
-![삭제](https://user-images.githubusercontent.com/46569105/144241992-8fca9ce6-4b35-4282-8301-9b25f43d87f1.gif)
+![게시글 삭제](https://user-images.githubusercontent.com/46569105/173226392-05329c72-aa1d-489c-a51a-ea16e81109ee.gif)  
 
 상세보기에서 해당 글을 삭제할 수 있습니다.  
 id를 기준으로 게시글을 삭제합니다.  
@@ -135,24 +119,15 @@ Page<Post> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorC
 
 ### [🔝 ](#-2-6-검색)2-7. 조회수 
 
-```java
-@Modifying
-@Query("UPDATE Post p SET view=view+1 WHERE p.id=:id")
-int updateView(@Param("id") Long id);
-```  
-    
-다음과 같은 update 쿼리를 작성했습니다.  
 게시글 상세보기를 할 때만 조회수가 1씩 증가합니다.  
-postService의 updateView 메소드에서 조회수를 증가시키도록 아래와 같이 리팩토링하였습니다.  
-update 쿼리를 작성할 필요가 없다는 것을 알았습니다.  
 
 ```java
 // 조회수 증가
-public void updateView(Long id) {
-    Post post=postRepository.findById(id).get();
-    post.setView(post.getView()+1);
-    postRepository.save(post);
+    public void updateView(Long id) {
+        Post post=postRepository.findById(id).get();
+        post.update(post.getTitle(), post.getContent(), post.getView()+1);
     }
+
 ```
 
 </br>
@@ -318,7 +293,7 @@ Entity의 변경사항을 데이터베이스에 자동으로 반영하는 기능
 <br/>
 
 #### 댓글 삭제  
-![댓글 삭제](https://user-images.githubusercontent.com/46569105/173214266-27b8e5db-1463-4432-bcea-027b05ae2fe5.gif)
+![댓글 삭제](https://user-images.githubusercontent.com/46569105/173214266-27b8e5db-1463-4432-bcea-027b05ae2fe5.gif)  
 댓글을 삭제하기 전 알림창을 띄우고 true를 리턴받으면 POST 방식으로 요청을 보냅니다.  
 </br>
 
@@ -353,26 +328,7 @@ WebSecurityConfigurerAdapter를 상속받은 WebSecurityConfig에서 인증 없�
 
 </br>
 
-### 3-2. 게시글 수정 후 조회수 초기화 문제
-게시글 상세보기를 하면 조회수가 정상적으로 증가했지만, 게시글을 수정하고 나면 조회수가 0으로 초기화되었습니다.  
-디버그해보니 put 요청을 받았을 때 조회수가 0인 것을 알았습니다.  
-그 이유에 대해서 생각해보니 put 요청을 받았을 때 게시글 객체 post는 사용자가 수정한 데이터 form이었습니다.  
-게시글 상세보기에서 제목, 작성자, 내용만 화면에 출력했기 때문에 post로 데이터를 받았을 때 제목, 작성자, 내용만 가지고 있었습니다. 
-
-```java
-@PutMapping("/post/edit/{id}")
-    public String update(Post post, @PathVariable("id") Long id) {
-        int view=postService.findOne(id).getView();
-        post.setView(view);   // 조회수 저장
-        postService.join(post);
-        return "redirect:/post";
-    }
-```
-데이터베이스에 영속적으로 저장하기 전에 id로 해당 객체를 찾아 가져온 조회수를 저장했습니다.  
-
-</br>
-
-### 3-3. 게시글 수정을 put으로 처리하기
+### 3-2. 게시글 수정을 put으로 처리하기
 처음에 post로 요청을 받아 처리하는 @PostMapping을 사용했습니다.  
 글을 수정할 때는 post보다 멱등성이 있는 put으로 요청을 받아야 한다는 알게 되었습니다.  
 @PostMapping을 @PutMapping으로 바꾸기만 하면 될 줄 알았지만, 다음과 같은 에러가 발생했습니다.  
@@ -392,7 +348,7 @@ spring.mvc.hiddenmethod.filter.enabled=true
 
 </br>
 
-### 3-4. 연속적인 게시글 번호
+### 3-3. 연속적인 게시글 번호
 삭제 기능을 테스트하다 보니 게시글 번호가 불연속적으로 출력됐습니다.  
 삭제해도 1부터 n까지 연속적으로 번호가 출력되어야 한다고 생각했습니다. 
 가장 먼저 한 생각은 삭제할 때마다 데이터베이스의 id 값들을 재조정해주는 것입니다.  
@@ -405,7 +361,7 @@ Thymeleaf 문서를 찾아보니 th:each를 쓸 때 인덱스값도 뽑아낼 �
 
 </br>
 
-### 3-5. 깃허브 커밋 reset 후 변경
+### 3-4. 깃허브 커밋 reset 후 변경
 한번은 파일을 실수로 빼먹고 원격 repository에 커밋을 올린 적이 있습니다.  
 ```
 git reset --hard HEAD~1
