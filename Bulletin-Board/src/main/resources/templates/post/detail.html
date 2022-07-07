@@ -245,7 +245,10 @@
         </div>
         </br>
         <div id="commentTable">
-            <div class="card-header bi bi-chat-dots"> Comments</div>
+            <div class="card-header bi bi-chat-dots">
+                <span th:text="${#lists.size(commentList)}"></span>
+                Comments
+            </div>
             <div th:each="comment:${commentList}" class="card">
                 <ul class="list-group-flush">
                     <li class="list-group-item">
