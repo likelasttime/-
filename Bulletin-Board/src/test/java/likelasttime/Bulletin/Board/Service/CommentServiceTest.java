@@ -42,6 +42,7 @@ public class CommentServiceTest {
                 .content("안녕")
                 .author("im")
                 .view(0)
+                .comment_cnt(0)
                 .build();
         postRepository.save(post);
     }
@@ -96,7 +97,7 @@ public class CommentServiceTest {
 
         // when
         Long comment_id=commentService.commentSave(name, id, content);
-        commentService.delete(comment_id);
+        commentService.delete(comment_id, id);
 
         // then
         assertThat(commentService.findAll().size()).isEqualTo(0);
