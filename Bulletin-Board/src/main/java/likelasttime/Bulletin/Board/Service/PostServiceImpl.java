@@ -46,6 +46,10 @@ public class PostServiceImpl implements PostService{
         return postRepository.findAll();
     }
 
+    public List<Post> findByRank(){
+        return postRepository.findTop10ByOrderByViewDesc();
+    }
+
     // 특정 게시글 조회
     public Optional<Post> findById(Long postId){
         return postRepository.findById(postId);

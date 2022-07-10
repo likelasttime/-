@@ -13,5 +13,31 @@
             Spring Security를 이용한 로그인과 CRUD</p>
     </div>
 </main>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">번호</th>
+        <th scope="col">제목</th>
+        <th scope="col">작성자</th>
+        <th scope="col">조회수</th>
+        <th scope="col">작성일자</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="post, i : ${rank_post}">
+        <td th:text="${i.count}"></td>
+        <td><a th:text="${post.title}" th:href="@{'/post/detail/' + ${post.id}}"></a>
+            <span class="badge bg-light">
+                            <i class="bi bi-chat-right-dots"></i>
+                            <a th:text="'+' + ${post.comment_cnt}"></a>
+                        </span>
+        </td>
+        <td th:text="${post.author}"></td>
+        <td th:text="${post.view}"></td>
+        <td th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd')}"></td>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>
