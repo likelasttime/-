@@ -5,6 +5,7 @@ import likelasttime.Bulletin.Board.domain.posts.Post;
 import likelasttime.Bulletin.Board.domain.posts.PostRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,7 @@ public class PostServiceImpl implements PostService{
         return postRepository.findAll();
     }
 
+    @Cacheable(value="findByRank")
     public List<Post> findByRank(){
         return postRepository.findTop10ByOrderByViewDesc();
     }

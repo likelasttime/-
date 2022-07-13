@@ -22,6 +22,8 @@ public interface PostService {
 
     List<Post> findAll();
 
+    List<Post> findByRank();
+
     void deleteAll();
 }
 

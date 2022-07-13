@@ -4,14 +4,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class User {
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
@@ -41,6 +43,9 @@ public class User {
             inverseJoinColumns=@JoinColumn(name="role_id")
     )
     private List<Role> roles;
+
+    @OneToMany(mappedBy="post", fetch=FetchType.EAGER, cascade=CascadeType.REMOVE)
+    private List<Comment> comment;
 
     @Builder
     public User(Long id, String name, String phone, String email, String password, String username, Boolean enabled, List<Role> roles){
