@@ -22,7 +22,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.0.0'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.7.0'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-cache', version: '2.7.0'
 	implementation group: 'org.springframework.session', name: 'spring-session-data-redis', version: '2.7.0'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
 	compile "com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4"
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
