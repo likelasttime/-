@@ -1,7 +1,7 @@
 package likelasttime.Bulletin.Board.Controller;
 
 import likelasttime.Bulletin.Board.Service.PostServiceImpl;
-import likelasttime.Bulletin.Board.domain.posts.Post;
+import likelasttime.Bulletin.Board.domain.posts.PostResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +16,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model){
-        List<Post> post=postService.findByRank();       // 조회수를 기준으로 상위 10개 게시글
+        List<PostResponseDto> post=postService.findByRank();       // 조회수를 기준으로 상위 10개 게시글
         model.addAttribute("rank_post", post);
         return "home";
     }

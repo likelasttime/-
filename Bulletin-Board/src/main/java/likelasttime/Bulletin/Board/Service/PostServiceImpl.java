@@ -3,6 +3,7 @@ package likelasttime.Bulletin.Board.Service;
 import likelasttime.Bulletin.Board.Repository.PostRepository;
 import likelasttime.Bulletin.Board.domain.posts.Post;
 import likelasttime.Bulletin.Board.domain.posts.PostRequestDto;
+import likelasttime.Bulletin.Board.domain.posts.PostResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.Cacheable;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Transactional
@@ -47,9 +49,11 @@ public class PostServiceImpl implements PostService{
         return postRepository.findAll();
     }
 
-    @Cacheable(value="findByRank")
-    public List<Post> findByRank(){
-        return postRepository.findTop10ByOrderByViewDesc();
+    @Cacheable(value="findByRank", unless="#result == null")
+    public List<PostResponseDto> findByRank(){
+        List<Post> postList=postRepository.findTop10ByOrderByViewDesc();
+        List<PostResponseDto> postDto=postList.stream().map(PostResponseDto::new).collect(Collectors.toList());
+        return postDto;
     }
 
     // 특정 게시글 조회

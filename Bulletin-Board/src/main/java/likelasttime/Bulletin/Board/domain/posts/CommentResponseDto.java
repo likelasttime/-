@@ -1,12 +1,19 @@
 package likelasttime.Bulletin.Board.domain.posts;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
-public class CommentResponseDto {
+@NoArgsConstructor
+public class CommentResponseDto implements Serializable {
     private Long id;
 
     private String user_name;
@@ -15,8 +22,12 @@ public class CommentResponseDto {
 
     private String comment;
 
+    @JsonSerialize(using= LocalDateTimeSerializer.class)
+    @JsonDeserialize(using= LocalDateTimeDeserializer.class)
     private LocalDateTime createdDate;
 
+    @JsonSerialize(using= LocalDateTimeSerializer.class)
+    @JsonDeserialize(using= LocalDateTimeDeserializer.class)
     private LocalDateTime modifiedDate;
 
     @Builder

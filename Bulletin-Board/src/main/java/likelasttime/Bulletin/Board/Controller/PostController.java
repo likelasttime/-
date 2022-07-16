@@ -5,6 +5,7 @@ import likelasttime.Bulletin.Board.domain.posts.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -97,6 +98,7 @@ public class PostController {
     }
 
     // 삭제
+    @CacheEvict(value="deletePost")
     @DeleteMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id) {
         postService.deletePost(id);
