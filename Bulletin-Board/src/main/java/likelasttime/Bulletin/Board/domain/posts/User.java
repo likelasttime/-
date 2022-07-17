@@ -6,14 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class User implements Serializable {
+public class User {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
@@ -44,7 +43,7 @@ public class User implements Serializable {
     )
     private List<Role> roles;
 
-    @OneToMany(mappedBy="post", fetch=FetchType.EAGER, cascade=CascadeType.REMOVE)
+    @OneToMany(mappedBy="post", cascade=CascadeType.REMOVE)
     private List<Comment> comment;
 
     @Builder

@@ -4,12 +4,11 @@ import likelasttime.Bulletin.Board.Repository.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Entity
 @NoArgsConstructor
 @Getter
-public class Comment extends BaseTimeEntity implements Serializable {
+public class Comment extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
@@ -17,11 +16,11 @@ public class Comment extends BaseTimeEntity implements Serializable {
     @Column(nullable=false)
     private String comment;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="post_id")
     private Post post;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User user;
 

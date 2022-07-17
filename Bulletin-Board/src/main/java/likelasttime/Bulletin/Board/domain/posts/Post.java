@@ -7,13 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
-public class Post extends BaseTimeEntity implements Serializable {
+public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
@@ -30,7 +29,7 @@ public class Post extends BaseTimeEntity implements Serializable {
 
     private int comment_cnt;
 
-    @OneToMany(mappedBy="post", fetch=FetchType.EAGER, cascade=CascadeType.REMOVE)
+    @OneToMany(mappedBy="post", cascade=CascadeType.REMOVE)
     @OrderBy("id desc")
     private List<Comment> comment;
 
