@@ -6,7 +6,8 @@ import likelasttime.Bulletin.Board.domain.posts.PostRequestDto;
 import likelasttime.Bulletin.Board.domain.posts.PostResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,11 +46,12 @@ public class PostServiceImpl implements PostService{
     }
 
     //전체 게시글 조회
+    @CachePut(value="findAll")
     public List<Post> findAll(){
         return postRepository.findAll();
     }
 
-    @Cacheable(value="findByRank", unless="#result == null")
+    @CachePut(value="findByRank")
     public List<PostResponseDto> findByRank(){
         List<Post> postList=postRepository.findTop10ByOrderByViewDesc();
         List<PostResponseDto> postDto=postList.stream().map(PostResponseDto::new).collect(Collectors.toList());
@@ -62,6 +64,7 @@ public class PostServiceImpl implements PostService{
     }
 
     // 삭제
+    @CacheEvict(value={"findByRank", "findAll"})
     public void deletePost(Long id){
         postRepository.deleteById(id);
     }
@@ -78,6 +81,7 @@ public class PostServiceImpl implements PostService{
         return lst;
     }
 
+    @CacheEvict(value={"findByRank", "findAll"})
     public void deleteAll(){
         postRepository.deleteAll();
     }
