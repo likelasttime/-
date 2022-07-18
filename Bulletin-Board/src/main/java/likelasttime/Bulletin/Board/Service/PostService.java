@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostService {
-    Post create(PostRequestDto post);
+    PostResponseDto create(PostRequestDto post);
 
     Post update(Long id, PostRequestDto post);
 
@@ -21,7 +21,7 @@ public interface PostService {
 
     Page<Post> search(String title, String content, String author, Pageable pageable);
 
-    List<Post> findAll();
+    List<PostResponseDto> findAll();
 
     List<PostResponseDto> findByRank();
 

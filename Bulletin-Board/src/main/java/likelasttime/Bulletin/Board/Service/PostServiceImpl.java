@@ -7,7 +7,7 @@ import likelasttime.Bulletin.Board.domain.posts.PostResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,10 +25,11 @@ public class PostServiceImpl implements PostService{
     private static final int POST_COUNT=4;  // 페이지당 게시글 수
 
     // 게시글 작성
-    public Post create(PostRequestDto post){
+    @CacheEvict(value={"findByRank", "findAll"}, allEntries = true)
+    public PostResponseDto create(PostRequestDto post){
         //validateDuplicatePost(post);  // 중복 게시글
         Post post_entity=modelMapper.map(post, Post.class);
-        return postRepository.save(post_entity);
+        return modelMapper.map(postRepository.save(post_entity), PostResponseDto.class);
     }
 
     private void validateDuplicatePost(Post post){
@@ -39,6 +40,7 @@ public class PostServiceImpl implements PostService{
     }
 
     // 게시글 수정
+    @CacheEvict(value={"findByRank", "findAll"}, allEntries = true)
     public Post update(Long id, PostRequestDto post){
         Post post_entity=postRepository.findById(id).get();
         post_entity.update(post.getTitle(), post.getContent(), post_entity.getView(), post_entity.getComment_cnt());
@@ -46,12 +48,12 @@ public class PostServiceImpl implements PostService{
     }
 
     //전체 게시글 조회
-    @CachePut(value="findAll")
-    public List<Post> findAll(){
-        return postRepository.findAll();
+    @Cacheable(value="findAll")
+    public List<PostResponseDto> findAll(){
+        return postRepository.findAll().stream().map(PostResponseDto::new).collect(Collectors.toList());
     }
 
-    @CachePut(value="findByRank")
+    @Cacheable(value="findByRank")
     public List<PostResponseDto> findByRank(){
         List<Post> postList=postRepository.findTop10ByOrderByViewDesc();
         List<PostResponseDto> postDto=postList.stream().map(PostResponseDto::new).collect(Collectors.toList());
@@ -64,7 +66,7 @@ public class PostServiceImpl implements PostService{
     }
 
     // 삭제
-    @CacheEvict(value={"findByRank", "findAll"})
+    @CacheEvict(value={"findByRank", "findAll"}, allEntries = true)
     public void deletePost(Long id){
         postRepository.deleteById(id);
     }
@@ -81,7 +83,7 @@ public class PostServiceImpl implements PostService{
         return lst;
     }
 
-    @CacheEvict(value={"findByRank", "findAll"})
+    @CacheEvict(value={"findByRank", "findAll"}, allEntries=true)
     public void deleteAll(){
         postRepository.deleteAll();
     }
