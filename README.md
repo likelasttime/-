@@ -19,6 +19,7 @@
 |**Spring Data JPA**|메소드 이름만으로 쿼리를 생성했습니다.|
 |**MySQL**|영속적인 데이터 사용을 위해 RDBMS인 MySQL을 사용했습니다.|
 |**JUnit5**|Given, When, Then 형식으로 테스트 코드를 작성했습니다.|
+|**Redis**|spring-boot-starter-data-redis 2.7.0 버전을 사용했습니다.|
 |**Thymeleaf**|server-side Java template engine입니다.|
 |**HTML**|화면을 만들기 위해 사용했습니다.|
 </br>
@@ -33,6 +34,7 @@
 - [조회수](#-2-7-조회수)
 - [인증](#-2-8-인증)
 - [댓글](#-2-9-댓글)
+- [캐시](#-2-10-캐시)
 </br>
 
 ### [🔝 ](#-2-핵심-기능)2-1. 게시글 작성
@@ -274,7 +276,7 @@ form 태그의 onsubmit 속성을 이용해 모든 유효성 검사를 통과해
 
 </br>
 
-## [🔝 ](#-2-8댓글)2-9. 댓글  
+## [🔝 ](#-2-8-인증)2-9. 댓글  
 댓글 등록, 수정은 @ResponseBody를 사용해 메소드가 리턴하는 오브젝트가 메시지 컨버터를 통해 HTTP 응답의 메시지 본문으로 전환됩니다.  
 #### 댓글 등록
 ![댓글 등록](https://user-images.githubusercontent.com/46569105/173214260-321a00d4-1cd4-42c4-b969-119289d9f557.gif)  
@@ -297,8 +299,63 @@ Entity의 변경사항을 데이터베이스에 자동으로 반영하는 기능
 댓글을 삭제하기 전 알림창을 띄우고 true를 리턴받으면 POST 방식으로 요청을 보냅니다.  
 </br>
 
+## [🔝 ](#-2-9-댓글)2-10. 캐시  
+전체 게시글 조회, 조회수를 기준으로 10개의 인기 게시글 조회에 캐시를 적용했습니다.  
+캐시 만료 기간은 1시간으로 설정했습니다.  
+글을 등록, 수정, 삭제 시 캐시에서 모든 entry를 삭제했습니다.  
+```java
+@CacheEvict(value={"findByRank", "findAll"}, allEntries = true)
+```
+조회 시 @Cacheable 어노테이션을 사용했습니다.  
+캐시가 비거나 만료 기간이 되었을 때 메소드를 실행합니다.  
+캐시에 데이터가 있는 경우에는 캐시에서 바로 가져옵니다.  
+아래에 캐시를 적용한 후 잘 동작하는 예시를 넣었습니다.  
+![캐시글쓰기](https://user-images.githubusercontent.com/46569105/179529184-1bcd670c-1ce7-4cb0-8ebc-e8a2b030e978.gif)  
+제목이 '헬로'인 게시글을 등록합니다.  
+</br>
+![캐시수정](https://user-images.githubusercontent.com/46569105/179529907-4aa73914-acc7-44e7-a1b4-7b4f744110bd.gif)  
+제목을 '헬로(수정)'으로 변경했습니다.  
+</br>
+![캐시삭제](https://user-images.githubusercontent.com/46569105/179530707-d6537ed9-cc07-4b16-89a2-4e647c7e92a4.gif)  
+인기 게시글 3위에 있던 '좋은날' 게시글을 삭제했습니다.  
+</br>
+
 ## [🔝 ](#-2-핵심-기능)3. 트러블 슈팅
-### 3-1. Spring Security 때문에 컨트롤러가 동작하지 않음
+### 3-1. 캐시에 있는 데이터가 최신 상태가 아닌 문제
+조회를 하는 메소드에 @Cacheable 메소드를 붙였습니다.  
+게시글을 등록, 수정, 삭제를 하면 캐시에 반영이 되지 않았습니다.  
+첫 번째로 쓴 방법은 @CachePut 어노테이션 사용입니다.  
+@CachePut은 캐시에 데이터를 등록하기 때문에 캐시의 데이터가 최신 상태로 유지됩니다.  
+하지만, 캐시를 사용한 이유를 생각해보았을 때 @CachePut을 사용한 것은 적절한 해결 방법이 아니었습니다.  
+두 번째로 쓴 방법은 등록, 수정, 삭제할 때 @CacheEvict를 사용하는 것 입니다.  
+이 방법으로 문제를 해결했습니다.  
+데이터베이스에 있는 데이터와 캐시에 있는 데이터가 달라질 때 캐시를 삭제합니다.  
+조회할 때 캐시에 데이터가 없으므로 메서드를 실행하고, 캐시에 저장합니다.  
+</br>
+
+### 3-2. 캐시에 Entity를 저장해서 Infinite recursion이 발생  
+POST 테이블과 COMMENT 테이블은 1:M으로 연관관계가 있어서 Infinite recursion 에러가 발생했습니다.  
+첫 번째로 쓴 방법은 @JsonManagedReference, @JsonBackReference를 사용했습니다.  
+POST의 comment에 @JsonManagedReference를 붙였습니다.  
+COMMENT의 post에 @JsonBackReference를 붙였습니다.  
+이번에는 M:M 관계인 USER와 ROLE 테이블에서 Infinite recursion 에러가 발생했습니다.  
+@JsonIgnore를 사용하는 해결방법도 있었지만, 저의 경우에는 사용하기에 부적절했습니다.  
+두 번째로 쓴 방법은 캐시에 DTO를 저장하는 것 입니다.  
+이 방법으로 Infinite recursion 에러를 해결했습니다.  
+메소드 반환 값이 캐시에 저장될 수 있도록 엔티티를 DTO로 변환해서 반환했습니다.  
+
+```java
+@Cacheable(value="findByRank")
+    public List<PostResponseDto> findByRank(){
+        List<Post> postList=postRepository.findTop10ByOrderByViewDesc();
+        List<PostResponseDto> postDto=postList.stream().map(PostResponseDto::new).collect(Collectors.toList());
+        return postDto;
+    }
+ ```
+
+</br>
+
+### 3-3. Spring Security 때문에 컨트롤러가 동작하지 않음
 ajax를 이용해서 아이디 중복 확인을 하는 기능을 만들다가 문제가 생겼습니다.  
 중복되지 않은 아이디를 입력해도 컨트롤러가 동작하지 않는 것 같다는 생각을 했습니다.  
 서버에서 받은 값을 프런트에서 출력하면 엉뚱하게 전체 회원가입 HTML 소스 코드가 나왔습니다.  
@@ -328,7 +385,7 @@ WebSecurityConfigurerAdapter를 상속받은 WebSecurityConfig에서 인증 없�
 
 </br>
 
-### 3-2. 게시글 수정을 put으로 처리하기
+### 3-4. 게시글 수정을 put으로 처리하기
 처음에 post로 요청을 받아 처리하는 @PostMapping을 사용했습니다.  
 글을 수정할 때는 post보다 멱등성이 있는 put으로 요청을 받아야 한다는 알게 되었습니다.  
 @PostMapping을 @PutMapping으로 바꾸기만 하면 될 줄 알았지만, 다음과 같은 에러가 발생했습니다.  
@@ -348,7 +405,7 @@ spring.mvc.hiddenmethod.filter.enabled=true
 
 </br>
 
-### 3-3. 연속적인 게시글 번호
+### 3-5. 연속적인 게시글 번호
 삭제 기능을 테스트하다 보니 게시글 번호가 불연속적으로 출력됐습니다.  
 삭제해도 1부터 n까지 연속적으로 번호가 출력되어야 한다고 생각했습니다. 
 가장 먼저 한 생각은 삭제할 때마다 데이터베이스의 id 값들을 재조정해주는 것입니다.  
@@ -361,7 +418,7 @@ Thymeleaf 문서를 찾아보니 th:each를 쓸 때 인덱스값도 뽑아낼 �
 
 </br>
 
-### 3-4. 깃허브 커밋 reset 후 변경
+### 3-6. 깃허브 커밋 reset 후 변경
 한번은 파일을 실수로 빼먹고 원격 repository에 커밋을 올린 적이 있습니다.  
 ```
 git reset --hard HEAD~1
