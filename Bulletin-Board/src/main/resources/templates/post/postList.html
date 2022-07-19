@@ -20,7 +20,7 @@
     <div class="container">
         <h2>게시판✍️</h2>
         <div style="float:left; margin-top:10px;">총 건수 : <span th:text="${post.totalElements}"></span></div>
-        <form class="form-inline d-flex justify-content-end" method="GET" th:action="@{/post}" style="float:right;">
+        <form class="form-inline d-flex justify-content-end" method="GET" th:action="@{/post/search}" style="float:right;">
             <div class="form-group mx-sm-3 mb-2">
                 <label for="searchText" class="sr-only">검색</label>
                 <input type="text" class="form-control" id="searchText" name="keyword" placeholder="검색어를 입력해주세요"
@@ -59,11 +59,14 @@
             <a type="button" class="btn btn-primary" th:href="@{/post/new}">쓰기</a>
         </div>
         <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center" style="margin-top:0;">
+            <ul class="pagination justify-content-center"
+                th:with="start=${T(Math).floor(post.number / 5) * 5 + 1}, end=(${start + 4 < post.totalPages ? start + 4 : post.totalPages})" style="margin-top:0;">
                 <li class="page-item" th:classappend="${1==post.pageable.pageNumber+1}? 'disabled'">
                     <a class="page-link" th:href="@{/post(page=${post.pageable.pageNumber-1})}" tabindex="-1" aria-disabled="true">Previous</a>
                 </li>
-                <li class="page-item" th:classappend="${i==post.pageable.pageNumber+1}? 'disabled'" th:each="i : ${#numbers.sequence(start, end)}"><a class="page-link" th:href="@{/post(page=${i-1})}" th:text="${i}">1</a></li>
+                <li class="page-item" th:classappend="${i==post.pageable.pageNumber+1}? 'disabled'" th:each="i : ${#numbers.sequence(start, end)}">
+                    <a class="page-link" th:href="@{/post(page=${i-1})}" th:text="${i}">1</a>
+                </li>
                 <li class="page-item" th:classappend="${post.totalPages==post.pageable.pageNumber+1}? 'disabled'">
                     <a class="page-link" th:href="@{/post(page=${post.pageable.pageNumber+1})}">Next</a>
                 </li>
