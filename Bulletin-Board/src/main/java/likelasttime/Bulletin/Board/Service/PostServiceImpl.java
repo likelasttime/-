@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +22,6 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService{
     private final PostRepository postRepository;
     private final ModelMapper modelMapper;
-    private static final int PAGE_NUM_COUNT=5;
-    private static final int POST_COUNT=4;  // 페이지당 게시글 수
 
     // 게시글 작성
     @CacheEvict(value={"findByRank", "findAll"}, allEntries = true)
@@ -50,7 +49,7 @@ public class PostServiceImpl implements PostService{
     //전체 게시글 조회
     @Cacheable(value="findAll")
     public List<PostResponseDto> findAll(){
-        return postRepository.findAll().stream().map(PostResponseDto::new).collect(Collectors.toList());
+        return postRepository.findAll(Sort.by("id").descending()).stream().map(PostResponseDto::new).collect(Collectors.toList());
     }
 
     @Cacheable(value="findByRank")
@@ -78,9 +77,10 @@ public class PostServiceImpl implements PostService{
     }
 
     // 검색
-    public Page<Post> search(String title, String content, String author, Pageable pageable){
-        Page<Post> lst=postRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(title, content, author, pageable);
-        return lst;
+    public Page<PostResponseDto> search(String title, String content, String author, Pageable pageable){
+        Page<Post> post=postRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(title, content, author, pageable);
+        Page<PostResponseDto> postResponseDtos=post.map(p -> modelMapper.map(p, PostResponseDto.class));
+        return postResponseDtos;
     }
 
     @CacheEvict(value={"findByRank", "findAll"}, allEntries=true)

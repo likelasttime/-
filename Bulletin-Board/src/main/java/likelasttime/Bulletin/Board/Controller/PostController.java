@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -43,20 +44,38 @@ public class PostController {
         return "redirect:/post";
     }
 
-    // 전체 게시글 조회
-    @GetMapping
+    // 게시글 조회(검색)
+    @GetMapping("/search")
     public String list(Model model,
                        @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                       @RequestParam(required = false, defaultValue = "") String keyword
-                       ) {
+                       @RequestParam(required = false, defaultValue = "") String keyword) {
 
-        Page<Post> post = postService.search(keyword, keyword, keyword, pageable);
-        Page<PostRequestDto> postDto=post.map(p -> modelMapper.map(p, PostRequestDto.class));
+        Page<PostResponseDto> postDto = postService.search(keyword, keyword, keyword, pageable);
 
-        int start = Math.max(1, postDto.getPageable().getPageNumber() - 4);
-        int end = Math.min(postDto.getTotalPages(), postDto.getPageable().getPageNumber() + 4);
+        int pageSize=pageable.getPageSize();
+        int start=(int) pageable.getOffset();
+        int end = Math.min((start + pageSize), pageSize);
 
         model.addAttribute("post", postDto);
+        model.addAttribute("start", start);
+        model.addAttribute("end", end);
+
+        return "post/postList";
+    }
+
+    // 전체 게시글 조회(findAll)
+    @GetMapping
+    public String findAllPosts(Model model,
+                       @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        List<PostResponseDto> postDto=postService.findAll();
+
+        int len_postDto=postDto.size();
+        int start=(int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), len_postDto);
+
+        Page<PostResponseDto> page=new PageImpl<>(postDto.subList(start, end), pageable, len_postDto);
+
+        model.addAttribute("post", page);
         model.addAttribute("start", start);
         model.addAttribute("end", end);
 
