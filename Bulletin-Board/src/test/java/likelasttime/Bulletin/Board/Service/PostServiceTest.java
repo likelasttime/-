@@ -2,6 +2,7 @@ package likelasttime.Bulletin.Board.Service;
 
 import likelasttime.Bulletin.Board.domain.posts.Post;
 import likelasttime.Bulletin.Board.domain.posts.PostRequestDto;
+import likelasttime.Bulletin.Board.domain.posts.PostResponseDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ class PostServiceTest {
         post.setContent("안녕");
 
         //when
-        Post post_object=postService.create(post);
+        PostResponseDto post_object=postService.create(post);
 
         //then
         Post findPost=postService.findById(post_object.getId()).get();
@@ -45,16 +46,16 @@ class PostServiceTest {
         //given
         PostRequestDto post1=new PostRequestDto();
         post1.setTitle("Spring1");
-        Post post_object1=postService.create(post1);
+        PostResponseDto post_object1=postService.create(post1);
 
         PostRequestDto post2=new PostRequestDto();
         post2.setTitle("Spring2");
-        Post post_object2=postService.create(post2);
+        PostResponseDto post_object2=postService.create(post2);
 
         Pageable pageable= PageRequest.of(0,5);
 
         //when
-        List<Post> result=postService.findAll();
+        List<PostResponseDto> result=postService.findAll();
 
         //then
         assertThat(result.size()).isEqualTo(2);
@@ -65,7 +66,7 @@ class PostServiceTest {
         // given
         PostRequestDto post=new PostRequestDto();
         post.setTitle("Spring");
-        Post post_object=postService.create(post);
+        PostResponseDto post_object=postService.create(post);
 
         // when
         Post result=postService.findById(post_object.getId()).get();
@@ -81,7 +82,7 @@ class PostServiceTest {
         PostRequestDto post=new PostRequestDto();
         post.setTitle("Spring1");
         post.setContent("hello");
-        Post post_object1=postService.create(post);
+        PostResponseDto post_object1=postService.create(post);
 
         // when
         post.setTitle("Spring2");
@@ -99,13 +100,13 @@ class PostServiceTest {
         // given
         PostRequestDto post=new PostRequestDto();
         post.setTitle("Spring");
-        Post post_object=postService.create(post);
+        PostResponseDto post_object=postService.create(post);
 
         // when
         postService.deletePost(post_object.getId());
 
         // then
-        List<Post> all_post=postService.findAll();
+        List<PostResponseDto> all_post=postService.findAll();
         assertThat(all_post.size()).isEqualTo(0);
     }
 
@@ -114,7 +115,7 @@ class PostServiceTest {
         // given
         PostRequestDto post=new PostRequestDto();
         post.setTitle("spring");
-        Post post_object=postService.create(post);
+        PostResponseDto post_object=postService.create(post);
 
         // when
         postService.updateView(post_object.getId());
@@ -131,14 +132,14 @@ class PostServiceTest {
         post.setTitle("hello");
         post.setContent("I like ..");
         post.setAuthor("ju");
-        Post post_object=postService.create(post);
+        PostResponseDto post_object=postService.create(post);
 
         String keyword="ju";
         Pageable pageable= PageRequest.of(0,5);
-        List<Post> page=postService.findAll();
+        List<PostResponseDto> page=postService.findAll();
 
         // when
-        Page<Post> result=postService.search(keyword, keyword, keyword, pageable);
+        Page<PostResponseDto> result=postService.search(keyword, keyword, keyword, pageable);
 
         // then
         assertThat(result.getTotalElements()).isEqualTo(1);
