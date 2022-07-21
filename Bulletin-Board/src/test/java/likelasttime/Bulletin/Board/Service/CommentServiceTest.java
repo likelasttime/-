@@ -8,6 +8,8 @@ import likelasttime.Bulletin.Board.domain.posts.User;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,8 +28,8 @@ public class CommentServiceTest {
     @Autowired
     PostRepository postRepository;
 
-    @BeforeAll
-    public void before(){
+    @BeforeEach
+    public void beforeEach(){
         User user=User.builder()
                 .name("츄츄")
                 .phone("01012345678")
@@ -47,18 +49,19 @@ public class CommentServiceTest {
         postRepository.save(post);
     }
 
-    @AfterAll
-    public void afterAll(){
+    @AfterEach
+    public void afterEach(){
         commentService.deleteAll();
         userRepository.deleteAll();
         postRepository.deleteAll();
     }
 
     @Test
+    @Transactional
     public void commentSave(){
         // given
         String name="alswjd00";
-        Long id=postRepository.findAll().get(0).getId();
+        Long id=postRepository.findAll(Sort.by("id")).get(0).getId();
         String content="반가워요";
 
         // when
@@ -75,7 +78,7 @@ public class CommentServiceTest {
     public void update(){
         // given
         String name="alswjd00";
-        Long id=postRepository.findAll().get(0).getId();
+        Long id=postRepository.findAll(Sort.by("id")).get(0).getId();
         String content="반가워요";
 
         // when
@@ -92,7 +95,7 @@ public class CommentServiceTest {
     public void delete(){
         // given
         String name="alswjd00";
-        Long id=postRepository.findAll().get(0).getId();
+        Long id=postRepository.findAll(Sort.by("id")).get(0).getId();
         String content="반가워요";
 
         // when
@@ -107,7 +110,7 @@ public class CommentServiceTest {
     public void deleteAll(){
         // given
         String name="alswjd00";
-        Long id=postRepository.findAll().get(0).getId();
+        Long id=postRepository.findAll(Sort.by("id")).get(0).getId();
         String content="반가워요";
 
         // when
@@ -122,7 +125,7 @@ public class CommentServiceTest {
     public void findById() {
         // given
         String name = "alswjd00";
-        Long id = postRepository.findAll().get(0).getId();
+        Long id = postRepository.findAll(Sort.by("id")).get(0).getId();
         String content = "반가워요";
 
         // when
@@ -137,11 +140,11 @@ public class CommentServiceTest {
     public void findAll(){
         // given
         String name_1 = "alswjd00";
-        Long id_1 = postRepository.findAll().get(0).getId();
+        Long id_1 = postRepository.findAll(Sort.by("id")).get(0).getId();
         String content_1 = "반가워요";
 
         String name_2="alswjd00";
-        Long id_2=postRepository.findAll().get(0).getId();
+        Long id_2=postRepository.findAll(Sort.by("id")).get(0).getId();
         String content_2="사랑해요";
 
         // when
