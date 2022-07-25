@@ -10,4 +10,5 @@ import java.util.List;
 public interface SpringDataJpaPostRepository extends JpaRepository<Post, Long>, PostRepository{
     List<Post> findTop10ByOrderByViewDesc();
     List<Post> findAll(Sort sort);
+    List<Post> findAll();
 }

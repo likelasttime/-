@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -84,7 +85,7 @@ public class PostController {
 
     // 상세 게시판 조회
     @GetMapping("/detail/{id}")
-    public String detail(@PathVariable("id") Long id, Model model) {
+    public String detail(@PathVariable("id") Long id, Model model) throws IOException {
         if(id == null){
             model.addAttribute("post", new PostRequestDto());
         }else{
@@ -106,7 +107,7 @@ public class PostController {
     @PutMapping("/detail/{id}")
     public String greetingSubmit(@PathVariable("id") Long id,
                                  @ModelAttribute("post") @Valid PostRequestDto post,
-                                 BindingResult bindingResult){
+                                 BindingResult bindingResult) throws IOException{
         post.setAuthor(((postService.findById(id).get()).getAuthor()));     // 작성자
         if(bindingResult.hasErrors()){
             return "/post/detail";

@@ -15,7 +15,7 @@ public class HomeController {
     private final PostServiceImpl postService;
 
     @GetMapping("/")
-    public String home(Model model){
+    public String home(Model model) {
         List<PostResponseDto> post=postService.findByRank();       // 조회수를 기준으로 상위 10개 게시글
         model.addAttribute("rank_post", post);
         return "home";

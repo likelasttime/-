@@ -46,5 +46,4 @@ public class PostResponseDto implements Serializable {
         this.comment_cnt=post.getComment_cnt();
 
     }
-
 }

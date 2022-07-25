@@ -13,6 +13,7 @@ public interface PostRepository{
     Optional<Post> findById(Long id);
     Optional<Post> findByTitle(String title);
     List<Post> findAll(Sort sort);
+    List<Post> findAll();
     void deleteById(Long id);
     Page<Post> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(String title, String content, String author, Pageable pageable);
     void deleteAll();
