@@ -9,6 +9,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
@@ -16,17 +17,19 @@ public class SpringConfig {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RedisTemplate redisTemplate;
 
     @Autowired
-    public SpringConfig(UserRepository userRepository, PostRepository postRepository, PasswordEncoder passwordEncoder){
+    public SpringConfig(UserRepository userRepository, PostRepository postRepository, PasswordEncoder passwordEncoder, RedisTemplate redisTemplate){
         this.userRepository=userRepository;
         this.postRepository=postRepository;
         this.passwordEncoder=passwordEncoder;
+        this.redisTemplate=redisTemplate;
     }
 
     @Bean
     public PostServiceImpl postService(){
-        return new PostServiceImpl(postRepository, modelMapper());
+        return new PostServiceImpl(postRepository, modelMapper(), redisTemplate);
     }
 
     @Bean
