@@ -7,11 +7,9 @@ import likelasttime.Bulletin.Board.domain.posts.PostResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,9 +50,11 @@ public class PostServiceImpl implements PostService{
     }
 
     //전체 게시글 조회
-    @Cacheable(value="findAll")
+    //@Cacheable(value="findAll")
     public List<PostResponseDto> findAll(){
-        return postRepository.findAll(Sort.by("id").descending()).stream().map(PostResponseDto::new).collect(Collectors.toList());
+        List<PostResponseDto> postResponsedtoList=postRepository.findAll(Sort.by("id").descending()).stream().map(PostResponseDto::new).collect(Collectors.toList());
+        redisTemplate.opsForList().leftPushAll("findAll", postResponsedtoList);
+        return postResponsedtoList;
     }
 
     //@Cacheable(value="findByRank")
@@ -69,7 +69,7 @@ public class PostServiceImpl implements PostService{
             List<PostResponseDto> postDto=postList.stream().map(PostResponseDto::new).collect(Collectors.toList());
             return postDto;
         }
-        HashOperations<String, String, Object> hashOperations= redisTemplate.opsForHash();
+        //HashOperations<String, String, Object> hashOperations= redisTemplate.opsForHash();
         List<PostResponseDto> collect=new ArrayList<>();
         for(ZSetOperations.TypedTuple<String> t : typedTuples){
             String id=t.getValue();
@@ -92,8 +92,11 @@ public class PostServiceImpl implements PostService{
     }
 
     // 삭제
-    @CacheEvict(value={"findByRank", "findAll"}, allEntries = true)
+    @CacheEvict(value="findAll", allEntries = true)
     public void deletePost(Long id){
+        String postId=id.toString();
+        redisTemplate.opsForZSet().remove("findByRank", postId);
+        redisTemplate.opsForHash().delete("rankByHash", postId);
         postRepository.deleteById(id);
     }
 
