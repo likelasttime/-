@@ -73,9 +73,7 @@ public class PostServiceImpl implements PostService{
         List<PostResponseDto> collect=new ArrayList<>();
         for(ZSetOperations.TypedTuple<String> t : typedTuples){
             String id=t.getValue();
-            Post post=postRepository.findById(Long.valueOf(id)).get();
-            PostResponseDto postResponseDto=modelMapper.map(post, PostResponseDto.class);
-            hashOperations.put("rankByHash", id, postResponseDto);
+            PostResponseDto postResponseDto=(PostResponseDto) redisTemplate.opsForHash().get("rankByHash", id);
             collect.add(postResponseDto);
         }
         return collect;
@@ -84,8 +82,12 @@ public class PostServiceImpl implements PostService{
     // 특정 게시글 조회
     public Optional<Post> findById(Long postId) throws IOException {
         String key="findByRank";
+        String id=postId.toString();
         Optional<Post> post=postRepository.findById(postId);
-        redisTemplate.opsForZSet().add(key, postId.toString(), post.get().getView() + 1);
+        PostResponseDto dto=modelMapper.map(post.get(), PostResponseDto.class);
+        dto.setView(dto.getView() + 1);
+        redisTemplate.opsForZSet().add(key, id, dto.getView());
+        redisTemplate.opsForHash().put("rankByHash", id, dto);
         return post;
     }
 
