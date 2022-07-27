@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface PostService {
     PostResponseDto create(PostRequestDto post);
 
-    Post update(Long id, PostRequestDto post);
+    PostResponseDto update(Long id, PostRequestDto post);
 
     Optional<Post> findById(Long postId) throws IOException;
 

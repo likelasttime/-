@@ -42,11 +42,15 @@ public class PostServiceImpl implements PostService{
     }
 
     // 게시글 수정
-    @CacheEvict(value={"findByRank", "findAll"}, allEntries = true)
-    public Post update(Long id, PostRequestDto post){
+    @CacheEvict(value="findAll", allEntries = true)
+    public PostResponseDto update(Long id, PostRequestDto postDto){
         Post post_entity=postRepository.findById(id).get();
-        post_entity.update(post.getTitle(), post.getContent(), post_entity.getView(), post_entity.getComment_cnt());
-        return post_entity;
+        post_entity.update(postDto.getTitle(), postDto.getContent(), post_entity.getView(), post_entity.getComment_cnt());
+        PostResponseDto postResponseDto= PostResponseDto.builder()
+                .post(post_entity)
+                .build();
+        redisTemplate.opsForHash().put("rankByHash", id.toString(), postResponseDto);
+        return postResponseDto;
     }
 
     //전체 게시글 조회
