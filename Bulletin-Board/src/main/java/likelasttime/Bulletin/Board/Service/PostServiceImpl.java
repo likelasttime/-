@@ -73,7 +73,6 @@ public class PostServiceImpl implements PostService{
             List<PostResponseDto> postDto=postList.stream().map(PostResponseDto::new).collect(Collectors.toList());
             return postDto;
         }
-        //HashOperations<String, String, Object> hashOperations= redisTemplate.opsForHash();
         List<PostResponseDto> collect=new ArrayList<>();
         for(ZSetOperations.TypedTuple<String> t : typedTuples){
             String id=t.getValue();
@@ -96,11 +95,12 @@ public class PostServiceImpl implements PostService{
     }
 
     // 삭제
-    @CacheEvict(value="findAll", allEntries = true)
+    //@CacheEvict(value="findAll", allEntries = true)
     public void deletePost(Long id){
         String postId=id.toString();
         redisTemplate.opsForZSet().remove("findByRank", postId);
         redisTemplate.opsForHash().delete("rankByHash", postId);
+        redisTemplate.opsForList().getOperations().delete("findAll");
         postRepository.deleteById(id);
     }
 
@@ -113,12 +113,15 @@ public class PostServiceImpl implements PostService{
     // 검색
     public Page<PostResponseDto> search(String title, String content, String author, Pageable pageable){
         Page<Post> post=postRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(title, content, author, pageable);
-        Page<PostResponseDto> postResponseDtos=post.map(p -> modelMapper.map(p, PostResponseDto.class));
-        return postResponseDtos;
+        Page<PostResponseDto> postResponseDto=post.map(p -> modelMapper.map(p, PostResponseDto.class));
+        return postResponseDto;
     }
 
-    @CacheEvict(value={"findByRank", "findAll"}, allEntries=true)
+    //@CacheEvict(value="findAll", allEntries=true)
     public void deleteAll(){
         postRepository.deleteAll();
+        redisTemplate.opsForZSet().getOperations().delete("findByRank");
+        redisTemplate.opsForHash().getOperations().delete("rankByHash");
+        redisTemplate.opsForList().getOperations().delete("findAll");
     }
 }
