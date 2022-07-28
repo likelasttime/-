@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -68,7 +69,11 @@ public class PostController {
     @GetMapping
     public String findAllPosts(Model model,
                        @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        List<PostResponseDto> postDto=postService.findAll();
+        List<PostResponseDto> postDto=new ArrayList<>();
+        postDto=postService.findAllByCache();       // 캐시에서 조회
+        if(postDto.isEmpty()) {             // 캐시에 없으면 DB에서 조회
+            postDto = postService.findAll();
+        }
 
         int len_postDto=postDto.size();
         int start=(int) pageable.getOffset();

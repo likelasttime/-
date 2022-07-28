@@ -6,7 +6,6 @@ import likelasttime.Bulletin.Board.domain.posts.PostRequestDto;
 import likelasttime.Bulletin.Board.domain.posts.PostResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -27,11 +27,15 @@ public class PostServiceImpl implements PostService{
     private final RedisTemplate redisTemplate;
 
     // 게시글 작성
-    @CacheEvict(value={"findByRank", "findAll"}, allEntries = true)
-    public PostResponseDto create(PostRequestDto post){
+    public PostResponseDto create(PostRequestDto postRequestDto){
         //validateDuplicatePost(post);  // 중복 게시글
-        Post post_entity=modelMapper.map(post, Post.class);
-        return modelMapper.map(postRepository.save(post_entity), PostResponseDto.class);
+        Post post_entity=modelMapper.map(postRequestDto, Post.class);
+        Post savedPost=postRepository.save(post_entity);
+        String id=savedPost.getId().toString();
+        PostResponseDto postResponseDto=modelMapper.map(savedPost, PostResponseDto.class);
+        redisTemplate.opsForHash().put("findAll", id, postResponseDto);
+
+        return postResponseDto;
     }
 
     private void validateDuplicatePost(Post post){
@@ -42,26 +46,38 @@ public class PostServiceImpl implements PostService{
     }
 
     // 게시글 수정
-    @CacheEvict(value="findAll", allEntries = true)
     public PostResponseDto update(Long id, PostRequestDto postDto){
         Post post_entity=postRepository.findById(id).get();
         post_entity.update(postDto.getTitle(), postDto.getContent(), post_entity.getView(), post_entity.getComment_cnt());
         PostResponseDto postResponseDto= PostResponseDto.builder()
                 .post(post_entity)
                 .build();
-        redisTemplate.opsForHash().put("rankByHash", id.toString(), postResponseDto);
+        String stringId=id.toString();
+        redisTemplate.opsForHash().put("rankByHash", stringId, postResponseDto);        // 고려
+        redisTemplate.opsForHash().put("findAll", stringId, postResponseDto);
+
         return postResponseDto;
     }
 
-    //전체 게시글 조회
-    //@Cacheable(value="findAll")
-    public List<PostResponseDto> findAll(){
-        List<PostResponseDto> postResponsedtoList=postRepository.findAll(Sort.by("id").descending()).stream().map(PostResponseDto::new).collect(Collectors.toList());
-        redisTemplate.opsForList().leftPushAll("findAll", postResponsedtoList);
-        return postResponsedtoList;
+    //전체 게시글 조회(캐시)
+    public List<PostResponseDto> findAllByCache(){
+        TreeMap<String, PostResponseDto> treeMap=new TreeMap<String, PostResponseDto>(Collections.reverseOrder());
+        treeMap.putAll(redisTemplate.opsForHash().entries("findAll"));
+        List<PostResponseDto> postResponseDtoList=treeMap.values().stream().collect(Collectors.toList());
+
+        return postResponseDtoList;
     }
 
-    //@Cacheable(value="findByRank")
+    // 전체 게시글 조회(캐시에 없어서 DB에서 조회 후 캐시에 저장)
+    public List<PostResponseDto> findAll() {
+        List<PostResponseDto> postResponseDtoList=postRepository.findAll(Sort.by("id").descending()).stream().map(PostResponseDto::new).collect(Collectors.toList());
+        Map<String, PostResponseDto> map=postResponseDtoList.stream()
+                .collect(Collectors.toMap(P -> P.getId().toString(), Function.identity()));
+        redisTemplate.opsForHash().putAll("findAll", map);            // 캐시에 저장
+
+        return postResponseDtoList;
+    }
+
     public List<PostResponseDto> findByRank(){
         String key="findByRank";
         ZSetOperations<String, String> zSetOperations=redisTemplate.opsForZSet();
@@ -71,14 +87,17 @@ public class PostServiceImpl implements PostService{
             // 데이터베이스에서 조회
             List<Post> postList=postRepository.findTop10ByOrderByViewDesc();
             List<PostResponseDto> postDto=postList.stream().map(PostResponseDto::new).collect(Collectors.toList());
+
             return postDto;
         }
+
         List<PostResponseDto> collect=new ArrayList<>();
         for(ZSetOperations.TypedTuple<String> t : typedTuples){
             String id=t.getValue();
             PostResponseDto postResponseDto=(PostResponseDto) redisTemplate.opsForHash().get("rankByHash", id);
             collect.add(postResponseDto);
         }
+
         return collect;
     }
 
@@ -91,16 +110,17 @@ public class PostServiceImpl implements PostService{
         dto.setView(dto.getView() + 1);
         redisTemplate.opsForZSet().add(key, id, dto.getView());
         redisTemplate.opsForHash().put("rankByHash", id, dto);
+        redisTemplate.opsForHash().put("findAll", id, dto);
+
         return post;
     }
 
     // 삭제
-    //@CacheEvict(value="findAll", allEntries = true)
     public void deletePost(Long id){
         String postId=id.toString();
         redisTemplate.opsForZSet().remove("findByRank", postId);
         redisTemplate.opsForHash().delete("rankByHash", postId);
-        redisTemplate.opsForList().getOperations().delete("findAll");
+        redisTemplate.opsForHash().delete("findAll", postId);
         postRepository.deleteById(id);
     }
 
@@ -114,10 +134,10 @@ public class PostServiceImpl implements PostService{
     public Page<PostResponseDto> search(String title, String content, String author, Pageable pageable){
         Page<Post> post=postRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrAuthorContainingIgnoreCase(title, content, author, pageable);
         Page<PostResponseDto> postResponseDto=post.map(p -> modelMapper.map(p, PostResponseDto.class));
+
         return postResponseDto;
     }
 
-    //@CacheEvict(value="findAll", allEntries=true)
     public void deleteAll(){
         postRepository.deleteAll();
         redisTemplate.opsForZSet().getOperations().delete("findByRank");
