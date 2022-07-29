@@ -52,11 +52,7 @@ public class UserServiceTest {
         userService.joinUser(user1);
 
         // then
-        if(userService.userIdCheck(user2.getUsername())){       // 중복된 아이디
-            fail("아이디 중복");
-        }else{
-            userService.joinUser(user2);
-        }
+        if(userService.userIdCheck(user2.getUsername()));       // 중복된 아이디
     }
 
     @Test
@@ -84,11 +80,7 @@ public class UserServiceTest {
         userService.joinUser(user1);
 
         // then
-        if(userService.userPhoneCheck(user2.getPhone())){
-            fail("연락처 중복");
-        }else{
-            userService.joinUser(user2);
-        }
+        assertTrue(userService.userPhoneCheck(user2.getPhone()));       // 연락처 중복
     }
 
     @Test
@@ -116,11 +108,7 @@ public class UserServiceTest {
         userService.joinUser(user1);
 
         // then
-        if(userService.userEmailCheck(user2.getEmail())){
-            fail("이메일 중복");
-        }else{
-            userService.joinUser(user2);
-        }
+        assertTrue(userService.userEmailCheck(user2.getEmail()));       // 이메일 중복
     }
 
     @Test
