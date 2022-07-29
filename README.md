@@ -304,25 +304,55 @@ Entity의 변경사항을 데이터베이스에 자동으로 반영하는 기능
 ## [🔝 ](#-2-9-댓글)2-10. 캐시  
 전체 게시글 조회, 조회수를 기준으로 10개의 인기 게시글 조회에 캐시를 적용했습니다.  
 캐시 만료 기간은 1시간으로 설정했습니다.  
-글을 등록, 수정, 삭제 시 캐시에서 모든 entry를 삭제했습니다.  
+조회할 때 먼저 캐시에 데이터가 있는지 확인합니다.  
+없다면 DB에서 데이터를 가져오고, 캐시에 저장합니다.  
 ```java
-@CacheEvict(value={"findByRank", "findAll"}, allEntries = true)
+//전체 게시글 조회(캐시)
+    public List<PostResponseDto> findAllByCache(){
+        TreeMap<String, PostResponseDto> treeMap=new TreeMap<String, PostResponseDto>(Collections.reverseOrder());
+        treeMap.putAll(redisTemplate.opsForHash().entries("findAll"));
+        List<PostResponseDto> postResponseDtoList=treeMap.values().stream().collect(Collectors.toList());
+
+        return postResponseDtoList;
+    }
 ```
-조회 시 @Cacheable 어노테이션을 사용했습니다.  
-캐시가 비거나 만료 기간이 되었을 때 메소드를 실행합니다.  
-캐시에 데이터가 있는 경우에는 캐시에서 바로 가져옵니다.  
-아래에 캐시를 적용한 후 잘 동작하는 예시를 넣었습니다.  
-![캐시글쓰기](https://user-images.githubusercontent.com/46569105/179529184-1bcd670c-1ce7-4cb0-8ebc-e8a2b030e978.gif)  
-제목이 '헬로'인 게시글을 등록합니다.  
-</br>
-![캐시수정](https://user-images.githubusercontent.com/46569105/179529907-4aa73914-acc7-44e7-a1b4-7b4f744110bd.gif)  
-제목을 '헬로(수정)'으로 변경했습니다.  
-</br>
-![캐시삭제](https://user-images.githubusercontent.com/46569105/179530707-d6537ed9-cc07-4b16-89a2-4e647c7e92a4.gif)  
-인기 게시글 3위에 있던 '좋은날' 게시글을 삭제했습니다.  
+전체 게시글 조회는 Hash를 사용했습니다.  
+Hash의 field는 게시글 id, value는 PostResponseDto 객체입니다.  
+Hash에서 데이터를 가져와 TreeMap에 담습니다.  
+TreeMap에 Collections.reverseOrder()을 넣어서 key를 기준으로 내림차순 정렬합니다.  
+```java
+redisTemplate.opsForHash().put("findAll", id, postResponseDto);
+```
+글을 작성하면 캐시에도 저장합니다.  
+```java
+redisTemplate.opsForHash().put("rankByHash", stringId, postResponseDto);        
+redisTemplate.opsForHash().put("findAll", stringId, postResponseDto);
+```
+글을 수정하면 캐시에도 반영합니다.  
+```java
+redisTemplate.opsForZSet().add(key, id, dto.getView());
+redisTemplate.opsForHash().put("rankByHash", id, dto);
+redisTemplate.opsForHash().put("findAll", id, dto);
+```
+게시글 상세보기를 하면 조회수가 증가하므로 캐시에도 반영합니다.  
+```java
+redisTemplate.opsForZSet().remove("findByRank", postId);
+redisTemplate.opsForHash().delete("rankByHash", postId);
+redisTemplate.opsForHash().delete("findAll", postId);
+```
+게시글을 삭제하면 캐시에서도 id를 찾아서 삭제합니다.  
 </br>
 
 ## [🔝 ](#-2-10-캐시)2-11. 실시간 인기 게시글  
+실시간 인기 게시글 조회는 Sorted set과 Hash를 사용했습니다.  
+Sorted Set의 member는 게시글 id, score는 조회수입니다.  
+Hash의 field는 게시글 id, value는 PostResponseDto 객체입니다.  
+최근에 조회된 게시글 중에서 순위를 계산합니다.  
+따라서, 게시글 상세보기를 할 때 Sorted set과 Hash에 담습니다.  
+```java
+Set<ZSetOperations.TypedTuple<String>> typedTuples = zSetOperations.reverseRangeWithScores(key, 0, 9);
+```
+score를 내림차순 정렬해서 10개를 가져옵니다.  
 ![실시간인기](https://user-images.githubusercontent.com/46569105/180739211-4a73a97d-2e60-4091-9549-cb11a14a6421.gif)  
 10위에 있던 '열이 올라요' 게시글이 조회 후 8위로 올라갑니다.  
 ![10번](https://user-images.githubusercontent.com/46569105/180740224-968d37c1-371b-4bfd-853a-37b0c84c51b4.png)  
@@ -337,7 +367,13 @@ After
 Before  
 ![삭제 후](https://user-images.githubusercontent.com/46569105/180977911-e11bec9c-e305-4ceb-b47a-0cce50f96982.png)  
 After  
-
+</br>
+![최신 캐시 수정](https://user-images.githubusercontent.com/46569105/181681578-8549a76b-8184-4c34-b4b9-6acded16ee34.gif)  
+1위에 있던 '일상' 게시글을 '일상(수정)'으로 수정했습니다.  
+![일상](https://user-images.githubusercontent.com/46569105/181682121-5137adaa-8bee-4c0f-bcf6-fd1f4740fac7.png)  
+Before  
+![일상 수정](https://user-images.githubusercontent.com/46569105/181682126-e2f0c52a-b0ba-4baa-b28a-973dd6c2e536.png)  
+After  
 </br>
 
 ## [🔝 ](#-2-핵심-기능)3. 트러블 슈팅
