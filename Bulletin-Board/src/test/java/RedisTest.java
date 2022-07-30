@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -127,5 +128,79 @@ public class RedisTest {
         assertThat(hashValue1.getTitle()).isNotEqualTo(hashValue2.getTitle());
         assertThat(afterPostResponseDto.getTitle()).isEqualTo("첫 번째(수정)");
 
+    }
+
+    @Test
+    public void redisWritePost(){
+        // given
+        Post post=Post.builder()
+                .title("첫 번째")
+                .content("안녕")
+                .author("im")
+                .view(0)
+                .comment_cnt(0)
+                .build();
+
+        postRepository.save(post);
+        PostRequestDto postRequestDto=modelMapper.map(post, PostRequestDto.class);
+
+        // when
+        PostResponseDto postResponseDto=postService.create(postRequestDto);
+
+        // then
+        PostResponseDto cacheDto=(PostResponseDto) redisTemplate.opsForHash().get("findAll", post.getId().toString());
+        assertThat(cacheDto.getTitle()).isEqualTo(post.getTitle());
+        assertThat(cacheDto.getContent()).isEqualTo(post.getContent());
+        assertThat(cacheDto.getAuthor()).isEqualTo(post.getAuthor());
+    }
+
+    @Test
+    public void redisFindAll(){     // DB 조회 후 캐시에 저장
+        // given
+        Post post1=Post.builder()
+                .title("두 번째")
+                .content("안녕")
+                .author("im")
+                .view(1)
+                .comment_cnt(0)
+                .build();
+
+        Post post2=Post.builder()
+                .title("첫 번째")
+                .content("안녕")
+                .author("im")
+                .view(2)
+                .comment_cnt(0)
+                .build();
+
+        // when
+        postRepository.save(post1);
+        postRepository.save(post2);
+        List<PostResponseDto> postResponseDtoList=postService.findAll();
+
+        // then
+        assertThat(redisTemplate.opsForHash().size("findAll")).isEqualTo(2);
+    }
+
+    @Test
+    public void RedisFindById() throws IOException {
+        // given
+        Post post1=Post.builder()
+                .title("두 번째")
+                .content("안녕")
+                .author("im")
+                .view(1)
+                .comment_cnt(0)
+                .build();
+
+        // when
+        postRepository.save(post1);
+        Long id=post1.getId();
+        postService.findById(id);
+
+        // then
+        assertThat(redisTemplate.opsForHash().size("findAll")).isEqualTo(1);
+        assertThat(redisTemplate.opsForHash().size("rankByHash")).isEqualTo(1);
+        assertThat(redisTemplate.opsForZSet().size("findByRank")).isEqualTo(1);
     }
 }
