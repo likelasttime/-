@@ -5,7 +5,6 @@ import lombok.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Setter
 @Getter
@@ -30,5 +29,7 @@ public class PostRequestDto {
     private LocalDateTime modifiedDate;
 
     private int comment_cnt;
+
+    private Long fileId;
 
 }

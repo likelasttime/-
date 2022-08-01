@@ -29,17 +29,20 @@ public class Post extends BaseTimeEntity {
 
     private int comment_cnt;
 
+    private Long fileId;
+
     @OneToMany(mappedBy="post", cascade=CascadeType.REMOVE)
     @OrderBy("id desc")
     private List<Comment> comment;
 
     @Builder
-    public Post(String title, String content, String author, int view, int comment_cnt){
+    public Post(String title, String content, String author, int view, int comment_cnt, Long fileId){
         this.title=title;
         this.content=content;
         this.author=author;
         this.view=view;
         this.comment_cnt=comment_cnt;
+        this.fileId=fileId;
     }
 
     public void update(String title, String content, int view, int comment_cnt){

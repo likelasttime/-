@@ -1,7 +1,9 @@
 package likelasttime.Bulletin.Board.Config;
 
+import likelasttime.Bulletin.Board.Repository.FileRepository;
 import likelasttime.Bulletin.Board.Repository.PostRepository;
 import likelasttime.Bulletin.Board.Repository.UserRepository;
+import likelasttime.Bulletin.Board.Service.FileService;
 import likelasttime.Bulletin.Board.Service.PostServiceImpl;
 import likelasttime.Bulletin.Board.Service.UserServiceImpl;
 import org.modelmapper.ModelMapper;
@@ -18,13 +20,15 @@ public class SpringConfig {
     private final PostRepository postRepository;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate redisTemplate;
+    private final FileRepository fileRepository;
 
     @Autowired
-    public SpringConfig(UserRepository userRepository, PostRepository postRepository, PasswordEncoder passwordEncoder, RedisTemplate redisTemplate){
+    public SpringConfig(UserRepository userRepository, PostRepository postRepository, PasswordEncoder passwordEncoder, RedisTemplate redisTemplate, FileRepository fileRepository){
         this.userRepository=userRepository;
         this.postRepository=postRepository;
         this.passwordEncoder=passwordEncoder;
         this.redisTemplate=redisTemplate;
+        this.fileRepository=fileRepository;
     }
 
     @Bean
@@ -47,4 +51,10 @@ public class SpringConfig {
                 .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
         return modelMapper;
     }
+
+    @Bean
+    public FileService fileService(){
+        return new FileService(fileRepository, modelMapper());
+    }
+
 }
