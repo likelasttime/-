@@ -183,6 +183,10 @@
                     내용 에러 메시지
                 </div>
             </div>
+            <div class="form-group" th:if="${post.fileId != null}">
+                <strong>첨부파일 : </strong>
+                <a th:href="@{'/post/download/' + ${post.fileId}}" th:text="${filename}"></a>
+            </div>
             <div style="float:right;">
                 <a type="button" class="btn btn-primary" th:href="@{/post}">취소</a>
                 <input type="hidden" name="_method" value="put"/>

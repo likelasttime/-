@@ -5,11 +5,16 @@ import likelasttime.Bulletin.Board.Service.PostServiceImpl;
 import likelasttime.Bulletin.Board.domain.posts.*;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -21,6 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,6 +115,10 @@ public class PostController {
             if (comments != null && !comments.isEmpty()) {
                 model.addAttribute("commentList", comments);
             }
+            if(post.getFileId() != null){
+                FileDto fileDto=fileService.getFile(post.getFileId());
+                model.addAttribute("filename", fileDto.getOriginFileName());
+            }
         }
         return "post/detail";
     }
@@ -132,7 +144,8 @@ public class PostController {
     }
 
     @PostMapping("/upload")
-    public String upload(@RequestParam("file") MultipartFile files, PostRequestDto postRequestDto) {
+    public String upload(@RequestParam("file") MultipartFile files,
+                         PostRequestDto postRequestDto) {
         try {
             String origFileName = files.getOriginalFilename();
             String fileName = new MD5Generator(origFileName).toString();
@@ -154,10 +167,24 @@ public class PostController {
 
             Long fileId = fileService.saveFile(fileDto);
             postRequestDto.setFileId(fileId);
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            postRequestDto.setAuthor(((UserDetails) principal).getUsername());     // 작성자=로그인한 유저 id
             postService.create(postRequestDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return "redirect:/";
+    }
+
+    @GetMapping("/download/{fileId}")
+    public ResponseEntity<Resource> fileDownload(@PathVariable("fileId") Long fileId) throws IOException{
+        FileDto fileDto=fileService.getFile(fileId);
+        Path path= Paths.get(fileDto.getFilePath());
+        Resource resource=new InputStreamResource(Files.newInputStream(path));
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/octest-stream"))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + fileDto.getOriginFileName() + "\"")
+                .body(resource);
     }
 }
