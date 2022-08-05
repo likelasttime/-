@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <div th:replace="fragments/common :: head('게시판')"></div>
+    <div th:insert="fragments/common :: head('게시판')"></div>
+    <!-- include summernote css/js -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
     <style>
         .container {
             margin-top: 50px;
@@ -18,6 +21,39 @@
             var fileName = $(fileInput).val().split('\\').pop();
             $(fileInput).siblings('.custom-file-label').addClass('selected').html(fileName);
         }
+
+        $(document).ready(function () {
+            $('.summernote').summernote({
+                placeholder: '내용을 입력해주세요.',
+                height:500,
+                //콜백 함수
+                /*callbacks : {
+            	    onImageUpload : function(files, editor, welEditable) {
+                        // 파일 업로드(다중업로드를 위해 반복문 사용)
+                        for (var i = files.length - 1; i >= 0; i--) {
+                            uploadSummernoteImageFile(files[i], this);
+            		    }
+            	    }
+                }*/
+            });
+            $('.note-resizebar').css('display', 'none');
+        });
+
+        /*function uploadSummernoteImageFile(file, el){       // 서버에 파일 업로드
+            data=new FormData();
+            data.append("file", file);
+            $ajax({
+                data : data,
+                type : "POST",
+                url : "/post/upload",
+                contentType : false,
+                enctype : 'multipart/form-data',
+                processData : false,
+                success : function(data) {
+                    $(el).summernote('editor.insetImage', data.url);
+                }
+            });
+        }*/
     </script>
 </head>
 
@@ -26,34 +62,28 @@
 </nav>
 <div class="container">
     <h2>✍️게시판</h2>
-    <form action="#" th:action="@{/post/upload}" th:object="${post}" method="post" enctype="multipart/form-data">
+    <form action="#" id="save" th:action="@{/post/new}" th:object="${post}" method="post" enctype="multipart/form-data">
         <input type="hidden" th:field="*{id}">
-        <div class="form-group">
-            <label for="title">제목</label>
-            <input type="text" class="form-control" id="title" th:field="*{title}" maxlength='30' required>
-            <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
-                제목 에러 메시지
+        <div class="card mt-3 mb-3">
+            <div class="card-header">
+                <input type="text" class="form-control" id="title" th:field="*{title}" maxlength='30' placeholder="제목을 입력해주세요." required>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="content">내용</label>
-            <textarea class="form-control" id="content" rows="3" th:field="*{content}" maxlength="10000" required></textarea>
-            <div class="invalid-feedback" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
-                내용 에러 메시지
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="inputFile"><strong>첨부 파일</strong></label>
-                <div class="custom-file" id="inputFile">
-                    <input name="file" type="file" class="custom-file-input" id="customFile" onchange="showFileName()" />
-                    <label class="custom-file-label" for="customFile">파일을 선택해 주세요.</label>
-                </div>
+            <textarea id="content" th:field="*{content}" class="summernote" required></textarea>
         </div>
         <div class="text-right">
-            <a type="button" class="btn btn-primary" th:href="@{/post}">취소</a>
-            <button type="submit" class="btn btn-primary">저장</button>
+            <button type="submit" class="btn btn-primary" id="write">저장</button>
         </div>
     </form>
 </div>
+<script>
+    var checkUnload=true;
+    $("#write").on("click", function() {
+        checkUnload=false;
+    });
+
+    $(window).on('beforeunload', function() {
+        if(checkUnload) return "이 페이지를 벗어나면 작성된 내용은 저장되지 않습니다.";
+    });
+</script>
 </body>
 </html>
