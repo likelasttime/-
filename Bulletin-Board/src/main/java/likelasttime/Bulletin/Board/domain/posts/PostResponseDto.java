@@ -47,6 +47,5 @@ public class PostResponseDto implements Serializable {
         this.view=post.getView();
         this.comment=post.getComment().stream().map(CommentResponseDto::new).collect(Collectors.toList());
         this.comment_cnt=post.getComment_cnt();
-        this.fileId=post.getFileId();
     }
 }

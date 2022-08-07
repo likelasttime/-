@@ -1,34 +1,34 @@
 package likelasttime.Bulletin.Board.domain.posts;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
+@Entity
 @NoArgsConstructor
-public class FileDto {
+public class UploadFile {
+    @Id
+    @GeneratedValue
     private Long id;
 
+    @Column
     private String originFileName;
 
+    @Column
     private String uuidFileName;
 
+    @Column
     private String filePath;
 
+    @Column
     private String contentType;
 
+    @Column
     private Long fileSize;
 
+    @Column
     private LocalDateTime registerDate;
-
-    @Builder
-    public FileDto(String originFileName, String filePath, Long fileSize, String uuidFileName, String contentType, LocalDateTime registerDate){
-        this.originFileName=originFileName;
-        this.filePath=filePath;
-        this.fileSize=fileSize;
-        this.contentType=contentType;
-        this.registerDate=registerDate;
-    }
 }

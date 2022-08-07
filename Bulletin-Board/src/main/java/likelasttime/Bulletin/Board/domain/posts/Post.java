@@ -14,13 +14,13 @@ import java.util.List;
 @NoArgsConstructor
 public class Post extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String title;
 
-    @Column(columnDefinition="TEXT")
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     private String author;
@@ -29,26 +29,23 @@ public class Post extends BaseTimeEntity {
 
     private int comment_cnt;
 
-    private Long fileId;
-
-    @OneToMany(mappedBy="post", cascade=CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     @OrderBy("id desc")
     private List<Comment> comment;
 
     @Builder
-    public Post(String title, String content, String author, int view, int comment_cnt, Long fileId){
-        this.title=title;
-        this.content=content;
-        this.author=author;
-        this.view=view;
-        this.comment_cnt=comment_cnt;
-        this.fileId=fileId;
+    public Post(String title, String content, String author, int view, int comment_cnt) {
+        this.title = title;
+        this.content = content;
+        this.author = author;
+        this.view = view;
+        this.comment_cnt = comment_cnt;
     }
 
-    public void update(String title, String content, int view, int comment_cnt){
-        this.title=title;
-        this.content=content;
-        this.view=view;
-        this.comment_cnt=comment_cnt;
+    public void update(String title, String content, int view, int comment_cnt) {
+        this.title = title;
+        this.content = content;
+        this.view = view;
+        this.comment_cnt = comment_cnt;
     }
 }
