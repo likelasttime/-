@@ -22,6 +22,7 @@
 |**Redis**|spring-boot-starter-data-redis 2.7.0 버전을 사용했습니다.|
 |**Thymeleaf**|server-side Java template engine입니다.|
 |**HTML**|화면을 만들기 위해 사용했습니다.|
+|**Summernote**|글 작성/수정시 Editor를 넣었습니다.|
 </br>
  
  ## [🔝 ](#-1-기술-스택)2. 핵심 기능
@@ -303,7 +304,6 @@ Entity의 변경사항을 데이터베이스에 자동으로 반영하는 기능
 
 ## [🔝 ](#-2-9-댓글)2-10. 캐시  
 전체 게시글 조회, 조회수를 기준으로 10개의 인기 게시글 조회에 캐시를 적용했습니다.  
-캐시 만료 기간은 1시간으로 설정했습니다.  
 조회할 때 먼저 캐시에 데이터가 있는지 확인합니다.  
 없다면 DB에서 데이터를 가져오고, 캐시에 저장합니다.  
 ```java
@@ -389,7 +389,12 @@ After
 조회할 때 캐시에 데이터가 없으므로 메서드를 실행하고, 캐시에 저장합니다.  
 </br>
 
-### 3-2. 캐시에 Entity를 저장해서 Infinite recursion이 발생  
+### 3-2. 캐시 어노테이션을 적용한 메소드의 반환값이 리스트로 저장되지 않음  
+리스트를 캐시에 저장하고, 캐시에서 해당 key의 타입을 조회해보니 리스트가 아닌 문자열이었습니다.  
+RedisTemplate 클래스를 이용해 원하는 데이터 타입에 맞게 메소드를 사용하고 저장했습니다.  
+<br/>
+
+### 3-3. 캐시에 Entity를 저장해서 Infinite recursion이 발생  
 POST 테이블과 COMMENT 테이블은 1:M으로 연관관계가 있어서 Infinite recursion 에러가 발생했습니다.  
 첫 번째로 쓴 방법은 @JsonManagedReference, @JsonBackReference를 사용했습니다.  
 POST의 comment에 @JsonManagedReference를 붙였습니다.  
@@ -411,7 +416,7 @@ COMMENT의 post에 @JsonBackReference를 붙였습니다.
 
 </br>
 
-### 3-3. Spring Security 때문에 컨트롤러가 동작하지 않음
+### 3-4. Spring Security 때문에 컨트롤러가 동작하지 않음
 ajax를 이용해서 아이디 중복 확인을 하는 기능을 만들다가 문제가 생겼습니다.  
 중복되지 않은 아이디를 입력해도 컨트롤러가 동작하지 않는 것 같다는 생각을 했습니다.  
 서버에서 받은 값을 프런트에서 출력하면 엉뚱하게 전체 회원가입 HTML 소스 코드가 나왔습니다.  
@@ -441,7 +446,7 @@ WebSecurityConfigurerAdapter를 상속받은 WebSecurityConfig에서 인증 없�
 
 </br>
 
-### 3-4. 게시글 수정을 put으로 처리하기
+### 3-5. 게시글 수정을 put으로 처리하기
 처음에 post로 요청을 받아 처리하는 @PostMapping을 사용했습니다.  
 글을 수정할 때는 post보다 멱등성이 있는 put으로 요청을 받아야 한다는 알게 되었습니다.  
 @PostMapping을 @PutMapping으로 바꾸기만 하면 될 줄 알았지만, 다음과 같은 에러가 발생했습니다.  
@@ -461,7 +466,7 @@ spring.mvc.hiddenmethod.filter.enabled=true
 
 </br>
 
-### 3-5. 연속적인 게시글 번호
+### 3-6. 연속적인 게시글 번호
 삭제 기능을 테스트하다 보니 게시글 번호가 불연속적으로 출력됐습니다.  
 삭제해도 1부터 n까지 연속적으로 번호가 출력되어야 한다고 생각했습니다. 
 가장 먼저 한 생각은 삭제할 때마다 데이터베이스의 id 값들을 재조정해주는 것입니다.  
@@ -474,7 +479,7 @@ Thymeleaf 문서를 찾아보니 th:each를 쓸 때 인덱스값도 뽑아낼 �
 
 </br>
 
-### 3-6. 깃허브 커밋 reset 후 변경
+### 3-7. 깃허브 커밋 reset 후 변경
 한번은 파일을 실수로 빼먹고 원격 repository에 커밋을 올린 적이 있습니다.  
 ```
 git reset --hard HEAD~1
