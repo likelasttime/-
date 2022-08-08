@@ -30,5 +30,6 @@ public class FileDto {
         this.fileSize=fileSize;
         this.contentType=contentType;
         this.registerDate=registerDate;
+        this.uuidFileName=uuidFileName;
     }
 }
