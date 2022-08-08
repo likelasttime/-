@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostService {
-    PostResponseDto create(PostRequestDto post);
+    Long create(PostRequestDto postRequestDto);
 
     PostResponseDto update(Long id, PostRequestDto post);
 

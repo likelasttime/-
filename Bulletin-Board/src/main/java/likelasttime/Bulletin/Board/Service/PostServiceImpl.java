@@ -1,9 +1,7 @@
 package likelasttime.Bulletin.Board.Service;
 
 import likelasttime.Bulletin.Board.Repository.PostRepository;
-import likelasttime.Bulletin.Board.domain.posts.Post;
-import likelasttime.Bulletin.Board.domain.posts.PostRequestDto;
-import likelasttime.Bulletin.Board.domain.posts.PostResponseDto;
+import likelasttime.Bulletin.Board.domain.posts.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -27,7 +25,7 @@ public class PostServiceImpl implements PostService{
     private final RedisTemplate redisTemplate;
 
     // 게시글 작성
-    public PostResponseDto create(PostRequestDto postRequestDto){
+    public Long create(PostRequestDto postRequestDto) {
         //validateDuplicatePost(post);  // 중복 게시글
         Post post_entity=modelMapper.map(postRequestDto, Post.class);
         Post savedPost=postRepository.save(post_entity);
@@ -35,7 +33,7 @@ public class PostServiceImpl implements PostService{
         PostResponseDto postResponseDto=modelMapper.map(savedPost, PostResponseDto.class);
         redisTemplate.opsForHash().put("findAll", id, postResponseDto);
 
-        return postResponseDto;
+        return Long.valueOf(id);
     }
 
     private void validateDuplicatePost(Post post){
