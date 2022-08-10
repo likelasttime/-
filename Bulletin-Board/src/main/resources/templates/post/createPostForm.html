@@ -16,44 +16,40 @@
 
     </style>
     <script>
-        function showFileName(){
-            const fileInput=document.getElementById("customFile");
-            var fileName = $(fileInput).val().split('\\').pop();
-            $(fileInput).siblings('.custom-file-label').addClass('selected').html(fileName);
-        }
-
         $(document).ready(function () {
             $('.summernote').summernote({
                 placeholder: '내용을 입력해주세요.',
                 height:500,
                 //콜백 함수
-                /*callbacks : {
+                callbacks : {
             	    onImageUpload : function(files, editor, welEditable) {
                         // 파일 업로드(다중업로드를 위해 반복문 사용)
                         for (var i = files.length - 1; i >= 0; i--) {
                             uploadSummernoteImageFile(files[i], this);
             		    }
             	    }
-                }*/
+                }
             });
             $('.note-resizebar').css('display', 'none');
         });
 
-        /*function uploadSummernoteImageFile(file, el){       // 서버에 파일 업로드
+        function uploadSummernoteImageFile(file, el){       // 서버에 파일 업로드
             data=new FormData();
             data.append("file", file);
-            $ajax({
+            $.ajax({
                 data : data,
                 type : "POST",
-                url : "/post/upload",
+                url : "/image",
                 contentType : false,
                 enctype : 'multipart/form-data',
                 processData : false,
-                success : function(data) {
-                    $(el).summernote('editor.insetImage', data.url);
+                success : function(url) {
+                    $(el).summernote('insertImage', url, function($image){
+                        $image.css('width', "100%");
+                    });
                 }
             });
-        }*/
+        }
     </script>
 </head>
 
@@ -62,16 +58,15 @@
 </nav>
 <div class="container">
     <h2>✍️게시판</h2>
-    <form action="#" id="save" th:action="@{/post/new}" th:object="${post}" method="post" enctype="multipart/form-data">
-        <input type="hidden" th:field="*{id}">
+    <form action="#" id="save" th:action="@{/post/new}" method="post" enctype="multipart/form-data">
         <div class="card mt-3 mb-3">
             <div class="card-header">
-                <input type="text" class="form-control" id="title" th:field="*{title}" maxlength='30' placeholder="제목을 입력해주세요." required>
+                <input type="text" class="form-control" id="title" name="title" maxlength='30' placeholder="제목을 입력해주세요." required>
             </div>
-            <textarea id="content" th:field="*{content}" class="summernote" required></textarea>
+            <textarea id="content" name="content" class="summernote" required></textarea>
         </div>
         <div class="text-right">
-            <button type="submit" class="btn btn-primary" id="write">저장</button>
+            <button type="submit"  class="btn btn-primary" id="write">저장</button>
         </div>
     </form>
 </div>
