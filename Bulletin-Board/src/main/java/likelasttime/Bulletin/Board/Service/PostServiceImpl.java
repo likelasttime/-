@@ -11,7 +11,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -25,7 +24,7 @@ public class PostServiceImpl implements PostService{
     private final RedisTemplate redisTemplate;
 
     // 게시글 작성
-    public Long create(PostRequestDto postRequestDto) {
+    public PostResponseDto create(PostRequestDto postRequestDto) {
         //validateDuplicatePost(post);  // 중복 게시글
         Post post_entity=modelMapper.map(postRequestDto, Post.class);
         Post savedPost=postRepository.save(post_entity);
@@ -33,7 +32,7 @@ public class PostServiceImpl implements PostService{
         PostResponseDto postResponseDto=modelMapper.map(savedPost, PostResponseDto.class);
         redisTemplate.opsForHash().put("findAll", id, postResponseDto);
 
-        return Long.valueOf(id);
+        return postResponseDto;
     }
 
     private void validateDuplicatePost(Post post){
@@ -102,7 +101,7 @@ public class PostServiceImpl implements PostService{
     }
 
     // 특정 게시글 조회
-    public Optional<Post> findById(Long postId) throws IOException {
+    public Optional<Post> findById(Long postId) {
         String key="findByRank";
         String id=postId.toString();
         Optional<Post> post=postRepository.findById(postId);

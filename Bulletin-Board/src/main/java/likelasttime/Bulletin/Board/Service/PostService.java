@@ -6,16 +6,15 @@ import likelasttime.Bulletin.Board.domain.posts.PostResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 public interface PostService {
-    Long create(PostRequestDto postRequestDto);
+    PostResponseDto create(PostRequestDto postRequestDto);
 
     PostResponseDto update(Long id, PostRequestDto post);
 
-    Optional<Post> findById(Long postId) throws IOException;
+    Optional<Post> findById(Long postId);
 
     void deletePost(Long id);
 

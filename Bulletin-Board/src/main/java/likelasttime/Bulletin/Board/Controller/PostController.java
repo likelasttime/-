@@ -1,34 +1,22 @@
 package likelasttime.Bulletin.Board.Controller;
 
-import likelasttime.Bulletin.Board.Service.FileService;
 import likelasttime.Bulletin.Board.Service.PostServiceImpl;
 import likelasttime.Bulletin.Board.domain.posts.*;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.IOException;
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,19 +26,19 @@ import java.util.List;
 @RequestMapping(path="/post")
 public class PostController {
     private final PostServiceImpl postService;
-    private final FileService fileService;
 
     @GetMapping("/new")
-    public String createForm(Model model) {
-        model.addAttribute("post", new PostRequestDto());
+    public String createForm() {
         return "post/createPostForm";
     }
 
     @PostMapping("/new")
-    public String create(@ModelAttribute("post") @Valid PostRequestDto post, BindingResult bindingResult) {
+    public String create(@Valid PostRequestDto post) {
+        /*
         if (bindingResult.hasErrors()) {
             return "post/createPostForm";
         }
+         */
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         post.setAuthor(((UserDetails) principal).getUsername());     // 작성자=로그인한 유저 id
         postService.create(post);
@@ -101,7 +89,7 @@ public class PostController {
 
     // 상세 게시판 조회
     @GetMapping("/detail/{id}")
-    public String detail(@PathVariable("id") Long id, Model model) throws IOException {
+    public String detail(@PathVariable("id") Long id, Model model) {
         if (id == null) {
             model.addAttribute("post", new PostRequestDto());
         } else {
@@ -115,10 +103,6 @@ public class PostController {
             if (comments != null && !comments.isEmpty()) {
                 model.addAttribute("commentList", comments);
             }
-            if(post.getFileId() != null){
-                FileDto fileDto=fileService.getFile(post.getFileId());
-                model.addAttribute("filename", fileDto.getOriginFileName());
-            }
         }
         return "post/detail";
     }
@@ -127,7 +111,7 @@ public class PostController {
     @PutMapping("/detail/{id}")
     public String greetingSubmit(@PathVariable("id") Long id,
                                  @ModelAttribute("post") @Valid PostRequestDto post,
-                                 BindingResult bindingResult) throws IOException {
+                                 BindingResult bindingResult) {
         post.setAuthor(((postService.findById(id).get()).getAuthor()));     // 작성자
         if (bindingResult.hasErrors()) {
             return "/post/detail";
@@ -143,39 +127,7 @@ public class PostController {
         return "redirect:/post";
     }
 
-    @PostMapping("/upload")
-    public String upload(@RequestParam("file") MultipartFile files,
-                         PostRequestDto postRequestDto) {
-        try {
-            String origFileName = files.getOriginalFilename();
-            String fileName = new MD5Generator(origFileName).toString();
-            String savePath = System.getProperty("user.dir") + "\\files";
-            if (!new File(savePath).exists()) {
-                try {
-                    new File(savePath).mkdir();
-                } catch (Exception e) {
-                    e.getStackTrace();
-                }
-            }
-            String filePath = savePath + "\\" + fileName;
-            files.transferTo(new File(filePath));
-
-            FileDto fileDto = new FileDto();
-            fileDto.setOriginFileName(origFileName);
-            fileDto.setFileName(fileName);
-            fileDto.setFilePath(filePath);
-
-            Long fileId = fileService.saveFile(fileDto);
-            postRequestDto.setFileId(fileId);
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            postRequestDto.setAuthor(((UserDetails) principal).getUsername());     // 작성자=로그인한 유저 id
-            postService.create(postRequestDto);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "redirect:/";
-    }
-
+/*
     @GetMapping("/download/{fileId}")
     public ResponseEntity<Resource> fileDownload(@PathVariable("fileId") Long fileId) throws IOException{
         FileDto fileDto=fileService.getFile(fileId);
@@ -187,4 +139,13 @@ public class PostController {
                         "attachment; filename=\"" + fileDto.getOriginFileName() + "\"")
                 .body(resource);
     }
+g
+    @ResponseBody
+    @GetMapping("/images/{id}")
+    public Resource showImage(@PathVariable Long id) throws MalformedURLException{
+        FileDto fileDto=fileService.getFile(id);
+        return new UrlResource("file:" + fileDto.getFilePath());
+    }
+
+ */
 }
