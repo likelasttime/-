@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import static org.assertj.core.api.Assertions.*;
+
 import java.util.*;
 
 @SpringBootTest
@@ -24,7 +25,7 @@ class PostServiceTest {
     }
 
     @Test
-    public void create(){
+    public void create() {
         //given
         PostRequestDto post=new PostRequestDto();
         post.setTitle("spring");
@@ -62,7 +63,7 @@ class PostServiceTest {
     }
 
     @Test
-    public void findById(){
+    public void findById() {
         // given
         PostRequestDto post=new PostRequestDto();
         post.setTitle("Spring");
@@ -86,7 +87,7 @@ class PostServiceTest {
 
         // when
         post.setTitle("Spring2");
-        Post post_object2=postService.update(post_object1.getId(), post);
+        PostResponseDto post_object2=postService.update(post_object1.getId(), post);
 
         // then
         assertThat(post_object2.getTitle()).isEqualTo("Spring2");
@@ -102,6 +103,7 @@ class PostServiceTest {
         post.setTitle("Spring");
         PostResponseDto post_object=postService.create(post);
 
+
         // when
         postService.deletePost(post_object.getId());
 
@@ -111,7 +113,7 @@ class PostServiceTest {
     }
 
     @Test
-    public void updateView(){
+    public void updateView() {
         // given
         PostRequestDto post=new PostRequestDto();
         post.setTitle("spring");
