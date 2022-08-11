@@ -59,8 +59,10 @@ public class PostServiceImpl implements PostService{
 
     //전체 게시글 조회(캐시)
     public List<PostResponseDto> findAllByCache(){
-        TreeMap<String, PostResponseDto> treeMap=new TreeMap<String, PostResponseDto>(Collections.reverseOrder());
-        treeMap.putAll(redisTemplate.opsForHash().entries("findAll"));
+        TreeMap<Long, PostResponseDto> treeMap=new TreeMap(Collections.reverseOrder());
+        Map<String, PostResponseDto> map1=redisTemplate.opsForHash().entries("findAll");
+        Map<Long, PostResponseDto> map2=map1.entrySet().stream().collect(Collectors.toMap(i -> (Long)Long.valueOf(i.getKey()), i -> (PostResponseDto)i.getValue()));
+        treeMap.putAll(map2);
         List<PostResponseDto> postResponseDtoList=treeMap.values().stream().collect(Collectors.toList());
 
         return postResponseDtoList;
