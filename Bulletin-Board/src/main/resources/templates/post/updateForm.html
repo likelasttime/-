@@ -1,42 +1,82 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <div th:replace="fragments/common :: head('게시판')"></div>
+    <div th:insert="fragments/common :: head('게시판')"></div>
+    <!-- include summernote css/js -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+
     <style>body{padding-top:70px; padding-bottom:30px;}</style>
+
     <script>
         function updatePost(){
             let id=document.getElementById('postId').value;
             let isUpdate=confirm("정말 수정하시겠습니까?");
-            if(isUpdate){
-                window.location.href="/post/edit/"+id;
-            }
+            return isUpdate;
         }
+
+        $(document).ready(function () {
+            $('.summernote').summernote({
+                placeholder: '내용을 입력해주세요.',
+                height:500,
+                //콜백 함수
+                callbacks : {
+            	    onImageUpload : function(files, editor, welEditable) {
+                        // 파일 업로드(다중업로드를 위해 반복문 사용)
+                        for (var i = files.length - 1; i >= 0; i--) {
+                            uploadSummernoteImageFile(files[i], this);
+            		    }
+            	    }
+                }
+            });
+            $('.note-resizebar').css('display', 'none');
+        });
+
+        function uploadSummernoteImageFile(file, el){       // 서버에 파일 업로드
+            data=new FormData();
+            data.append("file", file);
+            $.ajax({
+                data : data,
+                type : "POST",
+                url : "/image",
+                contentType : false,
+                enctype : 'multipart/form-data',
+                processData : false,
+                success : function(url) {
+                    $(el).summernote('insertImage', url, function($image){
+                        $image.css('width', "100%");
+                    });
+                }
+            });
+        }
+
     </script>
 </head>
 
 <body>
-<div class="container">
-    <h2>board Form</h2>
-    <form th:action="@{'/post/edit/'+${post.id}}" method="post">
-        <div class="mb-3">
-            <lable for="title">제목</lable>
-            <input type="text" class="form-control" name="title" th:value="${post.title}" required/>
-            <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
-                제목 에러 메시지
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" th:replace="fragments/common :: menu('board')"></nav>
+<div class="container mt-5">
+    <form th:action="@{'/post/update/'+${post.id}}" id="save" method="post" enctype="multipart/form-data" onSubmit="return updatePost()">
+        <div class=" card mt-3 mb-3">
+            <div class="card-header">
+                <input type="text" class="form-control" id="title" name="title" th:value="${post.title}" placeholder="제목을 입력해주세요." required/>
             </div>
-        </div>
-        <div class="mb-3">
-            <lable for="content">내용</lable>
-            <textarea name="content" class="form-control" rows="6" th:text="${post.content}" required></textarea>
-            <div class="invalid-feedback" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
-                내용 에러 메시지
-            </div>
+            <textarea class="summernote" name="content" th:utext="${post.content}" required></textarea>
         </div>
         <input type="hidden" id="postId" th:value="${post.id}">
         <input type="hidden" name="_method" value="put"/>
-        <button type="submit" onclick="updatePost();" class="btn btn-primary me-md-2">수정</button>
-        <button class="btn btn-primary me-md-2" onclick="location.href='/post'">목록</button>
+        <button type="submit" id="update" class="btn btn-primary me-md-2 float-right">수정</button>
     </form>
 </div>
+<script>
+    var checkUnload=true;
+    $("#update").on("click", function() {
+        checkUnload=false;
+    });
+
+    $(window).on('beforeunload', function() {
+        if(checkUnload) return "이 페이지를 벗어나면 작성된 내용은 저장되지 않습니다.";
+    });
+</script>
 </body>
 </html>

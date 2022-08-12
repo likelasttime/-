@@ -162,7 +162,10 @@
             <input type="hidden" name="_method" value="delete">
         </form>
 
-        <button type="button" class="btn btn-primary float-right mt-3" th:if="${#strings.equals(post.author, username)}">수정</button>
+        <form th:action="@{/post/update(id=${post.id})}">
+            <button type="submit" th:name="id" th:value="${post.id}" class="btn btn-primary float-right mt-3" th:if="${#strings.equals(post.author, username)}">수정</button>
+        </form>
+
         <button type="submit" form="delete" class="btn btn-danger mr-3 float-right mt-3 mb-3" th:if="${#strings.equals(post.author, username)}"><i class="bi bi-trash"></i> 삭제</button>
 
         <th:block layout:fragment="modal">

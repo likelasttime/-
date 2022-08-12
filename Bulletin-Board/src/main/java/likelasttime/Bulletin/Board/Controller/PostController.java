@@ -93,11 +93,8 @@ public class PostController {
         if (id == null) {
             model.addAttribute("post", new PostRequestDto());
         } else {
-            Post post = postService.findById(id).orElse(null);
+            PostResponseDto postResponseDto = postService.findById(id);
             postService.updateView(id);     // 조회수 증가
-            PostResponseDto postResponseDto = PostResponseDto.builder()
-                    .post(post)
-                    .build();
             model.addAttribute("post", postResponseDto);
             List<CommentResponseDto> comments = postResponseDto.getComment();
             if (comments != null && !comments.isEmpty()) {
@@ -107,12 +104,19 @@ public class PostController {
         return "post/detail";
     }
 
+    @GetMapping("/update")
+    public String updateForm(@RequestParam(value="id") Long id, Model model){
+        PostResponseDto postResponseDto=postService.findById(id);
+        model.addAttribute("post", postResponseDto);
+        return "/post/updateForm";
+    }
+
     // 수정
-    @PutMapping("/detail/{id}")
+    @PutMapping("/update/{id}")
     public String greetingSubmit(@PathVariable("id") Long id,
                                  @ModelAttribute("post") @Valid PostRequestDto post,
                                  BindingResult bindingResult) {
-        post.setAuthor(((postService.findById(id).get()).getAuthor()));     // 작성자
+        post.setAuthor(((postService.findById(id)).getAuthor()));     // 작성자
         if (bindingResult.hasErrors()) {
             return "/post/detail";
         }

@@ -101,7 +101,7 @@ public class PostServiceImpl implements PostService{
     }
 
     // 특정 게시글 조회
-    public Optional<Post> findById(Long postId) {
+    public PostResponseDto findById(Long postId) {
         String key="findByRank";
         String id=postId.toString();
         Optional<Post> post=postRepository.findById(postId);
@@ -110,8 +110,8 @@ public class PostServiceImpl implements PostService{
         redisTemplate.opsForZSet().add(key, id, dto.getView());
         redisTemplate.opsForHash().put("rankByHash", id, dto);
         redisTemplate.opsForHash().put("findAll", id, dto);
-
-        return post;
+        PostResponseDto postResponseDto=modelMapper.map(post.get(), PostResponseDto.class);
+        return postResponseDto;
     }
 
     // 삭제
