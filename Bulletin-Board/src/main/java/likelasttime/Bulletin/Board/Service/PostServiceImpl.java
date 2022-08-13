@@ -110,8 +110,7 @@ public class PostServiceImpl implements PostService{
         redisTemplate.opsForZSet().add(key, id, dto.getView());
         redisTemplate.opsForHash().put("rankByHash", id, dto);
         redisTemplate.opsForHash().put("findAll", id, dto);
-        PostResponseDto postResponseDto=modelMapper.map(post.get(), PostResponseDto.class);
-        return postResponseDto;
+        return dto;
     }
 
     // 삭제
