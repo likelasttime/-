@@ -4,6 +4,7 @@ import likelasttime.Bulletin.Board.Repository.PostRepository;
 import likelasttime.Bulletin.Board.domain.posts.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -105,7 +106,9 @@ public class PostServiceImpl implements PostService{
         String key="findByRank";
         String id=postId.toString();
         Optional<Post> post=postRepository.findById(postId);
-        PostResponseDto dto=modelMapper.map(post.get(), PostResponseDto.class);
+        PostResponseDto dto = PostResponseDto.builder()
+                .post(post.get())
+                .build();
         dto.setView(dto.getView() + 1);
         redisTemplate.opsForZSet().add(key, id, dto.getView());
         redisTemplate.opsForHash().put("rankByHash", id, dto);

@@ -93,10 +93,10 @@ public class PostController {
         if (id == null) {
             model.addAttribute("post", new PostRequestDto());
         } else {
-            PostResponseDto postResponseDto = postService.findById(id);
+            PostResponseDto dto = postService.findById(id);
             postService.updateView(id);     // 조회수 증가
-            model.addAttribute("post", postResponseDto);
-            List<CommentResponseDto> comments = postResponseDto.getComment();
+            model.addAttribute("post", dto);
+            List<CommentResponseDto> comments = dto.getComment();
             if (comments != null && !comments.isEmpty()) {
                 model.addAttribute("commentList", comments);
             }
@@ -106,8 +106,8 @@ public class PostController {
 
     @GetMapping("/update")
     public String updateForm(@RequestParam(value="id") Long id, Model model){
-        PostResponseDto postResponseDto=postService.findById(id);
-        model.addAttribute("post", postResponseDto);
+        PostResponseDto post=postService.findById(id);
+        model.addAttribute("post", post);
         return "/post/updateForm";
     }
 

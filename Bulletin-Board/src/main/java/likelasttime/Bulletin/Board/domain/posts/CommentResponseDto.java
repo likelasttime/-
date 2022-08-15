@@ -7,16 +7,18 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class CommentResponseDto implements Serializable {
     private Long id;
 
-    private String user_name;
+    private String username;
 
     private Long post_id;
 
@@ -34,7 +36,7 @@ public class CommentResponseDto implements Serializable {
     public CommentResponseDto(Comment comment) {
         this.id=comment.getId();
         this.comment=comment.getComment();
-        this.user_name=comment.getUser().getUsername();
+        this.username=comment.getUser().getUsername();
         this.post_id=comment.getPost().getId();
         this.createdDate=comment.getCreatedDate();
         this.modifiedDate=comment.getModifiedDate();
