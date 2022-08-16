@@ -12,7 +12,7 @@
             margin-bottom: 10px;
         }
     </style>
-    <script>
+    <script th:inline="javascript">
         function deletePost(){
             let id=document.getElementById('postId').value;
             let isDelete=confirm("정말 삭제하시겠습니까?");
@@ -31,7 +31,7 @@
             var post_id=document.getElementById("postId");
             var uri='/comment/delete/' + idx;
             var headers={"Content-Type" : "application/json", "X-HTTP-Method-Override" : "POST"};
-            var params = {"post_id" : post_id.value};
+            var params = {"post_id" : [[${post.id}]]};
 
             $.ajax({
                 url : uri,
@@ -56,11 +56,11 @@
 
             var content = document.getElementById("reply");
             var commentMsg=document.getElementById("reply_msg");
-            var post_id=document.getElementById("postId");
+            var post_id=[[${post.id}]];
 
             var uri = "/comment/write";
             var headers = {"Content-Type": "application/json", "X-HTTP-Method-Override" : "POST"};
-            var params = {"comment" : content.value, "post_id" : postId.value};
+            var params = {"comment" : content.value, "post_id" : post_id};
 
             $.ajax({
                 url: uri,
@@ -191,7 +191,7 @@
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="btnCommentDelete" class="btn btn-danger waves-effect waves-light" onclick="deleteComment()"><i class="bi bi-trash"></i> 삭제</button>
+                            <button type="button"  id="btnCommentDelete" class="btn btn-danger waves-effect waves-light" onclick="deleteComment()"><i class="bi bi-trash"></i> 삭제</button>
                             <button type="button" id="btnCommentUpdate" class="btn btn-primary waves-effect waves-light" onclick="updateComment()">수정</button>
                         </div>
                     </div>
@@ -222,11 +222,11 @@
                 <ul class="list-group-flush">
                     <li class="list-group-item">
                         <form method="post">
-                            <span th:text="${comment.user_name}" style="font-size: small"> 작성자 </span>
+                            <span th:text="${comment.username}" style="font-size: small"> 작성자 </span>
                             <span th:text="${#temporals.format(comment.createdDate, 'yyyy-MM-dd HH:mm')}" style="font-size: xx-small"> 날짜 </span>
                             </br>
                             <span th:text="${comment.comment}">댓글</span>
-                            <button type="button" th:if="${#strings.equals(comment.user_name, username)}" th:attr="onclick=|openModal('${comment.id}', '${comment.user_name}', '${comment.comment}' )|" class="bi bi-pencil" style="float : right"></button>
+                            <button type="button" th:if="${#strings.equals(comment.username, username)}" th:attr="onclick=|openModal('${comment.id}', '${comment.username}', '${comment.comment}' )|" class="bi bi-pencil" style="float : right"></button>
                         </form>
                     </li>
                 </ul>
