@@ -55,6 +55,19 @@
                 }
             });
         }
+
+      function checkIsEmpty(){
+          if($('#content').summernote('isEmpty')) {
+            console.log('contents is empty, fill it!');
+            // cancel submit
+            alert("내용을 입력하세요.");
+            return false;
+          }
+          else {
+            // do action
+            return true;
+          }
+      }
     </script>
 </head>
 
@@ -63,15 +76,15 @@
 </nav>
 <div class="container">
     <h2>✍️게시판</h2>
-    <form action="#" id="save" th:action="@{/post/new}" method="post" enctype="multipart/form-data">
+    <form action="#" id="save" th:action="@{/post/new}" method="post" enctype="multipart/form-data" onSubmit="return checkIsEmpty();">
         <div class="card mt-3 mb-3">
             <div class="card-header">
                 <input type="text" class="form-control" id="title" name="title" maxlength='30' placeholder="제목을 입력해주세요." required>
             </div>
-            <textarea id="content" name="content" class="summernote" required></textarea>
+            <textarea id="content" name="content" class="summernote"></textarea>
         </div>
         <div class="text-right">
-            <button type="submit"  class="btn btn-primary" id="write">저장</button>
+            <button type="submit" class="btn btn-primary" id="write">저장</button>
         </div>
     </form>
 </div>
