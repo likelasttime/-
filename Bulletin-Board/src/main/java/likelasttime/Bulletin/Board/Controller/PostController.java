@@ -94,7 +94,6 @@ public class PostController {
             model.addAttribute("post", new PostRequestDto());
         } else {
             PostResponseDto dto = postService.findById(id);
-            postService.updateView(id);     // 조회수 증가
             model.addAttribute("post", dto);
             List<CommentResponseDto> comments = dto.getComment();
             if (comments != null && !comments.isEmpty()) {

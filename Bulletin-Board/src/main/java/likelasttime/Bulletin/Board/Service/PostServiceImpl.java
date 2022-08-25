@@ -105,11 +105,11 @@ public class PostServiceImpl implements PostService{
     public PostResponseDto findById(Long postId) {
         String key="findByRank";
         String id=postId.toString();
-        Optional<Post> post=postRepository.findById(postId);
+        Post post=postRepository.findById(postId).get();
+        post.update(post.getTitle(), post.getContent(), post.getView()+1, post.getComment_cnt());
         PostResponseDto dto = PostResponseDto.builder()
-                .post(post.get())
+                .post(post)
                 .build();
-        dto.setView(dto.getView() + 1);
         redisTemplate.opsForZSet().add(key, id, dto.getView());
         redisTemplate.opsForHash().put("rankByHash", id, dto);
         redisTemplate.opsForHash().put("findAll", id, dto);
@@ -123,12 +123,6 @@ public class PostServiceImpl implements PostService{
         redisTemplate.opsForHash().delete("rankByHash", postId);
         redisTemplate.opsForHash().delete("findAll", postId);
         postRepository.deleteById(id);
-    }
-
-    // 조회수 증가
-    public void updateView(Long id) {
-        Post post=postRepository.findById(id).get();
-        post.update(post.getTitle(), post.getContent(), post.getView()+1, post.getComment_cnt());
     }
 
     // 검색

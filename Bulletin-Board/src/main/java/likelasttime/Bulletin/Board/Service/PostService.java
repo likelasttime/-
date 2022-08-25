@@ -16,8 +16,6 @@ public interface PostService {
 
     void deletePost(Long id);
 
-    void updateView(Long id);
-
     Page<PostResponseDto> search(String title, String content, String author, Pageable pageable);
 
     List<PostResponseDto> findAll();
