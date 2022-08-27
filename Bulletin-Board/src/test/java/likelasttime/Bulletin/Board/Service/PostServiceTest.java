@@ -1,6 +1,5 @@
 package likelasttime.Bulletin.Board.Service;
 
-import likelasttime.Bulletin.Board.domain.posts.Post;
 import likelasttime.Bulletin.Board.domain.posts.PostRequestDto;
 import likelasttime.Bulletin.Board.domain.posts.PostResponseDto;
 import org.junit.jupiter.api.AfterEach;
@@ -36,7 +35,7 @@ class PostServiceTest {
         PostResponseDto post_object=postService.create(post);
 
         //then
-        Post findPost=postService.findById(post_object.getId()).get();
+        PostResponseDto findPost=postService.findById(post_object.getId());
         assertThat(post_object.getTitle()).isEqualTo(findPost.getTitle());
         assertThat(post_object.getAuthor()).isEqualTo(findPost.getAuthor());
         assertThat(post_object.getContent()).isEqualTo(findPost.getContent());
@@ -70,10 +69,11 @@ class PostServiceTest {
         PostResponseDto post_object=postService.create(post);
 
         // when
-        Post result=postService.findById(post_object.getId()).get();
+        PostResponseDto result=postService.findById(post_object.getId());
 
         // then
         assertThat(result.getTitle()).isEqualTo("Spring");
+        assertThat(result.getView()).isEqualTo(1);
 
     }
 
@@ -110,21 +110,6 @@ class PostServiceTest {
         // then
         List<PostResponseDto> all_post=postService.findAll();
         assertThat(all_post.size()).isEqualTo(0);
-    }
-
-    @Test
-    public void updateView() {
-        // given
-        PostRequestDto post=new PostRequestDto();
-        post.setTitle("spring");
-        PostResponseDto post_object=postService.create(post);
-
-        // when
-        postService.updateView(post_object.getId());
-
-        // then
-        Post result=postService.findById(post_object.getId()).get();
-        assertThat(result.getView()).isEqualTo(1);
     }
 
     @Test
