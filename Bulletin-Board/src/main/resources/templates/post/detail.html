@@ -12,6 +12,7 @@
             margin-bottom: 10px;
         }
     </style>
+
     <script th:inline="javascript">
         function deletePost(){
             var id=[[${post.id}]];
@@ -129,23 +130,23 @@
             document.getElementById("btnCommentUpdate").setAttribute("onclick", "updateComment("+ idx +")");
             document.getElementById("btnCommentDelete").setAttribute("onclick", "deleteComment("+ idx +")");
 
-	}
-
-	function hideModal() {
-	    $("#commentModal").modal("hide");
-	}
-
-	function isValid(value) {
-	    const content=document.getElementById(value);
-
-	    if (!content.value.trim()) {
-	        alert('댓글을 입력하세요.');
-	        content.focus();
-	        return false;
 	    }
 
-	    return true;
-	}
+        function hideModal() {
+            $("#commentModal").modal("hide");
+        }
+
+        function isValid(value) {
+            const content=document.getElementById(value);
+
+            if (!content.value.trim()) {
+                alert('댓글을 입력하세요.');
+                content.focus();
+                return false;
+            }
+
+            return true;
+        }
     </script>
 </head>
 
@@ -153,6 +154,15 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" th:insert="fragments/common :: menu('board')">
 </nav>
     <div class="container" th:with="username=${#authentication.name}">
+        <div class="d-flex justify-content-end">
+            <a id="kakaotalk-sharing-btn" href="javascript:kakaoShare()">
+                <img
+                        src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png"
+                        alt="카카오톡 공유 보내기 버튼"
+                        style="display:block;"
+                />
+            </a>
+        </div>
         <div class="card">
             <h2 class="card-header" th:text="${post.title}">제목</h2>
             <span class="card-body text-dark" th:utext="${post.content}"></span>
@@ -233,5 +243,44 @@
             </div>
         </div>
     </div>
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+
+<script th:inline="javascript">
+    Kakao.init('d02e9127ac64b8d75564c90d6c3fd61b');
+    Kakao.isInitialized();
+
+    const shareTitle='Board';
+    const shareDes='게시글 공유';
+    const url="http://localhost:8080/post/detail/";
+    const id=[[${post.id}]];
+    const shareURL=url + id;
+    const shareImage='https://cdn.pixabay.com/photo/2019/09/17/18/48/computer-4484282_960_720.jpg';
+
+    function kakaoShare(){
+	  Kakao.Share.createDefaultButton({
+      container: '#kakaotalk-sharing-btn',
+      objectType: 'feed',
+      content: {
+        title: shareTitle,
+        description: shareDes,
+        imageUrl:
+          shareImage,
+        link: {
+          mobileWebUrl: shareURL,
+          webUrl: shareURL,
+        },
+      },
+      buttons: [
+        {
+          title: 'Board로 이동',
+          link: {
+            mobileWebUrl: shareURL,
+            webUrl: shareURL,
+          },
+        }
+      ]
+      });
+    }
+</script>
 </body>
 </html>
