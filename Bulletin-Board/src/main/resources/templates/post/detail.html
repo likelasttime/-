@@ -154,15 +154,10 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" th:insert="fragments/common :: menu('board')">
 </nav>
     <div class="container" th:with="username=${#authentication.name}">
-        <div class="d-flex justify-content-end">
-            <a id="kakaotalk-sharing-btn" href="javascript:kakaoShare()">
-                <img
-                        src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png"
-                        alt="카카오톡 공유 보내기 버튼"
-                        style="display:block;"
-                />
-            </a>
+        <div class="d-flex justify-content-end" title="공유하기">
+            <button type="button" data-bs-toggle="modal" class="btn btn-light" data-bs-target="#exampleModal"><i class="bi bi-share-fill"></i></button>
         </div>
+
         <div class="card">
             <h2 class="card-header" th:text="${post.title}">제목</h2>
             <span class="card-body text-dark" th:utext="${post.content}"></span>
@@ -178,11 +173,36 @@
 
         <button type="submit" form="delete" class="btn btn-danger mr-3 float-right mt-3 mb-3" th:if="${#strings.equals(post.author, username)}"><i class="bi bi-trash"></i> 삭제</button>
 
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">공유하기</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <a id="kakaotalk-sharing-btn" href="javascript:kakaoShare()">
+                            <img
+                                    src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png"
+                                    alt="카카오톡 공유 보내기 버튼"
+                                    style="display:block;"
+                                    class="rounded mx-auto d-block"
+                            />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <th:block layout:fragment="modal">
             <div id="commentModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
+                            <h5 class="modal-title" id="ModalTitle">Comment</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="hideModal();">
                                 <span aria-hidden="true">&times;</span>
                             </button>
