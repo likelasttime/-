@@ -1,5 +1,6 @@
 package likelasttime.Bulletin.Board.Service;
 
+import likelasttime.Bulletin.Board.PostNotFoundException;
 import likelasttime.Bulletin.Board.Repository.PostRepository;
 import likelasttime.Bulletin.Board.domain.posts.*;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,7 @@ public class PostServiceImpl implements PostService{
 
     // 게시글 수정
     public PostResponseDto update(Long id, PostRequestDto postDto){
-        Post post_entity=postRepository.findById(id).get();
+        Post post_entity=postRepository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
         post_entity.update(postDto.getTitle(), postDto.getContent(), post_entity.getView(), post_entity.getComment_cnt());
         PostResponseDto postResponseDto= PostResponseDto.builder()
                 .post(post_entity)
@@ -105,7 +106,7 @@ public class PostServiceImpl implements PostService{
     public PostResponseDto findById(Long postId) {
         String key="findByRank";
         String id=postId.toString();
-        Post post=postRepository.findById(postId).get();
+        Post post=postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
         post.update(post.getTitle(), post.getContent(), post.getView()+1, post.getComment_cnt());
         PostResponseDto dto = PostResponseDto.builder()
                 .post(post)
