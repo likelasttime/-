@@ -59,7 +59,7 @@
             var commentMsg=document.getElementById("reply_msg");
             var post_id=[[${post.id}]];
 
-            var uri = "/comment/write";
+            var uri = "/comment/view";
             var headers = {"Content-Type": "application/json", "X-HTTP-Method-Override" : "POST"};
             var params = {"comment" : content.value, "post_id" : post_id};
 
@@ -68,7 +68,7 @@
                 type: "POST",
                 headers : headers,
                 data: JSON.stringify(params),
-                success: function(response) {
+                /*success: function(response) {
                     if (response.blank == true) {
                         commentMsg.innerHTML="댓글을 작성해주세요.";
                     }else if (response.max == true) {
@@ -80,7 +80,10 @@
                 error: function(xhr, status, error) {
                     alert("에러가 발생하였습니다." + error + status);
                     return false;
-                }
+                }*/
+            })
+            .done(function (fragment) {
+                $('#commentTable').replaceWith(fragment);
             });
         }
 
@@ -153,7 +156,7 @@
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" th:insert="fragments/common :: menu('board')">
 </nav>
-    <div class="container" th:with="username=${#authentication.name}">
+    <div class="container">
         <div class="d-flex justify-content-end" title="공유하기">
             <button type="button" data-bs-toggle="modal" class="btn btn-light" data-bs-target="#exampleModal"><i class="bi bi-share-fill"></i></button>
         </div>
@@ -208,7 +211,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form method="POST" th:action="@{/comment/write}">
+                            <form method="POST" th:action="@{/comment/view}">
                                 <div class="form-group">
                                     <label for="modalWriter" class="col-form-label">작성자</label>
                                     <input type="text" id="modalWriter" class="form-control" disabled/>
@@ -243,7 +246,7 @@
             </form>
         </div>
 
-        <div id="commentTable">
+        <div id="commentTable" th:with="username=${#authentication.name}">
             <div class="card-header bi bi-chat-dots mt-3">
                 <span th:if=${commentList} th:text="${#lists.size(commentList)}"></span>
                 Comments

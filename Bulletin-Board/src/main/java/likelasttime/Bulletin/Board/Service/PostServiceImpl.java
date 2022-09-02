@@ -140,4 +140,10 @@ public class PostServiceImpl implements PostService{
         redisTemplate.opsForHash().getOperations().delete("rankByHash");
         redisTemplate.opsForList().getOperations().delete("findAll");
     }
+
+    public List<CommentResponseDto> getCommentList(Long id){
+        PostResponseDto post=findById(id);
+        return post.getComment();
+
+    }
 }

@@ -1,5 +1,6 @@
 package likelasttime.Bulletin.Board.Service;
 
+import likelasttime.Bulletin.Board.domain.posts.CommentResponseDto;
 import likelasttime.Bulletin.Board.domain.posts.PostRequestDto;
 import likelasttime.Bulletin.Board.domain.posts.PostResponseDto;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,8 @@ public interface PostService {
     List<PostResponseDto> findAll();
 
     List<PostResponseDto> findByRank();
+
+    List<CommentResponseDto> getCommentList(Long id);
 
     void deleteAll();
 }

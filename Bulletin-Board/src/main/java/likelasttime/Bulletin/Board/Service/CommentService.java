@@ -1,10 +1,7 @@
 package likelasttime.Bulletin.Board.Service;
 
 import likelasttime.Bulletin.Board.Repository.*;
-import likelasttime.Bulletin.Board.domain.posts.Comment;
-import likelasttime.Bulletin.Board.domain.posts.CommentRequestDto;
-import likelasttime.Bulletin.Board.domain.posts.Post;
-import likelasttime.Bulletin.Board.domain.posts.User;
+import likelasttime.Bulletin.Board.domain.posts.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
