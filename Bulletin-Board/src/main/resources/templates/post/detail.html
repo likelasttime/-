@@ -39,15 +39,11 @@
                 type : "POST",
                 headers : headers,
                 data : JSON.stringify(params),
-                success : function(response) {
-                    window.location.reload();
-                    $("#commentModal").modal("hide");
-                },
-                error : function(xhr, status, error) {
-                    alert("에러가 발생하였습니다.");
-                    return false;
-                }
-             });
+            })
+            .done(function (fragment) {
+                $('#commentTable').replaceWith(fragment);
+                hideModal();
+            });
         }
 
         function saveComment() {
@@ -100,27 +96,17 @@
 
             var uri = "/comment/update/" + idx;
             var headers = {"Content-Type": "application/json", "X-HTTP-Method-Override" : "PUT"};
-            var params = {"comment" : content.value};
+            var params = {"comment" : content.value, "post_id" : [[${post.id}]]};
 
             $.ajax({
                 url: uri,
                 type: "PUT",
                 headers: headers,
                 data: JSON.stringify(params),
-                success: function(response) {
-                    if (response.blank == true) {
-                        commentMsg.innerHTML="댓글을 작성해주세요.";
-                    }else if (response.max == true) {
-                        commentMsg.innerHTML="10,000자 이하로 댓글을 작성하세요.";
-                    }else {         // 댓글 수정 완료
-                        window.location.reload();
-                        $("#commentModal").modal("hide");
-                    }
-                },
-                error: function(xhr, status, error) {
-                    alert("에러가 발생하였습니다." + error + status);
-                    return false;
-                }
+            })
+            .done(function (fragment) {
+                $('#commentTable').replaceWith(fragment);
+                hideModal();
             });
         }
 
