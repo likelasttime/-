@@ -142,7 +142,7 @@
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" th:insert="fragments/common :: menu('board')">
 </nav>
-    <div class="container">
+    <div class="container" th:with="username=${#authentication.name}">
         <div class="d-flex justify-content-end" title="공유하기">
             <button type="button" data-bs-toggle="modal" class="btn btn-light" data-bs-target="#exampleModal"><i class="bi bi-share-fill"></i></button>
         </div>
