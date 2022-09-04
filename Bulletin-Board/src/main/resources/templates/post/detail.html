@@ -64,22 +64,10 @@
                 type: "POST",
                 headers : headers,
                 data: JSON.stringify(params),
-                /*success: function(response) {
-                    if (response.blank == true) {
-                        commentMsg.innerHTML="댓글을 작성해주세요.";
-                    }else if (response.max == true) {
-                        commentMsg.innerHTML="10,000자 이하로 댓글을 작성하세요.";
-                    }else {         // 댓글 등록 완료
-                        window.location.reload();
-                    }
-                },
-                error: function(xhr, status, error) {
-                    alert("에러가 발생하였습니다." + error + status);
-                    return false;
-                }*/
             })
             .done(function (fragment) {
                 $('#commentTable').replaceWith(fragment);
+                document.getElementById("reply").value='';
             });
         }
 
