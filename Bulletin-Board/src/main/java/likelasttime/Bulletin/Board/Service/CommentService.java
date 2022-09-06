@@ -25,6 +25,7 @@ public class CommentService {
         post.update(post.getTitle(), post.getContent(), post.getView(), post.getComment_cnt() + 1);
         CommentRequestDto comment=CommentRequestDto.builder()
                 .comment(content)
+                .postId(id)
                 .post(post)
                 .user(user)
                 .build();
@@ -51,5 +52,16 @@ public class CommentService {
     public Comment findById(Long id){return commentRepository.findById(id).get();}
 
     public List<Comment> findAll(){return commentRepository.findAll();}
+
+    public boolean validate(String comment, Result result){
+        if(comment.isBlank()) {
+            result.setBlank(true);
+            return false;
+        }else if(comment.length() > 10000){
+            result.setMax(true);
+            return false;
+        }
+        return true;
+    }
 
 }
