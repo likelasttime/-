@@ -43,6 +43,7 @@
 - [캐시](#-3-10-캐시)
 - [실시간 인기 게시글](#-3-11-실시간-인기-게시글)
 - [다중 파일 업로드](#-3-12-다중-파일-업로드)
+- [공유](#-3-13-공유)
 
 </br>
 
@@ -288,25 +289,22 @@ form 태그의 onsubmit 속성을 이용해 모든 유효성 검사를 통과해
 </br>
 
 ## [🔝 ](#-3-8-인증)3-9. 댓글  
-댓글 등록, 수정은 @ResponseBody를 사용해 메소드가 리턴하는 오브젝트가 메시지 컨버터를 통해 HTTP 응답의 메시지 본문으로 전환됩니다.  
+댓글 등록/수정/삭제 후 비동기로 댓글 리스트를 출력합니다.  
 #### 댓글 등록
-![댓글 등록](https://user-images.githubusercontent.com/46569105/173214260-321a00d4-1cd4-42c4-b969-119289d9f557.gif)  
+![댓글 등록](https://user-images.githubusercontent.com/46569105/188293089-c1c7a07c-e013-4323-a165-617c1f4ab786.gif)  
 Ajax를 이용해 비동기식으로 댓글을 등록합니다.  
-댓글이 Blank하거나 최대 길이 10,000자를 넘었는지 백엔드와 프런트엔드에서 유효성 검사를 합니다.  
-<br/>
 
 댓글 수정과 삭제는 Modal을 띄워서 합니다.  
 댓글을 쓴 회원에게만 Modal을 띄우는 아이콘이 보입니다.  
-<br/>
 
 #### 댓글 수정  
-![댓글 수정](https://user-images.githubusercontent.com/46569105/173214263-2999b79b-655f-4334-9bbb-6596fbf5b20c.gif)  
+![댓글 수정](https://user-images.githubusercontent.com/46569105/188293090-f82ca696-5089-4bb2-80b5-e64dc061b709.gif)  
 Entity의 변경사항을 데이터베이스에 자동으로 반영하는 기능 Dirty Checking을 이용했습니다.  
 댓글을 수정하기 전 알림창을 띄우고 true를 리턴받으면 form을 submit합니다.  
 <br/>
 
 #### 댓글 삭제  
-![댓글 삭제](https://user-images.githubusercontent.com/46569105/173214266-27b8e5db-1463-4432-bcea-027b05ae2fe5.gif)  
+![댓글 삭제](https://user-images.githubusercontent.com/46569105/188293092-69146f90-2b60-432a-8a91-407d77c624dd.gif)  
 댓글을 삭제하기 전 알림창을 띄우고 true를 리턴받으면 POST 방식으로 요청을 보냅니다.  
 </br>
 
@@ -392,6 +390,14 @@ After
 origin_file_name 필드는 클라이언트에서 업로드한 원본 파일명입니다.  
 uuid_file_name은 UUID를 이용해 로컬에 저장된 파일명입니다.  
 
+</br>
+
+## [🔝 ](#-3-12-다중-파일-업로드)3-13. 공유  
+카카오톡 메시지 공유 API를 사용했습니다.  
+![공유](https://user-images.githubusercontent.com/46569105/188299253-fde26642-81be-41cb-81c3-a15ddb665bb8.gif)  
+카카오톡 아이콘을 클릭하면 카카오톡이 실행되고 메시지를 보낼 수 있습니다.  
+화면 녹화에는 담기지 않아서 아래 사진을 첨부했습니다.  
+![카카오톡 공유](https://user-images.githubusercontent.com/46569105/188299294-c1165e2f-7530-4d7c-a0ef-9bb60bec3bd7.jpg)  
 </br>
 
 ## [🔝 ](#-3-핵심-기능)4. 트러블 슈팅
