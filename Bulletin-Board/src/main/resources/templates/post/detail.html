@@ -47,17 +47,12 @@
         }
 
         function saveComment() {
-            if(!isValid("reply")) {
-                return false;
-            }
-
             var content = document.getElementById("reply");
-            var commentMsg=document.getElementById("reply_msg");
-            var post_id=[[${post.id}]];
+            const post_id=[[${post.id}]];
 
-            var uri = "/comment/view";
-            var headers = {"Content-Type": "application/json", "X-HTTP-Method-Override" : "POST"};
-            var params = {"comment" : content.value, "post_id" : post_id};
+            const uri = "/comment/view";
+            const headers = {"Content-Type": "application/json", "X-HTTP-Method-Override" : "POST"};
+            var params = {"comment" : content.value, "postId" : post_id};
 
             $.ajax({
                 url: uri,
@@ -68,23 +63,84 @@
             .done(function (fragment) {
                 $('#commentTable').replaceWith(fragment);
                 document.getElementById("reply").value='';
+                commentMsg.innerHTML='';
             });
         }
 
-        function updateComment(idx) {
-            if(!isValid("modalContent")) {
+        function validateSave(){
+            if(!isValid("reply")) {
                 return false;
             }
+
+            const uri = "/comment/valid"
+            const headers = {"Content-Type": "application/json"};
+            var content = document.getElementById("reply");
+            var params = {"comment" : content.value};
+
+            $.ajax({
+                url : uri,
+                type : "post",
+                headers: headers,
+                data: JSON.stringify(params),
+                success: function(response) {
+                    if (response.blank == true) {
+                        commentMsg.innerHTML="댓글을 작성해주세요.";
+                    }else if (response.max == true) {
+                        commentMsg.innerHTML="10,000자 이하로 댓글을 작성하세요.";
+                    }else {
+                        saveComment();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert("에러가 발생하였습니다." + error + status);
+                    return false;
+                }
+            });
+        }
+
+        function validateUpdate(idx){
             if(!confirm('댓글을 수정하시겠어요?')) {
                 return false;
             }
 
+            if(!isValid("modalContent")) {
+                return false;
+            }
+
+            const uri = "/comment/valid"
+            const headers = {"Content-Type": "application/json"};
+            var content = document.getElementById("modalContent");
+            var params = {"comment" : content.value};
+
+            $.ajax({
+                url : uri,
+                type : "post",
+                headers: headers,
+                data: JSON.stringify(params),
+                success: function(response) {
+                    if (response.blank == true) {
+                        check_comment.innerHTML="댓글을 작성해주세요.";
+                    }else if (response.max == true) {
+                        check_comment.innerHTML="10,000자 이하로 댓글을 작성하세요.";
+                    }else {
+                        updateComment(idx);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert("에러가 발생하였습니다." + error + status);
+                    return false;
+                }
+            });
+        }
+
+        function updateComment(idx) {
             var content = document.getElementById("modalContent");
             var commentMsg=document.getElementById("check_comment");
+            const post_id=[[${post.id}]];
 
-            var uri = "/comment/update/" + idx;
+            const uri = "/comment/update";
             var headers = {"Content-Type": "application/json", "X-HTTP-Method-Override" : "PUT"};
-            var params = {"comment" : content.value, "post_id" : [[${post.id}]]};
+            var params = {"comment" : content.value, "post_id" : post_id, "comment_id" : idx};
 
             $.ajax({
                 url: uri,
@@ -94,22 +150,22 @@
             })
             .done(function (fragment) {
                 $('#commentTable').replaceWith(fragment);
+                check_comment.innerHTML="";
                 hideModal();
             });
         }
 
         function openModal(idx, writer, content) {
-
             $("#commentModal").modal("toggle");
             document.getElementById("modalWriter").value = writer;
             document.getElementById("modalContent").value = content;
 
-            document.getElementById("btnCommentUpdate").setAttribute("onclick", "updateComment("+ idx +")");
+            document.getElementById("btnCommentUpdate").setAttribute("onclick", "validateUpdate("+ idx +")");
             document.getElementById("btnCommentDelete").setAttribute("onclick", "deleteComment("+ idx +")");
-
 	    }
 
         function hideModal() {
+            check_comment.innerHTML="";
             $("#commentModal").modal("hide");
         }
 
@@ -199,7 +255,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button"  id="btnCommentDelete" class="btn btn-danger waves-effect waves-light" onclick="deleteComment()"><i class="bi bi-trash"></i> 삭제</button>
-                            <button type="button" id="btnCommentUpdate" class="btn btn-primary waves-effect waves-light" onclick="updateComment()">수정</button>
+                            <button type="button" id="btnCommentUpdate" class="btn btn-primary waves-effect waves-light" onclick="validateUpdate()">수정</button>
                         </div>
                     </div>
                 </div>
@@ -208,14 +264,14 @@
 
         <div class="card w-100">
             <div class="card-header bi bi-chat-right-dots"> Write a Comment</div>
-            <form method="POST" th:action="@{/comment/write}">
-                <input type="hidden" id="post_id" name="post_id" th:value="${post.id}">
+            <form method="POST">
+                <input type="hidden" id="post_id" name="postId" th:value="${post.id}">
                 <div class="card-body">
-                    <textarea id="reply" name="reply" class="form-control" rows="4" maxlength="10000" placeholder="댓글을 입력하세요"></textarea>
-                    <span class="text-danger" id="reply_msg"></span>
+                    <textarea id="reply" name="comment" class="form-control" rows="4" maxlength="10000" placeholder="댓글을 입력하세요"></textarea>
+                    <span class="text-danger" id="commentMsg"></span>
                 </div>
                 <div class="card-footer">
-                    <button type="button" id="btn-comment-save" onclick="saveComment()" class="btn btn-outline-primary bi bi-pencil-square">등록</button>
+                    <button type="button" id="btn-comment-save" onclick="validateSave()" class="btn btn-outline-primary bi bi-pencil-square">등록</button>
                 </div>
             </form>
         </div>
