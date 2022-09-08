@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -19,12 +19,13 @@ public class CommentService {
     private final ModelMapper modelMapper;
 
     public Long commentSave(String name, Long id, String content){
-        User user=userRepository.findByUsername(name).get();
+        User user=userRepository.findByUsername(name).orElseThrow(() ->
+                new IllegalArgumentException("댓글 쓰기 실패: 해당 유저가 존재하지 않습니다." + id));
         Post post=postRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("댓글 쓰기 실패: 해당 게시글이 존재하지 않습니다." + id));
         post.update(post.getTitle(), post.getContent(), post.getView(), post.getComment_cnt() + 1);
         CommentRequestDto comment=CommentRequestDto.builder()
-                .comment(content)
+                .content(content)
                 .postId(id)
                 .post(post)
                 .user(user)
@@ -50,8 +51,6 @@ public class CommentService {
     public void deleteAll(){commentRepository.deleteAll();}
 
     public Comment findById(Long id){return commentRepository.findById(id).get();}
-
-    public List<Comment> findAll(){return commentRepository.findAll();}
 
     public boolean validate(String comment, Result result){
         if(comment.isBlank()) {
