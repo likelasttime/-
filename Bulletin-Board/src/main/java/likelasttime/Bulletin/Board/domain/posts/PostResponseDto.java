@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Setter
 public class PostResponseDto implements Serializable {
-    private Long id;
-    private String title;
+    private Long postId;
+    private String postTitle;
     private String author;
-    private String content;
+    private String postContent;
     private Long fileId;
 
     @JsonSerialize(using= LocalDateTimeSerializer.class)
@@ -38,10 +38,10 @@ public class PostResponseDto implements Serializable {
 
     @Builder
     public PostResponseDto(Post post) {
-        this.id=post.getId();
-        this.title=post.getTitle();
+        this.postId=post.getId();
+        this.postTitle=post.getTitle();
         this.author=post.getAuthor();
-        this.content=post.getContent();
+        this.postContent=post.getContent();
         this.createdDate=post.getCreatedDate();
         this.modifiedDate=post.getModifiedDate();
         this.view=post.getView();

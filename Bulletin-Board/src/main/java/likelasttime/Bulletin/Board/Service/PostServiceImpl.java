@@ -73,7 +73,7 @@ public class PostServiceImpl implements PostService{
     public List<PostResponseDto> findAll() {
         List<PostResponseDto> postResponseDtoList=postRepository.findAll(Sort.by("id").descending()).stream().map(PostResponseDto::new).collect(Collectors.toList());
         Map<String, PostResponseDto> map=postResponseDtoList.stream()
-                .collect(Collectors.toMap(P -> P.getId().toString(), Function.identity()));
+                .collect(Collectors.toMap(P -> P.getPostId().toString(), Function.identity()));
         redisTemplate.opsForHash().putAll("findAll", map);            // 캐시에 저장
 
         return postResponseDtoList;

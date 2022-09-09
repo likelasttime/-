@@ -17,6 +17,12 @@ public class CommentController {
     private final CommentService commentService;
     private final PostService postService;
 
+    @GetMapping("/comments/{id}")
+    public String findAll(@PathVariable String id, Model model){
+        model.addAttribute("commentList", postService.getCommentList(Long.valueOf(id)));
+        return "/post/detail :: #commentTable";
+    }
+
     @ResponseBody
     @PostMapping("/valid")
     public Result isValid(@RequestBody Map<String, String> map){

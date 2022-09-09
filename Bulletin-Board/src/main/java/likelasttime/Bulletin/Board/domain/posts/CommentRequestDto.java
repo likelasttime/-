@@ -8,7 +8,7 @@ import lombok.*;
 public class CommentRequestDto {
     private Long id;
 
-    private String comment;
+    private String content;
 
     private Long postId;
 
@@ -17,8 +17,8 @@ public class CommentRequestDto {
     private Post post;
 
     @Builder
-    public CommentRequestDto(String comment, Long postId, User user, Post post){
-        this.comment=comment;
+    public CommentRequestDto(String content, Long postId, User user, Post post){
+        this.content=content;
         this.postId=postId;
         this.user=user;
         this.post=post;

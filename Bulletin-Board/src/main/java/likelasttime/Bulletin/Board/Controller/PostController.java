@@ -33,7 +33,7 @@ public class PostController {
     }
 
     @PostMapping("/new")
-    public String create(@Valid PostRequestDto post) {
+    public String create(PostRequestDto post) {
         /*
         if (bindingResult.hasErrors()) {
             return "post/createPostForm";
@@ -89,16 +89,13 @@ public class PostController {
 
     // 상세 게시판 조회
     @GetMapping("/detail/{id}")
-    public String detail(@PathVariable("id") Long id, Model model) {
+    public String detail(@PathVariable("id") Long id, Model model,
+                         @ModelAttribute("commentRequestDto") CommentRequestDto commentRequestDto) {
         if (id == null) {
-            model.addAttribute("post", new PostRequestDto());
+            model.addAttribute("post", new PostResponseDto());
         } else {
             PostResponseDto dto = postService.findById(id);
             model.addAttribute("post", dto);
-            List<CommentResponseDto> comments = dto.getComment();
-            if (comments != null && !comments.isEmpty()) {
-                model.addAttribute("commentList", comments);
-            }
         }
         return "post/detail";
     }
@@ -107,7 +104,7 @@ public class PostController {
     public String updateForm(@RequestParam(value="id") Long id, Model model){
         PostResponseDto post=postService.findById(id);
         model.addAttribute("post", post);
-        return "/post/updateForm";
+        return "post/updateForm";
     }
 
     // 수정

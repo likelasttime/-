@@ -22,7 +22,7 @@ public class CommentResponseDto implements Serializable {
 
     private Long post_id;
 
-    private String comment;
+    private String content;
 
     @JsonSerialize(using= LocalDateTimeSerializer.class)
     @JsonDeserialize(using= LocalDateTimeDeserializer.class)
@@ -35,7 +35,7 @@ public class CommentResponseDto implements Serializable {
     @Builder
     public CommentResponseDto(Comment comment) {
         this.id=comment.getId();
-        this.comment=comment.getComment();
+        this.content=comment.getContent();
         this.username=comment.getUser().getUsername();
         this.post_id=comment.getPost().getId();
         this.createdDate=comment.getCreatedDate();
