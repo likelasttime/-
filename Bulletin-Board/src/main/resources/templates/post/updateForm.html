@@ -56,14 +56,14 @@
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" th:replace="fragments/common :: menu('board')"></nav>
 <div class="container mt-5">
-    <form th:action="@{'/post/update/'+${post.id}}" id="save" method="post" enctype="multipart/form-data" onSubmit="return updatePost()">
+    <form th:action="@{'/post/update/'+${post.postId}}" id="save" method="post" enctype="multipart/form-data" onSubmit="return updatePost()">
         <div class=" card mt-3 mb-3">
             <div class="card-header">
-                <input type="text" class="form-control" id="title" name="title" th:value="${post.title}" placeholder="제목을 입력해주세요." required/>
+                <input type="text" class="form-control" id="title" name="title" th:value="${post.postTitle}" placeholder="제목을 입력해주세요." required/>
             </div>
-            <textarea class="summernote" name="content" th:utext="${post.content}" required></textarea>
+            <textarea class="summernote" name="content" th:utext="${post.postContent}" required></textarea>
         </div>
-        <input type="hidden" id="postId" th:value="${post.id}">
+        <input type="hidden" id="postId" th:value="${post.postId}">
         <input type="hidden" name="_method" value="put"/>
         <button type="submit" id="update" class="btn btn-primary me-md-2 float-right">수정</button>
     </form>

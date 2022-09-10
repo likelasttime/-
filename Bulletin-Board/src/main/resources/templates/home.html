@@ -21,7 +21,7 @@
             <tbody>
             <tr th:each="post, i : ${rank_post}">
                 <td th:text="${i.count}"></td>
-                <td><a th:text="${post.title}" th:href="@{'/post/detail/' + ${post.id}}"></a>
+                <td><a th:text="${post.postTitle}" th:href="@{'/post/detail/' + ${post.postId}}"></a>
                     <span class="badge bg-light">
                         <i class="bi bi-chat-right-dots"></i>
                         <a th:text="'+' + ${post.comment_cnt}"></a>
