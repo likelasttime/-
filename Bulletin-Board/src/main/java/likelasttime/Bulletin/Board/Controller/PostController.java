@@ -89,8 +89,7 @@ public class PostController {
 
     // 상세 게시판 조회
     @GetMapping("/detail/{id}")
-    public String detail(@PathVariable("id") Long id, Model model,
-                         @ModelAttribute("commentRequestDto") CommentRequestDto commentRequestDto) {
+    public String detail(@PathVariable("id") Long id, Model model) {
         if (id == null) {
             model.addAttribute("post", new PostResponseDto());
         } else {
