@@ -1,7 +1,6 @@
 package likelasttime.Bulletin.Board.Controller;
 
 import likelasttime.Bulletin.Board.Service.CommentService;
-import likelasttime.Bulletin.Board.Service.PostService;
 import likelasttime.Bulletin.Board.domain.posts.Result;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -15,11 +14,10 @@ import java.util.Map;
 @RequestMapping(path="/comment")
 public class CommentController {
     private final CommentService commentService;
-    private final PostService postService;
 
     @GetMapping("/comments/{id}")
     public String findAll(@PathVariable String id, Model model){
-        model.addAttribute("commentList", postService.getCommentList(Long.valueOf(id)));
+        model.addAttribute("commentList", commentService.getCommentList(Long.valueOf(id)));
         return "/post/detail :: #commentTable";
     }
 
@@ -41,7 +39,7 @@ public class CommentController {
         commentService.commentSave(principal.getName(), post_id, comment);
 
         // 댓글 리스트 추가
-        model.addAttribute("commentList", postService.getCommentList(post_id));
+        model.addAttribute("commentList", commentService.getCommentList(post_id));
 
         return "/post/detail :: #commentTable";
     }
@@ -53,7 +51,7 @@ public class CommentController {
         Long comment_id=Long.valueOf(map.get("comment_id"));
         Long post_id=Long.parseLong(map.get("post_id"));
         commentService.update(comment_id, comment);
-        model.addAttribute("commentList", postService.getCommentList(post_id));
+        model.addAttribute("commentList", commentService.getCommentList(post_id));
         return "/post/detail :: #commentTable";
     }
 
@@ -62,7 +60,7 @@ public class CommentController {
     public String delete(@PathVariable("id") Long id, @RequestBody Map<String, String> map, Model model) {
         Long post_id=Long.parseLong(map.get("post_id"));        // 게시글 번호
         commentService.delete(id, post_id);
-        model.addAttribute("commentList", postService.getCommentList(post_id));
+        model.addAttribute("commentList", commentService.getCommentList(post_id));
         return "/post/detail :: #commentTable";
     }
 

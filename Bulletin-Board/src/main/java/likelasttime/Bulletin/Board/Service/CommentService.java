@@ -1,5 +1,6 @@
 package likelasttime.Bulletin.Board.Service;
 
+import likelasttime.Bulletin.Board.PostNotFoundException;
 import likelasttime.Bulletin.Board.Repository.*;
 import likelasttime.Bulletin.Board.domain.posts.*;
 import lombok.RequiredArgsConstructor;
@@ -61,6 +62,12 @@ public class CommentService {
             return false;
         }
         return true;
+    }
+
+    public List<CommentResponseDto> getCommentList(Long postId){
+        List<Comment> comment=commentRepository.findCommentsByPost(postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId)));
+        List<CommentResponseDto> results=comment.stream().map(x -> modelMapper.map(x, CommentResponseDto.class)).collect(Collectors.toList());
+        return results;
     }
 
 }
