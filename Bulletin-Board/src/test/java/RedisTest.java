@@ -68,8 +68,8 @@ public class RedisTest {
         List<PostResponseDto> postList=postService.findByRank();
 
         // then
-        assertThat(postList.get(0).getTitle()).isEqualTo(postResponseDto2.getTitle());
-        assertThat(postList.get(1).getTitle()).isEqualTo(postResponseDto1.getTitle());
+        assertThat(postList.get(0).getPostTitle()).isEqualTo(postResponseDto2.getPostTitle());
+        assertThat(postList.get(1).getPostTitle()).isEqualTo(postResponseDto1.getPostTitle());
     }
 
     @Test
@@ -113,20 +113,20 @@ public class RedisTest {
         postRepository.save(post);
         PostRequestDto postRequestDto=modelMapper.map(post, PostRequestDto.class);
         PostResponseDto postResponseDto=modelMapper.map(post, PostResponseDto.class);
-        String id=postResponseDto.getId().toString();
+        String id=postResponseDto.getPostId().toString();
 
         redisTemplate.opsForHash().put("rankByHash", id, postResponseDto);
         PostResponseDto hashValue1=(PostResponseDto) redisTemplate.opsForHash().get("rankByHash", id);
         postRequestDto.setTitle("첫 번째(수정)");
-        postResponseDto.setTitle("첫 번째(수정)");
+        postResponseDto.setPostTitle("첫 번째(수정)");
 
         // when
         PostResponseDto afterPostResponseDto=postService.update(Long.valueOf(id), postRequestDto);          // 수정
 
         // then
         PostResponseDto hashValue2=(PostResponseDto) redisTemplate.opsForHash().get("rankByHash", id);
-        assertThat(hashValue1.getTitle()).isNotEqualTo(hashValue2.getTitle());
-        assertThat(afterPostResponseDto.getTitle()).isEqualTo("첫 번째(수정)");
+        assertThat(hashValue1.getPostTitle()).isNotEqualTo(hashValue2.getPostTitle());
+        assertThat(afterPostResponseDto.getPostTitle()).isEqualTo("첫 번째(수정)");
 
     }
 
@@ -149,8 +149,8 @@ public class RedisTest {
 
         // then
         PostResponseDto cacheDto=(PostResponseDto) redisTemplate.opsForHash().get("findAll", post.getId().toString());
-        assertThat(cacheDto.getTitle()).isEqualTo(post.getTitle());
-        assertThat(cacheDto.getContent()).isEqualTo(post.getContent());
+        assertThat(cacheDto.getPostTitle()).isEqualTo(post.getTitle());
+        assertThat(cacheDto.getPostContent()).isEqualTo(post.getContent());
         assertThat(cacheDto.getAuthor()).isEqualTo(post.getAuthor());
     }
 

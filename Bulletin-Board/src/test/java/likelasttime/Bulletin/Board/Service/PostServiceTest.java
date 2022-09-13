@@ -35,10 +35,10 @@ class PostServiceTest {
         PostResponseDto post_object=postService.create(post);
 
         //then
-        PostResponseDto findPost=postService.findById(post_object.getId());
-        assertThat(post_object.getTitle()).isEqualTo(findPost.getTitle());
+        PostResponseDto findPost=postService.findById(post_object.getPostId());
+        assertThat(post_object.getPostTitle()).isEqualTo(findPost.getPostTitle());
         assertThat(post_object.getAuthor()).isEqualTo(findPost.getAuthor());
-        assertThat(post_object.getContent()).isEqualTo(findPost.getContent());
+        assertThat(post_object.getPostContent()).isEqualTo(findPost.getPostContent());
     }
 
     @Test
@@ -69,10 +69,10 @@ class PostServiceTest {
         PostResponseDto post_object=postService.create(post);
 
         // when
-        PostResponseDto result=postService.findById(post_object.getId());
+        PostResponseDto result=postService.findById(post_object.getPostId());
 
         // then
-        assertThat(result.getTitle()).isEqualTo("Spring");
+        assertThat(result.getPostTitle()).isEqualTo("Spring");
         assertThat(result.getView()).isEqualTo(1);
 
     }
@@ -87,11 +87,11 @@ class PostServiceTest {
 
         // when
         post.setTitle("Spring2");
-        PostResponseDto post_object2=postService.update(post_object1.getId(), post);
+        PostResponseDto post_object2=postService.update(post_object1.getPostId(), post);
 
         // then
-        assertThat(post_object2.getTitle()).isEqualTo("Spring2");
-        assertThat(post_object2.getContent()).isEqualTo("hello");
+        assertThat(post_object2.getPostTitle()).isEqualTo("Spring2");
+        assertThat(post_object2.getPostContent()).isEqualTo("hello");
         assertThat(post_object2.getView()).isEqualTo(0);
 
     }
@@ -105,7 +105,7 @@ class PostServiceTest {
 
 
         // when
-        postService.deletePost(post_object.getId());
+        postService.deletePost(post_object.getPostId());
 
         // then
         List<PostResponseDto> all_post=postService.findAll();
