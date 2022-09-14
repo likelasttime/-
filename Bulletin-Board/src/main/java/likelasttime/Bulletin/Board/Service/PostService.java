@@ -13,6 +13,8 @@ public interface PostService {
 
     PostResponseDto update(Long id, PostRequestDto post);
 
+    List<PostResponseDto> findAllByCache();
+
     PostResponseDto findById(Long postId);
 
     void deletePost(Long id);
