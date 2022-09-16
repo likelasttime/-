@@ -32,27 +32,25 @@ public class PostRestController {
         return "post/createPostForm";
     }*/
 
-    @PostMapping("/post")
+    @PostMapping("/rest/posts")
     public PostResponseDto create(@Valid @RequestBody PostRequestDto postRequestDto){
         PostResponseDto postResponseDto = postService.create(postRequestDto);
         return postResponseDto;
     }
 
-    /*@GetMapping("/post/{keyword}")
+    @GetMapping("/rest/posts/keywords")
     public Page<PostResponseDto> list(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                                      @PathVariable String keyword){
+                                      @RequestParam("keyword") String keyword){
         return postService.search(keyword, keyword, keyword, pageable);
     }
 
-     */
-
-    @GetMapping("/post/{id}")
+    @GetMapping("/rest/posts/{id}")
     public ResponseEntity<PostResponseDto> detail(@PathVariable("id") Long id) {
         PostResponseDto dto = postService.findById(id);
         return new ResponseEntity<PostResponseDto>(dto, HttpStatus.OK) ;
     }
 
-    @GetMapping("/post")
+    @GetMapping("/rest/posts")
     public ResponseEntity<Page<PostResponseDto>> findAllPosts(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
         List<PostResponseDto> postDto = new ArrayList<>();
         postDto = postService.findAllByCache();       // 캐시에서 조회
@@ -76,7 +74,7 @@ public class PostRestController {
 
      */
 
-    @PutMapping("/post/{id}")
+    @PutMapping("/rest/posts/{id}")
     public ResponseEntity<PostResponseDto> greetingSubmit(@PathVariable("id") Long id,
                                  @Valid PostRequestDto post,
                                  BindingResult bindingResult) {
@@ -89,7 +87,7 @@ public class PostRestController {
         return new ResponseEntity<PostResponseDto>(postResponseDto, HttpStatus.OK);
     }
 
-    @DeleteMapping("/post/{id}")
+    @DeleteMapping("/rest/posts/{id}")
     public String delete(@PathVariable("id") Long id) {
         postService.deletePost(id);
         return "redirect:/post";

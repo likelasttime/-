@@ -46,10 +46,10 @@ public class PostRestControllerTest {
     public void create() throws Exception{
         PostRequestDto postRequestDto = new PostRequestDto();
         postRequestDto.setTitle("첫 번째 글");
-        mockMvc.perform(post("/post")
+        mockMvc.perform(post("/rest/posts")
                         .contentType("application/json")
                         .with(csrf())
-                        .content(objectMapper.writeValueAsString(postRequestDto)))
+                .content(objectMapper.writeValueAsString(postRequestDto)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -58,46 +58,47 @@ public class PostRestControllerTest {
     public void detail() throws Exception{
         PostRequestDto postRequestDto=new PostRequestDto();
 
-        mockMvc.perform(get("/post/{id}", 1L)
+        mockMvc.perform(get("/rest/posts/{id}", 1L)
                         .contentType("application/json"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
-
-    /*@Test
-    public void list() throws Exception{
-        mockMvc.perform(get("/post/{keyword}", "안녕")
-                        .contentType("application/json"))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-     */
 
     @Test
+    public void list() throws Exception{
+        String keyword="vlog";
+        mockMvc.perform(get("/rest/posts/keywords")
+                        .contentType("application/x-www-form-urlencoded")
+                        .param("keyword", keyword))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    // 문제
     public void findAllPosts() throws Exception{
-        mockMvc.perform(get("/post")
+        mockMvc.perform(get("/rest/posts")
                         .contentType("application/json"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$['pageable']['paged']]").value("true"));
     }
 
-    /*@Test
+   /* @Test
     public void updateForm() throws Exception{
-        mockMvc.perform(get("/post/{id}", 1L)
+        mockMvc.perform(get("/rest/post/{id}", 1L)
                         .param("id", "1"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
-     */
+    */
 
     @Test
     public void greetingSubmit() throws Exception{
         PostRequestDto postRequestDto=new PostRequestDto();
         postRequestDto.setAuthor("happy");
-        mockMvc.perform(put("/post/{id}", 1)
+        mockMvc.perform(put("/rest/posts/{id}", 1)
                         .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -105,7 +106,7 @@ public class PostRestControllerTest {
 
     @Test
     public void delete() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.delete("/post/{id}", 1)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/rest/posts/{id}", 1)
                         .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk());
