@@ -14,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,15 +35,16 @@ public class PostRestController {
     }*/
 
     @PostMapping("/rest/posts")
-    public PostResponseDto create(@Valid @RequestBody PostRequestDto postRequestDto){
+    public ResponseEntity create(@Valid @RequestBody PostRequestDto postRequestDto){
         PostResponseDto postResponseDto = postService.create(postRequestDto);
-        return postResponseDto;
+        return new ResponseEntity(postResponseDto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/rest/posts/keywords")
-    public Page<PostResponseDto> list(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+    @GetMapping("/rest/posts/search")
+    public ResponseEntity list(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                                       @RequestParam("keyword") String keyword){
-        return postService.search(keyword, keyword, keyword, pageable);
+        Page<PostResponseDto> pagePostResponseDto = postService.search(keyword, keyword, keyword, pageable);
+        return new ResponseEntity(pagePostResponseDto, HttpStatus.OK);
     }
 
     @GetMapping("/rest/posts/{id}")
@@ -75,22 +78,22 @@ public class PostRestController {
      */
 
     @PutMapping("/rest/posts/{id}")
-    public ResponseEntity<PostResponseDto> greetingSubmit(@PathVariable("id") Long id,
-                                 @Valid PostRequestDto post,
-                                 BindingResult bindingResult) {
+    public ResponseEntity greetingSubmit(@PathVariable("id") Long id,
+                                         @RequestBody @Valid PostRequestDto post, BindingResult bindingResult,
+                                         HttpServletResponse response) throws IOException {
         //post.setAuthor(((postService.findById(id)).getAuthor()));     // 작성자 -> postService.update로 옮기기
-        /*if (bindingResult.hasErrors()) {
-            return "/post/detail";
-        }*/
-
+        if (bindingResult.hasErrors()) {
+            response.sendRedirect("/post/detail");
+            return new ResponseEntity(HttpStatus.FOUND);
+        }
         PostResponseDto postResponseDto = postService.update(id, post);
-        return new ResponseEntity<PostResponseDto>(postResponseDto, HttpStatus.OK);
+        return new ResponseEntity(postResponseDto, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/rest/posts/{id}")
-    public String delete(@PathVariable("id") Long id) {
+    public ResponseEntity delete(@PathVariable("id") Long id) {
         postService.deletePost(id);
-        return "redirect:/post";
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     /*@GetMapping("/post")
