@@ -24,17 +24,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf()
                     .csrfTokenRepository(new CookieCsrfTokenRepository())
-                    .and()
+                .and()
                 .authorizeRequests()
                     .antMatchers("/", "/user/availability/**").permitAll()
                     .anyRequest().authenticated()
-                    .and()
+                .and()
                 .formLogin()
                     .loginPage("/user/login")
                     .permitAll()
-                    .and()
+                .and()
                 .logout()
-                    .permitAll();
+                    .permitAll()
+                    .deleteCookies("JSESSIONID")
+                .and()
+                .rememberMe().key("uniqueAndSecret").tokenValiditySeconds(86400);
     }
 
     @Autowired
