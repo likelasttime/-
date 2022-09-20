@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <div th:replace="fragments/common :: head('게시판')"></div>
+    <div th:insert="fragments/common :: head('게시판')"></div>
     <title>Login</title>
     <style>
     html,body {
@@ -70,6 +70,7 @@
     <input type="text" id="username" name="username" th:value="${result}" class="form-control" placeholder="Username" required autofocus>
     <label for="inputPassword" class="sr-only">Password</label>
     <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
+        <p class="text-right">remember me <input type="checkbox" name="remember-me"></p>
     <span class="find">
         <a th:href="@{/user/availability/find-id}">아이디</a>
         <span class="slash"> / </span>
