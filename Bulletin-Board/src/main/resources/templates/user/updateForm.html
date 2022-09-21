@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <div th:replace="fragments/common :: head('게시판')"></div>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <div th:insert="fragments/common :: head('게시판')"></div>
     <style>
         html,body {
             height: 100%;
@@ -135,6 +137,7 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" th:replace="fragments/common :: menu('board')">
 </nav>
     <form class="form-update" th:action="@{'/user/'+${userDto.id}}" method="post" modelAttribute="userDto">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         <input type="hidden" name="_method" value="put"/>
         <input type="hidden" name="id" th:value="${userDto.id}"/>
         <div class="label">

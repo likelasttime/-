@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <div th:insert="fragments/common :: head('게시판')"></div>
     <!-- include summernote css/js -->
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
@@ -48,6 +50,9 @@
                 contentType : false,
                 enctype : 'multipart/form-data',
                 processData : false,
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
                 success : function(url) {
                     $(el).summernote('insertImage', url, function($image){
                         $image.css('width', "100%");
@@ -77,6 +82,7 @@
 <div class="container">
     <h2>✍️게시판</h2>
     <form action="#" id="save" th:action="@{/post/new}" method="post" enctype="multipart/form-data" onSubmit="return checkIsEmpty();">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         <div class="card mt-3 mb-3">
             <div class="card-header">
                 <input type="text" class="form-control" id="title" name="title" maxlength='30' placeholder="제목을 입력해주세요." required>

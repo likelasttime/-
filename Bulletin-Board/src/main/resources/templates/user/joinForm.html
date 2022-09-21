@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <div th:replace="fragments/common :: head('게시판')"></div>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <div th:insert="fragments/common :: head('게시판')"></div>
     <title>sign up</title>
     <style>
         html,body { height: 100%; }
@@ -58,6 +60,8 @@
     }
 
     function checkId(){
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
         var id = $('#user_id').val();
         var msg=document.getElementById('id_msg');
         var password=$('#password').val();
@@ -79,6 +83,9 @@
             url: "/user/availability/idCheck",
             type: "post",
             data: {'id':id},
+            beforeSend : function(xhr){
+                xhr.setRequestHeader(header, token);
+            },
             success:function(flag){
                 if(flag){       // 중복된 아이디
                     msg.innerHTML="사용 중인 아이디입니다.";
@@ -133,6 +140,9 @@
     }
 
     function emailCheck(){
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+
         var getMail=/^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+$/;
 
         var emailMsg=document.getElementById("check_email");
@@ -148,6 +158,9 @@
             url: "/user/availability/emailCheck",
             type: "post",
             data: {'email':email},
+            beforeSend : function(xhr){
+                xhr.setRequestHeader(header, token);
+            },
             success:function(flag){
                 emailMsg.innerHTML="";
                 if(flag){   // 중복
@@ -161,6 +174,9 @@
     }
 
     function phoneCheck(){
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+
         var phone=$('#phone').val();
         var phoneMsg=document.getElementById("check_phone");
         phoneMsg.style.color=wrong;
@@ -176,6 +192,9 @@
             url: "/user/availability/phoneCheck",
             type: "post",
             data: {'phone':phone},
+            beforeSend : function(xhr){
+                xhr.setRequestHeader(header, token);
+            },
             success:function(flag){
                 phoneMsg.innerHTML="";
                 if(flag){   // 중복
@@ -209,6 +228,7 @@
 
 <body class="text-center">
 <form class="form-register" method="post" action="/user/availability/join" onsubmit="return signUp();" modelAttribute="userDto">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     <h1 class="h3 mb-3 font-weight-normal">✨회원가입✨</h1>
     <div class="label">
         <lable for="username">Name</lable>

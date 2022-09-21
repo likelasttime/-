@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <div th:insert="fragments/common :: head('게시판')"></div>
     <!-- include summernote css/js -->
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
@@ -42,6 +44,9 @@
                 contentType : false,
                 enctype : 'multipart/form-data',
                 processData : false,
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
                 success : function(url) {
                     $(el).summernote('insertImage', url, function($image){
                         $image.css('width', "100%");
@@ -57,6 +62,7 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" th:replace="fragments/common :: menu('board')"></nav>
 <div class="container mt-5">
     <form th:action="@{'/post/update/'+${post.postId}}" id="save" method="post" enctype="multipart/form-data" onSubmit="return updatePost()">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         <div class=" card mt-3 mb-3">
             <div class="card-header">
                 <input type="text" class="form-control" id="title" name="title" th:value="${post.postTitle}" placeholder="제목을 입력해주세요." required/>

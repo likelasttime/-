@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <div th:replace="fragments/common :: head('게시판')"></div>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <div th:insert="fragments/common :: head('게시판')"></div>
     <style>
        html,body {
             height: 100%;
@@ -109,6 +111,7 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" th:replace="fragments/common :: menu('board')">
 </nav>
 <form method="post" class="form-find" onsubmit="return submitButton()">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     <div class="form-group">
         <lable for="username">Name</lable>
         <input type="text" id="username" name="name" onchange="checkName()" minlength='2' maxlength='5' class="form-control" placeholder="2~5자의 한글" required autofocus>
