@@ -36,7 +36,7 @@ public class CommentResponseDto implements Serializable {
     public CommentResponseDto(Comment comment) {
         this.id=comment.getId();
         this.content=comment.getContent();
-        this.username=comment.getUser().getUsername();
+        this.username=comment.getPost().getAuthor();
         this.post_id=comment.getPost().getId();
         this.createdDate=comment.getCreatedDate();
         this.modifiedDate=comment.getModifiedDate();

@@ -66,7 +66,8 @@ public class CommentService {
 
     public List<CommentResponseDto> getCommentList(Long postId){
         List<Comment> comment=commentRepository.findCommentsByPost(postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId)));
-        List<CommentResponseDto> results=comment.stream().map(x -> modelMapper.map(x, CommentResponseDto.class)).collect(Collectors.toList());
+        List<CommentResponseDto> results=comment.stream().map(x -> CommentResponseDto.builder()
+                        .comment(x).build()).collect(Collectors.toList());
         return results;
     }
 
