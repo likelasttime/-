@@ -33,12 +33,10 @@ public class PostController {
     }
 
     @PostMapping("/new")
-    public String create(PostRequestDto post) {
-        /*
+    public String create(@ModelAttribute @Valid PostRequestDto post, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "post/createPostForm";
         }
-         */
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         post.setAuthor(((UserDetails) principal).getUsername());     // 작성자=로그인한 유저 id
         postService.create(post);
@@ -111,7 +109,6 @@ public class PostController {
     public String greetingSubmit(@PathVariable("id") Long id,
                                  @ModelAttribute("post") @Valid PostRequestDto post,
                                  BindingResult bindingResult) {
-        post.setAuthor(((postService.findById(id)).getAuthor()));     // 작성자
         if (bindingResult.hasErrors()) {
             return "/post/detail";
         }

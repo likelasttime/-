@@ -13,10 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,9 +32,12 @@ public class PostRestController {
     }*/
 
     @PostMapping("/rest/posts")
-    public ResponseEntity create(@Valid @RequestBody PostRequestDto postRequestDto){
+    public ResponseEntity create(@Valid @RequestBody PostRequestDto postRequestDto, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()){
+            return new ResponseEntity("post/createPostForm", HttpStatus.BAD_REQUEST);
+        }
         PostResponseDto postResponseDto = postService.create(postRequestDto);
-        return new ResponseEntity(postResponseDto, HttpStatus.CREATED);
+        return new ResponseEntity("/post", HttpStatus.FOUND);
     }
 
     @GetMapping("/rest/posts/search")
@@ -79,15 +79,13 @@ public class PostRestController {
 
     @PutMapping("/rest/posts/{id}")
     public ResponseEntity greetingSubmit(@PathVariable("id") Long id,
-                                         @RequestBody @Valid PostRequestDto post, BindingResult bindingResult,
-                                         HttpServletResponse response) throws IOException {
+                                         @RequestBody @Valid PostRequestDto post, BindingResult bindingResult) {
         //post.setAuthor(((postService.findById(id)).getAuthor()));     // 작성자 -> postService.update로 옮기기
         if (bindingResult.hasErrors()) {
-            response.sendRedirect("/post/detail");
-            return new ResponseEntity(HttpStatus.FOUND);
+            return new ResponseEntity("/post/detail", HttpStatus.BAD_REQUEST);
         }
         PostResponseDto postResponseDto = postService.update(id, post);
-        return new ResponseEntity(postResponseDto, HttpStatus.CREATED);
+        return new ResponseEntity("/post", HttpStatus.FOUND);
     }
 
     @DeleteMapping("/rest/posts/{id}")

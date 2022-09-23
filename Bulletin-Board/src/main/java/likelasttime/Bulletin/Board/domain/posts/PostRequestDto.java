@@ -20,8 +20,8 @@ public class PostRequestDto {
 
     private String author;
 
-    //@NotBlank(message = "내용을 작성해주세요.")
-    //@Size(max = 10000, message = "10,000자 이하로 작성하세요.")
+    @NotBlank(message = "내용을 작성해주세요.")
+    @Size(max = 10000, message = "10,000자 이하로 작성하세요.")
     private String content;
 
     private int view;
