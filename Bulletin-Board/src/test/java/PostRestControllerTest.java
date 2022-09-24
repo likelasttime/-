@@ -2,13 +2,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import likelasttime.Bulletin.Board.Controller.PostRestController;
 import likelasttime.Bulletin.Board.Service.PostService;
 import likelasttime.Bulletin.Board.domain.posts.PostRequestDto;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -18,12 +15,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
 @ContextConfiguration(classes = PostRestController.class)
@@ -59,17 +54,20 @@ public class PostRestControllerTest {
     public void create_success() throws Exception{
         PostRequestDto postRequestDto = new PostRequestDto();
         postRequestDto.setTitle("첫 번째 글");
+        postRequestDto.setContent("내용");
         mockMvc.perform(post("/rest/posts")
                         .contentType("application/json")
                         .with(csrf())
                 .content(objectMapper.writeValueAsString(postRequestDto)))
                 .andDo(print())
-                .andExpect(status().isCreated());
+                .andExpect(status().isFound())
+                .andExpect(content().string("/post"));
     }
 
     @Test
-    public void create_fail() throws Exception{
+    public void create_fail_Title() throws Exception{
         PostRequestDto postRequestDto = new PostRequestDto();
+        postRequestDto.setContent("content 작성");
 
         MvcResult result=mockMvc.perform(post("/rest/posts")
                         .contentType("application/json")
@@ -77,10 +75,23 @@ public class PostRestControllerTest {
                         .content(objectMapper.writeValueAsString(postRequestDto)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
+                .andExpect(content().string("post/createPostForm"))
                 .andReturn();
+    }
 
-        String message=result.getResolvedException().getMessage();
-        Assertions.assertThat(message).contains("제목을 작성해주세요.");
+    @Test
+    public void create_fail_Content() throws Exception{
+        PostRequestDto postRequestDto = new PostRequestDto();
+        postRequestDto.setTitle("title 작성");
+
+        MvcResult result=mockMvc.perform(post("/rest/posts")
+                        .contentType("application/json")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(postRequestDto)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("post/createPostForm"))
+                .andReturn();
     }
 
     @Test
@@ -104,7 +115,6 @@ public class PostRestControllerTest {
     }
 
     @Test
-    // 문제
     public void findAllPosts() throws Exception{
         mockMvc.perform(get("/rest/posts")
                         .contentType("application/json"))
@@ -133,9 +143,8 @@ public class PostRestControllerTest {
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(postRequestDto)))
                 .andDo(print())
-                .andExpect(status().isFound())      // 302
-                .andExpect(redirectedUrl("/post/detail"))
-                .andExpect(status().is3xxRedirection());    // redirection 여부
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("/post/detail"));
     }
 
     @Test
@@ -143,13 +152,15 @@ public class PostRestControllerTest {
         PostRequestDto postRequestDto=new PostRequestDto();
         postRequestDto.setTitle("첫 게시글");
         postRequestDto.setAuthor("iu");
+        postRequestDto.setContent("내용");
 
         mockMvc.perform(put("/rest/posts/{id}", 1)
                         .with(csrf())
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(postRequestDto)))
                 .andDo(print())
-                .andExpect(status().isCreated());
+                .andExpect(status().isFound())
+                .andExpect(content().string("/post"));
     }
 
     @Test
