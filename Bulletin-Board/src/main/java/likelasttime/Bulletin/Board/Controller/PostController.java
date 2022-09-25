@@ -28,12 +28,13 @@ public class PostController {
     private final PostServiceImpl postService;
 
     @GetMapping("/new")
-    public String createForm() {
+    public String createForm(Model model) {
+        model.addAttribute("post", new PostRequestDto());
         return "post/createPostForm";
     }
 
     @PostMapping("/new")
-    public String create(@ModelAttribute @Valid PostRequestDto post, BindingResult bindingResult) {
+    public String create(@ModelAttribute("post") @Valid PostRequestDto post, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "post/createPostForm";
         }
