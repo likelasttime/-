@@ -26,7 +26,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .csrfTokenRepository(new CookieCsrfTokenRepository())
                 .and()
                 .authorizeRequests()
-                    .antMatchers("/", "/user/availability/**").permitAll()
+                    .antMatchers("/", "/user/availability/**", "/oauth2/*").permitAll()
                     .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -37,7 +37,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
                     .deleteCookies("JSESSIONID")
                 .and()
-                .rememberMe().key("uniqueAndSecret").tokenValiditySeconds(86400);
+                .rememberMe().key("uniqueAndSecret").tokenValiditySeconds(86400)
+                .and()
+                .oauth2Login();
     }
 
     @Autowired
