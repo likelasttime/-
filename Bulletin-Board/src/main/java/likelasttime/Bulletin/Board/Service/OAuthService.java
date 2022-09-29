@@ -1,15 +1,28 @@
 package likelasttime.Bulletin.Board.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import likelasttime.Bulletin.Board.Repository.UserRepository;
+import likelasttime.Bulletin.Board.domain.posts.Role;
 import likelasttime.Bulletin.Board.domain.posts.Token;
+import likelasttime.Bulletin.Board.domain.posts.KakaoUserInfo;
+import likelasttime.Bulletin.Board.domain.posts.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @Service
+@RequiredArgsConstructor
 public class OAuthService {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
     public String getKakaoAccessToken(String code) throws IOException {
         String access_Token = "";
         String refresh_Token = "";
@@ -59,5 +72,75 @@ public class OAuthService {
             e.printStackTrace();
         }
         return access_Token;
+    }
+
+    public HashMap<String, Object> getKakaoUserInfo(String token) throws MalformedURLException, IOException{
+        HashMap<String, Object> map = new HashMap<>();
+        String reqURL = "https://kapi.kakao.com/v2/user/me";
+
+        try{
+            URL url = new URL(reqURL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Authorization", "Bearer " + token);
+
+            // 200 코드면 성공
+            int responseCode = conn.getResponseCode();
+            System.out.println("responseCode : " + responseCode);
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line = "";
+            String result = "";
+
+            while((line = br.readLine()) != null){
+                result += line;
+            }
+            System.out.println("response body : " + result);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            KakaoUserInfo kakaoUserInfo = objectMapper.readValue(result, KakaoUserInfo.class);
+            String nickName = kakaoUserInfo.getKakao_account().getProfile().getNickname();
+            String email = kakaoUserInfo.getKakao_account().getEmail();
+            String id = kakaoUserInfo.getId().toString();
+            if(email.isEmpty()) {
+                email = "a" + id + "@temp.com";
+            }
+            String tempPassword = "abc" + id + "!";
+            String encodedPassword = passwordEncoder.encode(tempPassword);
+            String tempPhone = "01012341234";
+            Role role = new Role();
+            role.setId(2L);
+            role.setName("ROLE_GUEST");
+            ArrayList roles = new ArrayList();
+            roles.add(role);
+
+            if(!userRepository.existsByEmail(email)){
+                User user = User.builder()
+                        .name(nickName)
+                        .username(email)
+                        .email(email)
+                        .password(encodedPassword)
+                        .phone(tempPhone)
+                        .roles(new ArrayList<>())
+                        .enabled(true)
+                        .build();
+
+                user.getRoles().add(role);
+                userRepository.save(user);
+            }
+
+            map.put("nickname", nickName);
+            map.put("email", email);
+            map.put("password", tempPassword);
+
+            br.close();
+
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
+        return map;
     }
 }
