@@ -12,9 +12,9 @@ public class Token {
 
     String token_type;
 
-    String expires_in;
+    Integer expires_in;
 
     String scope;
 
-    String refresh_token_expires_in;
+    Integer refresh_token_expires_in;
 }
