@@ -103,26 +103,27 @@ public class OAuthService {
             KakaoUserInfo kakaoUserInfo = objectMapper.readValue(result, KakaoUserInfo.class);
             String nickName = kakaoUserInfo.getKakao_account().getProfile().getNickname();
             String email = kakaoUserInfo.getKakao_account().getEmail();
+            String userName = "";
             String id = kakaoUserInfo.getId().toString();
             if(email.isEmpty()) {
-                email = "a" + id + "@temp.com";
+                userName = "a" + id;
+            }else{
+                userName = email;
             }
             String tempPassword = "abc" + id + "!";
             String encodedPassword = passwordEncoder.encode(tempPassword);
-            String tempPhone = "01012341234";
             Role role = new Role();
             role.setId(2L);
             role.setName("ROLE_GUEST");
             ArrayList roles = new ArrayList();
             roles.add(role);
 
-            if(!userRepository.existsByEmail(email)){
+            if(!userRepository.existsByUsername(userName)){
                 User user = User.builder()
                         .name(nickName)
                         .username(email)
                         .email(email)
                         .password(encodedPassword)
-                        .phone(tempPhone)
                         .roles(new ArrayList<>())
                         .enabled(true)
                         .build();
