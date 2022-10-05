@@ -5,6 +5,7 @@ import likelasttime.Bulletin.Board.domain.posts.FileDto;
 import likelasttime.Bulletin.Board.domain.posts.UploadFile;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 @Transactional
 @RequiredArgsConstructor
+@Service
 public class FileService {
     private final FileRepository fileRepository;
     private final ModelMapper modelMapper;
