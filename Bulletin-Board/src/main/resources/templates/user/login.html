@@ -77,10 +77,15 @@
         <a th:href="@{/user/availability/findPassword}">비밀번호 찾기</a>
     </span>
     <button class="btn btn-lg btn-primary btn-block">Sign in</button>
-    <a href="https://kauth.kakao.com/oauth/authorize?client_id=db5b74e6c640443403b9705680d9dbac&redirect_uri=http://localhost:8080/oauth2/kakao&response_type=code" alt="카카오 로그인 버튼">
-        <img src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png" align="left" class="mt-2" />
+    <a href="/oauth2/authorization/kakao" role="button">
+        <img width="68" height="69" src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png" align="left" class="mt-2 ml-3" alt="카카오 로그인 버튼">
     </a>
-    <a href="/oauth2/authorization/naver" class="btn btn-secondary active" role="button">네이버 로그인</a>
+    <a href="/oauth2/authorization/google" role="button">
+        <img class="mt-2 ml-1 mr-2" width="68" height="69" src="https://w7.pngwing.com/pngs/687/86/png-transparent-google-logo-google-adwords-g-suite-google-account-google-logo-chess-google-chrome-thumbnail.png" alt="구글 로그인 버튼">
+    </a>
+    <a href="/oauth2/authorization/naver" role="button">
+        <img class="ml-3 mt-2" src="../../btnG_naver.png" width="68" height="69" alt="네이버 로그인 버튼">
+    </a>
 </form>
 </body>
 </html>
