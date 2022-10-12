@@ -402,15 +402,10 @@ uuid_file_name은 UUID를 이용해 로컬에 저장된 파일명입니다.
 </br>
 
 ## [🔝 ](#-3-13-공유)3-14. 소셜 로그인
-인가 코드 받기, 토큰 받기, 사용자 로그인 처리 과정으로 이루어집니다.  
-카카오톡 계정으로 로그인할 수 있습니다.  
-아이디가 존재하지 않으면 DB에 회원 정보를 저장합니다.  
-AuthenticationManager를 이용해 로그인 처리를 합니다.  
-```java
-Authentication kakaoUsernamePassword = new UsernamePasswordAuthenticationToken(map.get("email"), map.get("password"));
-Authentication authentication = authenticationManager.authenticate(kakaoUsernamePassword);
-SecurityContextHolder.getContext().setAuthentication(authentication);
-```
+![소셜 로그인](https://user-images.githubusercontent.com/46569105/195322364-95be5cf9-dd5b-4595-912c-00ff43a7ade0.png)  
+UserDetails, OAuth2User를 상속받은 PrincipalDetails 클래스를 생성했습니다.  
+PrincipalDetails는 일반 로그인 또는 OAuth2 로그인을 한 사용자 정보를 담습니다.  
+이메일이 DB에 없으면 해당 사용자를 DB에 저장합니다.  
 </br>
 
 ## [🔝 ](#-3-핵심-기능)4. 트러블 슈팅
