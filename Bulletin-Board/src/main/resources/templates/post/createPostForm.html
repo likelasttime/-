@@ -41,6 +41,8 @@
         });
 
         function uploadSummernoteImageFile(file, el){       // 서버에 파일 업로드
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
             data=new FormData();
             data.append("file", file);
             $.ajax({
