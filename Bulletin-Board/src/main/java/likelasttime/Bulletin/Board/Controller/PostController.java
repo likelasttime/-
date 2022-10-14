@@ -9,8 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,12 +33,13 @@ public class PostController {
     }
 
     @PostMapping("/new")
-    public String create(@ModelAttribute("post") @Valid PostRequestDto post, BindingResult bindingResult) {
+    public String create(@ModelAttribute("post") @Valid PostRequestDto post, BindingResult bindingResult,
+                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
         if (bindingResult.hasErrors()) {
             return "post/createPostForm";
         }
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        post.setAuthor(((UserDetails) principal).getUsername());     // 작성자=로그인한 유저 id
+        String username = principalDetails.getUsername();
+        post.setAuthor(username);
         postService.create(post);
         return "redirect:/post";
     }
