@@ -30,7 +30,6 @@ public class Post extends BaseTimeEntity {
     private int comment_cnt;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-    @OrderBy("id desc")
     private List<Comment> comment;
 
     @Builder
