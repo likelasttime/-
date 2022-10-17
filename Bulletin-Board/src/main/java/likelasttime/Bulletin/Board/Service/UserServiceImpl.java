@@ -4,10 +4,13 @@ import likelasttime.Bulletin.Board.Repository.UserRepository;
 import likelasttime.Bulletin.Board.domain.posts.Role;
 import likelasttime.Bulletin.Board.domain.posts.User;
 import likelasttime.Bulletin.Board.domain.posts.UserRequestDto;
+import likelasttime.Bulletin.Board.domain.posts.UserResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
@@ -20,9 +23,11 @@ import java.util.Optional;
 
 @Transactional
 @RequiredArgsConstructor
+@Service
 public class UserServiceImpl implements UserService{
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     // 중복 아이디 체크
     @Override
@@ -66,7 +71,11 @@ public class UserServiceImpl implements UserService{
     public Optional<User> findById(Long id){return userRepository.findById(id);}
 
     @Override
-    public Optional<User> findByUsername(String username){return userRepository.findByUsername(username);}
+    public UserResponseDto findByUsername(String username){
+        User user = userRepository.findByUsername(username).orElse(new User());
+        UserResponseDto userResponseDto = modelMapper.map(user, UserResponseDto.class);
+        return userResponseDto;
+    }
 
     @Override
     public void save(User user){userRepository.save(user);}

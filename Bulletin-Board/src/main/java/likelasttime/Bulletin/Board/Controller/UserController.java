@@ -4,12 +4,13 @@ import likelasttime.Bulletin.Board.Service.EmailServiceImpl;
 import likelasttime.Bulletin.Board.Service.UserServiceImpl;
 import likelasttime.Bulletin.Board.domain.posts.User;
 import likelasttime.Bulletin.Board.domain.posts.UserRequestDto;
+import likelasttime.Bulletin.Board.domain.posts.UserResponseDto;
 import likelasttime.Bulletin.Board.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.PrintWriter;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,6 +32,7 @@ public class UserController {
     private final EmailServiceImpl emailService;
     private final UserServiceImpl userService;
     private final UserValidator userValidator;
+    private final ModelMapper modelMapper;
     private final static Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping("/availability/joinForm")
@@ -94,7 +97,8 @@ public class UserController {
     @GetMapping("/form")      // 개인정보 수정
     public String updateForm(Model model){
         String id=userService.getUserId(); // 로그인한 유저 id
-        model.addAttribute("userDto", userService.findByUsername(id).get());
+        UserResponseDto userResponseDto = userService.findByUsername(id);
+        model.addAttribute("userDto", userResponseDto);
         return "/user/updateForm";
     }
 
@@ -123,8 +127,8 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String loginForm(){
-        return "/user/login";
+    public String loginForm() {
+        return "user/login";
     }
 
     @GetMapping("/availability/find-id")
@@ -137,7 +141,7 @@ public class UserController {
         response.setContentType("text/html;charset=utf-8");
         PrintWriter out=response.getWriter();
         Optional<User> result=userService.findUserId(user);
-        if(result.isEmpty()){       // 아이디 찾기 실패
+        if(result.isPresent()){       // 아이디 찾기 실패
             out.println("<script>");
             out.println("alert('가입된 아이디가 없습니다.');");
             out.println("history.go(-1)");
@@ -172,7 +176,8 @@ public class UserController {
             return "/user/findPassword";
         }
 
-        User user=userService.findByUsername(username).get();
+        UserResponseDto userResponseDto=userService.findByUsername(username);
+        User user = modelMapper.map(userResponseDto, User.class);
         emailService.sendMail(email, username, user);
         out.println("<script>");
         out.println("alert('이메일로 임시 비밀번호를 발송했습니다.');");

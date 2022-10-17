@@ -2,6 +2,7 @@ package likelasttime.Bulletin.Board.Service;
 
 import likelasttime.Bulletin.Board.domain.posts.User;
 import likelasttime.Bulletin.Board.domain.posts.UserRequestDto;
+import likelasttime.Bulletin.Board.domain.posts.UserResponseDto;
 import org.springframework.validation.Errors;
 
 import javax.servlet.http.HttpSession;
@@ -17,7 +18,7 @@ public interface UserService {
     boolean userPhoneCheck(String phone);
     List<User> findAll();
     Optional<User> findById(Long id);
-    Optional<User> findByUsername(String username);
+    UserResponseDto findByUsername(String username);
     void save(User user);
     void deleteAll();
     boolean checkUpdate(UserRequestDto userRequestDto, Long id);
