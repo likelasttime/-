@@ -3,19 +3,17 @@ package likelasttime.Bulletin.Board.Service;
 import likelasttime.Bulletin.Board.domain.posts.Role;
 import likelasttime.Bulletin.Board.domain.posts.User;
 import likelasttime.Bulletin.Board.domain.posts.UserRequestDto;
+import likelasttime.Bulletin.Board.domain.posts.UserResponseDto;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest
 public class UserServiceTest {
@@ -199,7 +197,7 @@ public class UserServiceTest {
 
         // when
         userService.joinUser(user1);
-        User user2=userService.findByUsername(user1.getUsername()).get();
+        UserResponseDto user2=userService.findByUsername(user1.getUsername());
 
         // then
         assertThat(user2.getUsername()).isEqualTo(user1.getUsername());
